@@ -8,86 +8,60 @@
   <style>
     :root {
       --bg: #020617;
-      --card: rgba(17, 24, 39, 0.85);
-      --border: rgba(148, 163, 184, 0.25);
+      --card: rgba(17, 24, 39, 0.8);
+      --border: rgba(148, 163, 184, 0.2);
       --text: #f8fafc;
       --muted: #94a3b8;
-      --primary: #9333ea;
-      --secondary: #0ea5e9;
-      --input: rgba(30, 41, 59, 0.8);
     }
 
-    * { box-sizing: border-box; }
     body {
       margin: 0;
-      min-height: 100vh;
-      font-family: Inter, system-ui, sans-serif;
+      font-family: Inter, sans-serif;
       background:
-        radial-gradient(circle at top, rgba(59,130,246,.15), transparent 35%),
-        radial-gradient(circle at bottom right, rgba(147,51,234,.15), transparent 30%),
+        radial-gradient(circle at top, rgba(59,130,246,.15), transparent 40%),
+        radial-gradient(circle at bottom right, rgba(147,51,234,.15), transparent 40%),
         var(--bg);
       color: var(--text);
     }
 
     #app {
       min-height: 100vh;
+      padding: 40px;
+    }
+
+    .center {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
     }
 
     .card {
-      width: 100%;
-      max-width: 460px;
-      padding: 28px;
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 20px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 20px 60px rgba(0,0,0,.35);
-    }
-
-    h1, h2 {
-      margin: 0 0 8px;
-      font-size: 28px;
-      line-height: 1.1;
-    }
-
-    p {
-      margin: 0 0 20px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .stack {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      padding: 28px;
+      max-width: 420px;
+      width: 100%;
     }
 
     input, select {
       width: 100%;
-      padding: 13px 14px;
-      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 10px;
       border: 1px solid var(--border);
-      background: var(--input);
-      color: var(--text);
-      outline: none;
-    }
-
-    input::placeholder {
-      color: #94a3b8;
+      background: #1f2937;
+      color: white;
     }
 
     button {
       width: 100%;
-      padding: 13px 14px;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 10px;
       border: none;
-      border-radius: 12px;
-      color: white;
-      font-weight: 700;
       cursor: pointer;
+      font-weight: 700;
     }
 
     .primary {
@@ -100,108 +74,38 @@
 
     .ghost {
       background: rgba(255,255,255,.06);
-      border: 1px solid var(--border);
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .label {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin: 4px 0 6px;
-    }
-
-    .small {
-      font-size: 13px;
-      color: var(--muted);
     }
 
     .dashboard {
-      max-width: 900px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 24px;
+      max-width: 1000px;
+      margin: auto;
     }
 
     .topbar {
       display: flex;
       justify-content: space-between;
-      gap: 16px;
-      align-items: center;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-
-    .panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+      gap: 16px;
     }
 
     .stat {
+      padding: 16px;
+      border-radius: 14px;
       background: rgba(255,255,255,.03);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
     }
 
-    .stat-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
+    h1 { margin: 0 0 10px; }
+    p { color: var(--muted); }
 
-    .stat-value {
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    .actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-    }
-
-    .actions button {
-      width: auto;
-      min-width: 160px;
-    }
-
-    .message {
-      margin-top: 10px;
-      font-size: 13px;
-      color: #cbd5e1;
-    }
-
-    @media (max-width: 640px) {
-      .row {
-        grid-template-columns: 1fr;
-      }
-
-      h1, h2 {
-        font-size: 24px;
-      }
-    }
   </style>
 </head>
+
 <body>
   <div id="app"></div>
 
@@ -214,231 +118,157 @@
       window.APP_CONFIG.SUPABASE_ANON_KEY
     );
 
-    const ROLE_OPTIONS = [
-      { id: "rd", title: "Regional Director", team: "Executive" },
-      { id: "internal-ad", title: "Internal Associate Director", team: "Executive" },
-      { id: "external-ad", title: "External Associate Director", team: "Executive" },
-      { id: "registration-dir", title: "Registration Director", team: "Registration" },
-      { id: "sports-dir", title: "Sports Director", team: "Sports" },
-      { id: "ops-dir-1", title: "Ops Director 1 — Command Center Lead", team: "Operations" },
-      { id: "ops-dir-2", title: "Ops Director 2 — Communications Lead", team: "Operations" },
-      { id: "comps-dir", title: "Competitions Director", team: "Competitions" },
-      { id: "dt-dir", title: "Dream Team Director", team: "Dream Team" },
-      { id: "pr-dir", title: "PR Director", team: "PR" },
-      { id: "programs-dir", title: "Programs Director", team: "Programs" },
-      { id: "finance-dir", title: "Finance Director", team: "Finance" },
-      { id: "judges-chair", title: "Judges Chair", team: "Competitions" },
-      { id: "graphics-chair", title: "Graphics Chair", team: "PR" },
-      { id: "marketing-chair", title: "Marketing Chair", team: "PR" },
-      { id: "awards-chair", title: "Awards & Ceremonies Chair", team: "Programs" },
-      { id: "workshops-chair", title: "Workshops Chair", team: "Programs" },
-      { id: "sponsorships-chair", title: "Sponsorships Chair", team: "Finance" },
-      { id: "recruitment-lead", title: "Recruitment Lead", team: "Dream Team" },
-      { id: "td-lead", title: "Training & Development Lead", team: "Dream Team" }
+    const ROLES = [
+      { id:"rd", title:"Regional Director", team:"Executive" },
+      { id:"registration-dir", title:"Registration Director", team:"Registration" },
+      { id:"sports-dir", title:"Sports Director", team:"Sports" },
+      { id:"ops-dir", title:"Operations Director", team:"Operations" }
     ];
 
-    async function getUser() {
-      const { data } = await supabaseClient.auth.getUser();
+    async function getUser(){
+      const {data} = await supabaseClient.auth.getUser();
       return data.user;
     }
 
-    async function getProfile(userId) {
-      const { data, error } = await supabaseClient
+    async function getProfile(id){
+      const {data} = await supabaseClient
         .from("profiles")
         .select("*")
-        .eq("id", userId)
+        .eq("id",id)
         .maybeSingle();
-
-      if (error) {
-        console.error("Profile fetch error:", error);
-        return null;
-      }
-
       return data;
     }
 
-    async function signUp() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+    async function login(){
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-      const { error } = await supabaseClient.auth.signUp({
-        email,
-        password
-      });
+      const {error} = await supabaseClient.auth.signInWithPassword({email,password});
+      if(error) return alert(error.message);
 
-      if (error) return alert(error.message);
-      alert("Account created. Then log in.");
-    }
-
-    async function login() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      const { error } = await supabaseClient.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) return alert(error.message);
       location.reload();
     }
 
-    async function logout() {
+    async function signUp(){
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const {error} = await supabaseClient.auth.signUp({email,password});
+      if(error) return alert(error.message);
+
+      alert("Account created");
+    }
+
+    async function logout(){
       await supabaseClient.auth.signOut();
       location.reload();
     }
 
-    async function saveProfile() {
+    async function saveProfile(){
       const user = await getUser();
-      if (!user) return alert("No user found.");
 
-      const fullName = document.getElementById("full-name").value.trim();
-      const roleId = document.getElementById("role-id").value;
+      const name = document.getElementById("name").value;
+      const role = document.getElementById("role").value;
 
-      if (!fullName || !roleId) {
-        alert("Please fill out your name and choose a role.");
-        return;
-      }
+      const selected = ROLES.find(r=>r.id===role);
 
-      const selectedRole = ROLE_OPTIONS.find(r => r.id === roleId);
-
-      const payload = {
-        id: user.id,
-        full_name: fullName,
-        email: user.email,
-        role_id: roleId,
-        team: selectedRole ? selectedRole.team : null,
-        updated_at: new Date().toISOString()
-      };
-
-      const { error } = await supabaseClient
-        .from("profiles")
-        .upsert(payload);
-
-      if (error) {
-        console.error(error);
-        alert(error.message);
-        return;
-      }
+      await supabaseClient.from("profiles").upsert({
+        id:user.id,
+        full_name:name,
+        email:user.email,
+        role_id:role,
+        team:selected?.team
+      });
 
       location.reload();
     }
 
-    function renderLogin() {
+    function loginUI(){
       return `
+      <div class="center">
         <div class="card">
-          <h1>MIST Dallas Portal</h1>
-          <p>Log in first. New organizers can create an account here.</p>
-
-          <div class="stack">
-            <input id="email" type="email" placeholder="Email" />
-            <input id="password" type="password" placeholder="Password" />
-            <button class="primary" onclick="login()">Log In</button>
-            <button class="secondary" onclick="signUp()">Sign Up</button>
-          </div>
+          <h1>MIST Dallas</h1>
+          <input id="email" placeholder="Email">
+          <input id="password" type="password" placeholder="Password">
+          <button class="primary" onclick="login()">Login</button>
+          <button class="secondary" onclick="signUp()">Sign Up</button>
         </div>
-      `;
+      </div>`;
     }
 
-    function renderRoleSetup(user) {
+    function roleUI(user){
       return `
+      <div class="center">
         <div class="card">
-          <h2>Complete your profile</h2>
-          <p>Before entering the portal, choose your organizer role.</p>
-
-          <div class="stack">
-            <div>
-              <div class="label">Email</div>
-              <input value="${user.email}" disabled />
-            </div>
-
-            <div>
-              <div class="label">Full name</div>
-              <input id="full-name" placeholder="Your full name" />
-            </div>
-
-            <div>
-              <div class="label">Role</div>
-              <select id="role-id">
-                <option value="">Choose your role</option>
-                ${ROLE_OPTIONS.map(role => `
-                  <option value="${role.id}">
-                    ${role.title} — ${role.team}
-                  </option>
-                `).join("")}
-              </select>
-            </div>
-
-            <button class="primary" onclick="saveProfile()">Save and Continue</button>
-            <div class="message">This can be made admin-assigned later. For now, each organizer chooses once.</div>
-          </div>
+          <h1>Choose Role</h1>
+          <input id="name" placeholder="Full Name">
+          <select id="role">
+            <option value="">Select Role</option>
+            ${ROLES.map(r=>`<option value="${r.id}">${r.title}</option>`).join("")}
+          </select>
+          <button class="primary" onclick="saveProfile()">Continue</button>
         </div>
-      `;
+      </div>`;
     }
 
-    function renderDashboard(user, profile) {
+    function dashboard(user,profile){
       return `
-        <div class="dashboard">
-          <div class="topbar">
-            <div>
-              <h1>MIST Dallas Portal</h1>
-              <p>You're in. Next we connect this to the workbook.</p>
-            </div>
-            <button class="ghost" onclick="logout()">Log Out</button>
+      <div class="dashboard">
+        <div class="topbar">
+          <div>
+            <h1>MIST Dallas Portal</h1>
+            <p>Welcome back, ${profile.full_name}</p>
+          </div>
+          <button class="ghost" onclick="logout()">Log Out</button>
+        </div>
+
+        <div class="grid">
+          <div class="stat">
+            <p>Email</p>
+            <h3>${user.email}</h3>
           </div>
 
-          <div class="panel">
-            <h2>Welcome, ${profile.full_name || user.email}</h2>
-            <p>This is your organizer dashboard shell. Next we will connect your assigned role to the workbook.</p>
+          <div class="stat">
+            <p>Role</p>
+            <h3>${profile.role_id}</h3>
+          </div>
 
-            <div class="grid">
-              <div class="stat">
-                <div class="stat-title">Email</div>
-                <div class="stat-value">${user.email}</div>
-              </div>
-
-              <div class="stat">
-                <div class="stat-title">Role</div>
-                <div class="stat-value">${profile.role_id || "Not set"}</div>
-              </div>
-
-              <div class="stat">
-                <div class="stat-title">Team</div>
-                <div class="stat-value">${profile.team || "Not set"}</div>
-              </div>
-
-              <div class="stat">
-                <div class="stat-title">Tracking status</div>
-                <div class="stat-value">Coming next</div>
-              </div>
-            </div>
-
-            <div class="actions">
-              <button class="primary" onclick="alert('Next step: connect workbook by role')">Open Workbook</button>
-              <button class="secondary" onclick="alert('Next step: shared organizer progress board')">Progress Board</button>
-            </div>
+          <div class="stat">
+            <p>Team</p>
+            <h3>${profile.team}</h3>
           </div>
         </div>
-      `;
+
+        <br>
+
+        <button class="primary" onclick="alert('Next: Workbook')">
+          Open Workbook
+        </button>
+
+        <button class="secondary" onclick="alert('Next: Progress Board')">
+          Progress Board
+        </button>
+
+      </div>`;
     }
 
-    async function init() {
+    async function init(){
       const app = document.getElementById("app");
       const user = await getUser();
 
-      if (!user) {
-        app.innerHTML = renderLogin();
+      if(!user){
+        app.innerHTML = loginUI();
         return;
       }
 
       const profile = await getProfile(user.id);
 
-      if (!profile || !profile.role_id) {
-        app.innerHTML = renderRoleSetup(user);
+      if(!profile || !profile.role_id){
+        app.innerHTML = roleUI(user);
         return;
       }
 
-      app.innerHTML = renderDashboard(user, profile);
+      app.innerHTML = dashboard(user,profile);
     }
 
     init();
