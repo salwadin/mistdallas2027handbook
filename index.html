@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIST Dallas Portal</title>
+  <style>
+    :root {
+      --bg: #020617;
+      --card: rgba(17, 24, 39, 0.82);
+      --border: rgba(148, 163, 184, 0.22);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --input: rgba(30, 41, 59, 0.85);
+      --purple: #7c3aed;
+      --pink: #d946ef;
+      --blue: #0ea5e9;
+      --blue2: #2563eb;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(59, 130, 246, 0.18), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(147, 51, 234, 0.18), transparent 35%),
+        var(--bg);
+    }
+
+    #app {
+      min-height: 100vh;
+      width: 100%;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card, .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(14px);
+    }
+
+    .card {
+      width: 100%;
+      max-width: 460px;
+      padding: 28px;
+    }
+
+    .dashboard-shell {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .panel {
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    h1, h2, h3 { margin: 0; }
+    h1 {
+      font-size: 32px;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-size: 24px;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+    h3 { font-size: 18px; line-height: 1.2; }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--input);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 13px 14px;
+      font-size: 15px;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    input::placeholder, textarea::placeholder { color: #94a3b8; }
+    input:disabled { opacity: 0.8; cursor: not-allowed; }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 13px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+      font-family: inherit;
+    }
+
+    button:hover { transform: translateY(-1px); opacity: 0.96; }
+    .full { width: 100%; }
+    .primary { background: linear-gradient(90deg, var(--purple), var(--pink)); }
+    .secondary { background: linear-gradient(90deg, var(--blue), var(--blue2)); }
+    .ghost {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--border);
+      width: auto;
+      min-width: 130px;
+    }
+
+    .subtext { margin-top: 8px; font-size: 14px; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .stat-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.3;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .actions button { min-width: 170px; }
+
+    .note {
+      margin-top: 14px;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 18px 0 24px;
+    }
+
+    .tab-btn {
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      min-width: 130px;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(90deg, rgba(124,58,237,.9), rgba(217,70,239,.9));
+      border-color: transparent;
+    }
+
+    .check-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      margin-bottom: 10px;
+    }
+
+    .check-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--purple);
+      flex-shrink: 0;
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .phase-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .muted { color: var(--muted); }
+
+    .list-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+    }
+
+    .list-table th, .list-table td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      margin-top: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--blue), var(--purple), var(--pink));
+    }
+
+    .save-status {
+      min-height: 20px;
+      margin-top: 12px;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .phase-progress-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .phase-mini {
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+    }
+
+    .phase-mini strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 640px) {
+      #app { padding: 16px; }
+      .card, .panel { padding: 20px; }
+      h1 { font-size: 28px; }
+      h2 { font-size: 22px; }
+      .topbar { flex-direction: column; }
+      .actions { flex-direction: column; }
+      .actions button, .ghost, .tab-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="workbook-data.js"></script>
+
+  <script>
+    const supabaseClient = window.supabase.createClient(
+      window.APP_CONFIG.SUPABASE_URL,
+      window.APP_CONFIG.SUPABASE_ANON_KEY
+    );
+
+    const ROLE_OPTIONS = window.WORKBOOK_DATA.roleOptions;
+    const WORKBOOKS = window.WORKBOOK_DATA.workbooks;
+    const PHASES = window.WORKBOOK_DATA.phases;
+
+    let APP_STATE = {
+      view: "dashboard",
+      activePhase: "foundations",
+      progress: {},
+      saveTimers: {}
+    };
+
+    async function getUser() {
+      const { data } = await supabaseClient.auth.getUser();
+      return data.user;
+    }
+
+    async function getProfile(userId) {
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .maybeSingle();
+      if (error) {
+        console.error("Profile fetch error:", error);
+        return null;
+      }
+      return data;
+    }
+
+    async function getAllProfiles() {
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("id,full_name,email,role_id,team,updated_at")
+        .order("full_name", { ascending: true });
+      if (error) {
+        console.error("Profiles list error:", error);
+        return [];
+      }
+      return data || [];
+    }
+
+    async function getWorkbookProgress(userId) {
+      const { data, error } = await supabaseClient
+        .from("workbook_progress")
+        .select("phase,data,percent_complete,updated_at")
+        .eq("user_id", userId);
+
+      if (error) {
+        console.error("Workbook progress fetch error:", error);
+        return {};
+      }
+
+      return rowsToProgressMap(data || []);
+    }
+
+    async function getAllWorkbookProgress() {
+      const { data, error } = await supabaseClient
+        .from("workbook_progress")
+        .select("user_id,phase,data,percent_complete,updated_at");
+
+      if (error) {
+        console.error("All workbook progress fetch error:", error);
+        return [];
+      }
+
+      return data || [];
+    }
+
+    async function signUp() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      if (!email || !password) return alert("Enter email and password.");
+      const { error } = await supabaseClient.auth.signUp({ email, password });
+      if (error) return alert(error.message);
+      alert("Account created. Then log in.");
+    }
+
+    async function login() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      if (!email || !password) return alert("Enter email and password.");
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) return alert(error.message);
+      location.reload();
+    }
+
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      location.reload();
+    }
+
+    async function saveProfile() {
+      const user = await getUser();
+      if (!user) return alert("No user found.");
+
+      const fullName = document.getElementById("full-name").value.trim();
+      const roleId = document.getElementById("role-id").value;
+      if (!fullName || !roleId) return alert("Please fill out your name and choose your role.");
+
+      const selectedRole = ROLE_OPTIONS.find(role => role.id === roleId);
+
+      const { error } = await supabaseClient
+        .from("profiles")
+        .upsert({
+          id: user.id,
+          full_name: fullName,
+          email: user.email,
+          role_id: roleId,
+          team: selectedRole ? selectedRole.team : null,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) {
+        console.error("Profile save error:", error);
+        return alert(error.message);
+      }
+
+      location.reload();
+    }
+
+    function openWorkbook() {
+      APP_STATE.view = "workbook";
+      APP_STATE.activePhase = "foundations";
+      renderApp();
+    }
+
+    function openProgressBoard() {
+      APP_STATE.view = "progress";
+      renderApp();
+    }
+
+    function goDashboard() {
+      APP_STATE.view = "dashboard";
+      renderApp();
+    }
+
+    function setPhase(phaseId) {
+      APP_STATE.activePhase = phaseId;
+      renderApp();
+    }
+
+    function rowsToProgressMap(rows) {
+      return rows.reduce((map, row) => {
+        map[row.phase] = {
+          data: row.data || { checks: [], notes: "" },
+          percent_complete: row.percent_complete || 0,
+          updated_at: row.updated_at
+        };
+        return map;
+      }, {});
+    }
+
+    function getPhaseProgress(phaseId) {
+      return APP_STATE.progress[phaseId] || {
+        data: { checks: [], notes: "" },
+        percent_complete: 0,
+        updated_at: null
+      };
+    }
+
+    function calculatePhasePercent(workbook, phaseId, phaseData) {
+      const checklist = workbook.phases[phaseId]?.checklist || [];
+      if (!checklist.length) return 0;
+      const checks = phaseData.checks || [];
+      const completed = checklist.filter((_, index) => checks[index]).length;
+      return Math.round((completed / checklist.length) * 100);
+    }
+
+    function calculateOverallPercent(workbook, progressMap) {
+      const phaseIds = Object.keys(workbook.phases);
+      if (!phaseIds.length) return 0;
+
+      const total = phaseIds.reduce((sum, phaseId) => {
+        const stored = progressMap[phaseId] || { data: { checks: [] } };
+        return sum + calculatePhasePercent(workbook, phaseId, stored.data || {});
+      }, 0);
+
+      return Math.round(total / phaseIds.length);
+    }
+
+    function setSaveStatus(message) {
+      const status = document.getElementById("save-status");
+      if (status) status.textContent = message;
+    }
+
+    async function saveWorkbookPhase(phaseId) {
+      const user = await getUser();
+      const profile = await getProfile(user.id);
+      const workbook = WORKBOOKS[profile.role_id] || WORKBOOKS.default;
+      const phaseState = getPhaseProgress(phaseId);
+      const percent = calculatePhasePercent(workbook, phaseId, phaseState.data);
+
+      setSaveStatus("Saving...");
+
+      const { error } = await supabaseClient
+        .from("workbook_progress")
+        .upsert({
+          user_id: user.id,
+          phase: phaseId,
+          data: phaseState.data,
+          percent_complete: percent,
+          updated_at: new Date().toISOString()
+        }, { onConflict: "user_id,phase" });
+
+      if (error) {
+        console.error("Progress save error:", error);
+        setSaveStatus("Could not save. Check Supabase table setup.");
+        return;
+      }
+
+      APP_STATE.progress[phaseId].percent_complete = percent;
+      APP_STATE.progress[phaseId].updated_at = new Date().toISOString();
+      updateVisibleProgress(workbook);
+      setSaveStatus("Saved");
+    }
+
+    function queueSave(phaseId) {
+      clearTimeout(APP_STATE.saveTimers[phaseId]);
+      setSaveStatus("Saving...");
+      APP_STATE.saveTimers[phaseId] = setTimeout(() => saveWorkbookPhase(phaseId), 650);
+    }
+
+    function updateChecklist(phaseId, index, checked) {
+      const phaseState = getPhaseProgress(phaseId);
+      const checks = [...(phaseState.data.checks || [])];
+      checks[index] = checked;
+      APP_STATE.progress[phaseId] = {
+        ...phaseState,
+        data: { ...phaseState.data, checks }
+      };
+      queueSave(phaseId);
+    }
+
+    function updateNotes(phaseId, value) {
+      const phaseState = getPhaseProgress(phaseId);
+      APP_STATE.progress[phaseId] = {
+        ...phaseState,
+        data: { ...phaseState.data, notes: value }
+      };
+      queueSave(phaseId);
+    }
+
+    function updateVisibleProgress(workbook) {
+      const overall = calculateOverallPercent(workbook, APP_STATE.progress);
+      const overallText = document.getElementById("overall-percent");
+      const overallFill = document.getElementById("overall-fill");
+      const phaseText = document.getElementById("phase-percent");
+      const phaseFill = document.getElementById("phase-fill");
+      const phaseState = getPhaseProgress(APP_STATE.activePhase);
+
+      if (overallText) overallText.textContent = `${overall}% complete`;
+      if (overallFill) overallFill.style.width = `${overall}%`;
+      if (phaseText) phaseText.textContent = `${phaseState.percent_complete || 0}% complete`;
+      if (phaseFill) phaseFill.style.width = `${phaseState.percent_complete || 0}%`;
+    }
+
+    function renderLogin() {
+      return `
+        <div class="card">
+          <h1>MIST Dallas</h1>
+          <p>Organizer portal access for 2027 planning.</p>
+          <div class="stack">
+            <input id="email" type="email" placeholder="Email" />
+            <input id="password" type="password" placeholder="Password" />
+            <button class="primary full" onclick="login()">Log In</button>
+            <button class="secondary full" onclick="signUp()">Sign Up</button>
+          </div>
+          <p class="subtext">If you are new, create your account first, then log in.</p>
+        </div>
+      `;
+    }
+
+    function renderRoleSetup(user) {
+      return `
+        <div class="card">
+          <h2>Complete your profile</h2>
+          <p>Choose your organizer role before entering the portal.</p>
+          <div class="stack">
+            <div>
+              <div class="label">Email</div>
+              <input value="${user.email}" disabled />
+            </div>
+            <div>
+              <div class="label">Full name</div>
+              <input id="full-name" placeholder="Your full name" />
+            </div>
+            <div>
+              <div class="label">Role</div>
+              <select id="role-id">
+                <option value="">Choose your role</option>
+                ${ROLE_OPTIONS.map(role => `
+                  <option value="${role.id}">${role.title} - ${role.team}</option>
+                `).join("")}
+              </select>
+            </div>
+            <button class="primary full" onclick="saveProfile()">Save and Continue</button>
+          </div>
+          <div class="note">For now, each organizer selects their role once. We can make this admin-assigned later.</div>
+        </div>
+      `;
+    }
+
+    function renderDashboard(user, profile) {
+      const workbook = WORKBOOKS[profile.role_id] || WORKBOOKS.default;
+      const overallPercent = calculateOverallPercent(workbook, APP_STATE.progress);
+
+      return `
+        <div class="dashboard-shell">
+          <div class="topbar">
+            <div>
+              <h1>MIST Dallas Portal</h1>
+              <p>Welcome back, ${profile.full_name || user.email}</p>
+            </div>
+            <button class="ghost" onclick="logout()">Log Out</button>
+          </div>
+
+          <div class="panel">
+            <h2>Organizer Dashboard</h2>
+            <p>Your portal is connected. You can open your role workbook or view the shared organizer board.</p>
+
+            <div class="grid">
+              <div class="stat">
+                <div class="stat-title">Email</div>
+                <div class="stat-value">${user.email}</div>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Role</div>
+                <div class="stat-value">${formatRole(profile.role_id)}</div>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Team</div>
+                <div class="stat-value">${profile.team || "Not set"}</div>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Progress Status</div>
+                <div class="stat-value">${overallPercent}% complete</div>
+                <div class="progress-track"><div class="progress-fill" style="width:${overallPercent}%"></div></div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="primary" onclick="openWorkbook()">Open Workbook</button>
+              <button class="secondary" onclick="openProgressBoard()">Progress Board</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderWorkbook(profile) {
+      const workbook = WORKBOOKS[profile.role_id] || WORKBOOKS.default;
+      const phase = workbook.phases[APP_STATE.activePhase] || workbook.phases.foundations;
+      const visiblePhases = Object.keys(workbook.phases);
+      const phaseState = getPhaseProgress(APP_STATE.activePhase);
+      const checks = phaseState.data.checks || [];
+      const notes = phaseState.data.notes || "";
+      const overallPercent = calculateOverallPercent(workbook, APP_STATE.progress);
+      const phasePercent = calculatePhasePercent(workbook, APP_STATE.activePhase, phaseState.data);
+
+      return `
+        <div class="dashboard-shell">
+          <div class="topbar">
+            <div>
+              <h1>${workbook.title}</h1>
+              <p>${workbook.team} Team - ${profile.full_name || ""}</p>
+            </div>
+            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
+          </div>
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Workbook</h2>
+                <p>${workbook.description}</p>
+              </div>
+              <div class="phase-chip">Role: ${formatRole(profile.role_id)}</div>
+            </div>
+
+            <div class="grid">
+              <div class="stat">
+                <div class="stat-title">Overall Progress</div>
+                <div id="overall-percent" class="stat-value">${overallPercent}% complete</div>
+                <div class="progress-track"><div id="overall-fill" class="progress-fill" style="width:${overallPercent}%"></div></div>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Current Phase</div>
+                <div id="phase-percent" class="stat-value">${phasePercent}% complete</div>
+                <div class="progress-track"><div id="phase-fill" class="progress-fill" style="width:${phasePercent}%"></div></div>
+              </div>
+            </div>
+
+            <div class="tabs">
+              ${visiblePhases.map(phaseId => `
+                <button class="tab-btn ${APP_STATE.activePhase === phaseId ? "active" : ""}" onclick="setPhase('${phaseId}')">
+                  ${PHASES[phaseId].label}
+                </button>
+              `).join("")}
+            </div>
+
+            <div class="panel" style="margin-bottom:0; padding:20px;">
+              <div class="phase-header">
+                <div>
+                  <h3>${PHASES[APP_STATE.activePhase].title}</h3>
+                  <p>${phase.focus}</p>
+                </div>
+                <div class="phase-chip">${PHASES[APP_STATE.activePhase].dates}</div>
+              </div>
+
+              <div class="label">Checklist</div>
+              ${phase.checklist.map((item, index) => `
+                <label class="check-row">
+                  <input type="checkbox" ${checks[index] ? "checked" : ""} onchange="updateChecklist('${APP_STATE.activePhase}', ${index}, this.checked)" />
+                  <span>${item}</span>
+                </label>
+              `).join("")}
+
+              <div style="margin-top:18px;">
+                <div class="label">Notes</div>
+                <textarea placeholder="Write your phase notes here..." oninput="updateNotes('${APP_STATE.activePhase}', this.value)">${escapeHtml(notes)}</textarea>
+              </div>
+              <div id="save-status" class="save-status">Autosave is ready.</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderProgressBoard(rows, progressRows) {
+      const progressByUser = progressRows.reduce((map, row) => {
+        if (!map[row.user_id]) map[row.user_id] = [];
+        map[row.user_id].push(row);
+        return map;
+      }, {});
+
+      return `
+        <div class="dashboard-shell">
+          <div class="topbar">
+            <div>
+              <h1>Organizer Progress Board</h1>
+              <p>Shared visibility across all organizers.</p>
+            </div>
+            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
+          </div>
+
+          <div class="panel">
+            <h2>Team Progress Snapshot</h2>
+            <p>Everyone can see the shared progress view. Written notes stay in each organizer's own workbook for now.</p>
+
+            <table class="list-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Team</th>
+                  <th>Overall</th>
+                  <th>Last Saved</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows.map(row => renderProgressRow(row, progressByUser[row.id] || [])).join("")}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderProgressRow(profile, progressRows) {
+      const workbook = WORKBOOKS[profile.role_id] || WORKBOOKS.default;
+      const progressMap = rowsToProgressMap(progressRows);
+      const overallPercent = calculateOverallPercent(workbook, progressMap);
+      const latestSaved = progressRows
+        .map(row => row.updated_at)
+        .filter(Boolean)
+        .sort()
+        .pop();
+
+      return `
+        <tr>
+          <td>${escapeHtml(profile.full_name || "-")}</td>
+          <td>${escapeHtml(formatRole(profile.role_id))}</td>
+          <td>${escapeHtml(profile.team || "-")}</td>
+          <td>
+            <strong>${overallPercent}%</strong>
+            <div class="progress-track"><div class="progress-fill" style="width:${overallPercent}%"></div></div>
+          </td>
+          <td class="muted">${latestSaved ? formatDate(latestSaved) : "Not started"}</td>
+        </tr>
+      `;
+    }
+
+    function formatRole(roleId) {
+      const role = ROLE_OPTIONS.find(r => r.id === roleId);
+      return role ? role.title : (roleId || "Not set");
+    }
+
+    function formatDate(value) {
+      return new Date(value).toLocaleString([], {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit"
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    async function renderApp() {
+      const app = document.getElementById("app");
+      const user = await getUser();
+
+      if (!user) {
+        app.innerHTML = renderLogin();
+        return;
+      }
+
+      const profile = await getProfile(user.id);
+      if (!profile || !profile.role_id) {
+        app.innerHTML = renderRoleSetup(user);
+        return;
+      }
+
+      APP_STATE.progress = await getWorkbookProgress(user.id);
+
+      if (APP_STATE.view === "workbook") {
+        app.innerHTML = renderWorkbook(profile);
+        return;
+      }
+
+      if (APP_STATE.view === "progress") {
+        const rows = await getAllProfiles();
+        const progressRows = await getAllWorkbookProgress();
+        app.innerHTML = renderProgressBoard(rows, progressRows);
+        return;
+      }
+
+      app.innerHTML = renderDashboard(user, profile);
+    }
+
+    renderApp();
+  </script>
+</body>
+</html>
