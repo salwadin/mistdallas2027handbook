@@ -1,277 +1,528 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MIST Dallas Portal</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIST Dallas Portal</title>
 
-  <style>
-    :root {
-      --bg: #020617;
-      --card: rgba(17, 24, 39, 0.8);
-      --border: rgba(148, 163, 184, 0.2);
-      --text: #f8fafc;
-      --muted: #94a3b8;
-    }
+  <style>
+    :root {
+      --bg: #020617;
+      --card: rgba(17, 24, 39, 0.82);
+      --border: rgba(148, 163, 184, 0.22);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --input: rgba(30, 41, 59, 0.85);
+    }
 
-    body {
-      margin: 0;
-      font-family: Inter, sans-serif;
-      background:
-        radial-gradient(circle at top, rgba(59,130,246,.15), transparent 40%),
-        radial-gradient(circle at bottom right, rgba(147,51,234,.15), transparent 40%),
-        var(--bg);
-      color: var(--text);
-    }
+    * {
+      box-sizing: border-box;
+    }
 
-    #app {
-      min-height: 100vh;
-      padding: 40px;
-    }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+    }
 
-    .center {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(59, 130, 246, 0.18), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(147, 51, 234, 0.18), transparent 35%),
+        var(--bg);
+    }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 28px;
-      max-width: 420px;
-      width: 100%;
-    }
+    #app {
+      min-height: 100vh;
+      width: 100%;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-    input, select {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: #1f2937;
-      color: white;
-    }
+    .card {
+      width: 100%;
+      max-width: 440px;
+      padding: 28px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(14px);
+    }
 
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 12px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      font-weight: 700;
-    }
+    .dashboard-shell {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
 
-    .primary {
-      background: linear-gradient(90deg, #7c3aed, #d946ef);
-    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(14px);
+    }
 
-    .secondary {
-      background: linear-gradient(90deg, #0ea5e9, #2563eb);
-    }
+    h1, h2, h3 {
+      margin: 0;
+    }
 
-    .ghost {
-      background: rgba(255,255,255,.06);
-    }
+    h1 {
+      font-size: 32px;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
 
-    .dashboard {
-      max-width: 1000px;
-      margin: auto;
-    }
+    h2 {
+      font-size: 26px;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
 
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
+    h3 {
+      font-size: 18px;
+      line-height: 1.2;
+    }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
-      gap: 16px;
-    }
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
 
-    .stat {
-      padding: 16px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid var(--border);
-    }
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 18px;
+    }
 
-    h1 { margin: 0 0 10px; }
-    p { color: var(--muted); }
+    .label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
 
-  </style>
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--input);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 13px 14px;
+      font-size: 15px;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input::placeholder {
+      color: #94a3b8;
+    }
+
+    input:disabled {
+      opacity: 0.8;
+      cursor: not-allowed;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.96;
+    }
+
+    .primary {
+      background: linear-gradient(90deg, #7c3aed, #d946ef);
+    }
+
+    .secondary {
+      background: linear-gradient(90deg, #0ea5e9, #2563eb);
+    }
+
+    .ghost {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--border);
+      width: auto;
+      min-width: 130px;
+    }
+
+    .subtext {
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .stat-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.3;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .actions button {
+      width: auto;
+      min-width: 170px;
+    }
+
+    .note {
+      margin-top: 14px;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    @media (max-width: 640px) {
+      #app {
+        padding: 16px;
+      }
+
+      .card,
+      .panel {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      h2 {
+        font-size: 22px;
+      }
+
+      .topbar {
+        flex-direction: column;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .actions button,
+      .ghost {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
-
 <body>
-  <div id="app"></div>
+  <div id="app"></div>
 
-  <script src="config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script>
-    const supabaseClient = window.supabase.createClient(
-      window.APP_CONFIG.SUPABASE_URL,
-      window.APP_CONFIG.SUPABASE_ANON_KEY
-    );
+  <script>
+    const supabaseClient = window.supabase.createClient(
+      window.APP_CONFIG.SUPABASE_URL,
+      window.APP_CONFIG.SUPABASE_ANON_KEY
+    );
 
-    const ROLES = [
-      { id:"rd", title:"Regional Director", team:"Executive" },
-      { id:"registration-dir", title:"Registration Director", team:"Registration" },
-      { id:"sports-dir", title:"Sports Director", team:"Sports" },
-      { id:"ops-dir", title:"Operations Director", team:"Operations" }
-    ];
+    const ROLE_OPTIONS = [
+      { id: "rd", title: "Regional Director", team: "Executive" },
+      { id: "internal-ad", title: "Internal Associate Director", team: "Executive" },
+      { id: "external-ad", title: "External Associate Director", team: "Executive" },
+      { id: "registration-dir", title: "Registration Director", team: "Registration" },
+      { id: "sports-dir", title: "Sports Director", team: "Sports" },
+      { id: "ops-dir-1", title: "Ops Director 1 — Command Center Lead", team: "Operations" },
+      { id: "ops-dir-2", title: "Ops Director 2 — Communications Lead", team: "Operations" },
+      { id: "comps-dir", title: "Competitions Director", team: "Competitions" },
+      { id: "dt-dir", title: "Dream Team Director", team: "Dream Team" },
+      { id: "pr-dir", title: "PR Director", team: "PR" },
+      { id: "programs-dir", title: "Programs Director", team: "Programs" },
+      { id: "finance-dir", title: "Finance Director", team: "Finance" },
+      { id: "judges-chair", title: "Judges Chair", team: "Competitions" },
+      { id: "graphics-chair", title: "Graphics Chair", team: "PR" },
+      { id: "marketing-chair", title: "Marketing Chair", team: "PR" },
+      { id: "awards-chair", title: "Awards & Ceremonies Chair", team: "Programs" },
+      { id: "workshops-chair", title: "Workshops Chair", team: "Programs" },
+      { id: "sponsorships-chair", title: "Sponsorships Chair", team: "Finance" },
+      { id: "recruitment-lead", title: "Recruitment Lead", team: "Dream Team" },
+      { id: "td-lead", title: "Training & Development Lead", team: "Dream Team" }
+    ];
 
-    async function getUser(){
-      const {data} = await supabaseClient.auth.getUser();
-      return data.user;
-    }
+    async function getUser() {
+      const { data } = await supabaseClient.auth.getUser();
+      return data.user;
+    }
 
-    async function getProfile(id){
-      const {data} = await supabaseClient
-        .from("profiles")
-        .select("*")
-        .eq("id",id)
-        .maybeSingle();
-      return data;
-    }
+    async function getProfile(userId) {
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .maybeSingle();
 
-    async function login(){
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+      if (error) {
+        console.error("Profile fetch error:", error);
+        return null;
+      }
 
-      const {error} = await supabaseClient.auth.signInWithPassword({email,password});
-      if(error) return alert(error.message);
+      return data;
+    }
 
-      location.reload();
-    }
+    async function signUp() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-    async function signUp(){
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+      if (!email || !password) {
+        alert("Enter email and password.");
+        return;
+      }
 
-      const {error} = await supabaseClient.auth.signUp({email,password});
-      if(error) return alert(error.message);
+      const { error } = await supabaseClient.auth.signUp({
+        email,
+        password
+      });
 
-      alert("Account created");
-    }
+      if (error) {
+        alert(error.message);
+        return;
+      }
 
-    async function logout(){
-      await supabaseClient.auth.signOut();
-      location.reload();
-    }
+      alert("Account created. Then log in.");
+    }
 
-    async function saveProfile(){
-      const user = await getUser();
+    async function login() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-      const name = document.getElementById("name").value;
-      const role = document.getElementById("role").value;
+      if (!email || !password) {
+        alert("Enter email and password.");
+        return;
+      }
 
-      const selected = ROLES.find(r=>r.id===role);
+      const { error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
 
-      await supabaseClient.from("profiles").upsert({
-        id:user.id,
-        full_name:name,
-        email:user.email,
-        role_id:role,
-        team:selected?.team
-      });
+      if (error) {
+        alert(error.message);
+        return;
+      }
 
-      location.reload();
-    }
+      location.reload();
+    }
 
-    function loginUI(){
-      return `
-      <div class="center">
-        <div class="card">
-          <h1>MIST Dallas</h1>
-          <input id="email" placeholder="Email">
-          <input id="password" type="password" placeholder="Password">
-          <button class="primary" onclick="login()">Login</button>
-          <button class="secondary" onclick="signUp()">Sign Up</button>
-        </div>
-      </div>`;
-    }
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      location.reload();
+    }
 
-    function roleUI(user){
-      return `
-      <div class="center">
-        <div class="card">
-          <h1>Choose Role</h1>
-          <input id="name" placeholder="Full Name">
-          <select id="role">
-            <option value="">Select Role</option>
-            ${ROLES.map(r=>`<option value="${r.id}">${r.title}</option>`).join("")}
-          </select>
-          <button class="primary" onclick="saveProfile()">Continue</button>
-        </div>
-      </div>`;
-    }
+    async function saveProfile() {
+      const user = await getUser();
+      if (!user) {
+        alert("No user found.");
+        return;
+      }
 
-    function dashboard(user,profile){
-      return `
-      <div class="dashboard">
-        <div class="topbar">
-          <div>
-            <h1>MIST Dallas Portal</h1>
-            <p>Welcome back, ${profile.full_name}</p>
-          </div>
-          <button class="ghost" onclick="logout()">Log Out</button>
-        </div>
+      const fullName = document.getElementById("full-name").value.trim();
+      const roleId = document.getElementById("role-id").value;
 
-        <div class="grid">
-          <div class="stat">
-            <p>Email</p>
-            <h3>${user.email}</h3>
-          </div>
+      if (!fullName || !roleId) {
+        alert("Please fill out your name and choose your role.");
+        return;
+      }
 
-          <div class="stat">
-            <p>Role</p>
-            <h3>${profile.role_id}</h3>
-          </div>
+      const selectedRole = ROLE_OPTIONS.find(role => role.id === roleId);
 
-          <div class="stat">
-            <p>Team</p>
-            <h3>${profile.team}</h3>
-          </div>
-        </div>
+      const { error } = await supabaseClient
+        .from("profiles")
+        .upsert({
+          id: user.id,
+          full_name: fullName,
+          email: user.email,
+          role_id: roleId,
+          team: selectedRole ? selectedRole.team : null,
+          updated_at: new Date().toISOString()
+        });
 
-        <br>
+      if (error) {
+        console.error("Profile save error:", error);
+        alert(error.message);
+        return;
+      }
 
-        <button class="primary" onclick="alert('Next: Workbook')">
-          Open Workbook
-        </button>
+      location.reload();
+    }
 
-        <button class="secondary" onclick="alert('Next: Progress Board')">
-          Progress Board
-        </button>
+    function renderLogin() {
+      return `
+        <div class="card">
+          <h1>MIST Dallas</h1>
+          <p>Organizer portal access for 2027 planning.</p>
 
-      </div>`;
-    }
+          <div class="stack">
+            <input id="email" type="email" placeholder="Email" />
+            <input id="password" type="password" placeholder="Password" />
+            <button class="primary" onclick="login()">Log In</button>
+            <button class="secondary" onclick="signUp()">Sign Up</button>
+          </div>
 
-    async function init(){
-      const app = document.getElementById("app");
-      const user = await getUser();
+          <p class="subtext">If you are new, create your account first, then log in.</p>
+        </div>
+      `;
+    }
 
-      if(!user){
-        app.innerHTML = loginUI();
-        return;
-      }
+    function renderRoleSetup(user) {
+      return `
+        <div class="card">
+          <h2>Complete your profile</h2>
+          <p>Choose your organizer role before entering the portal.</p>
 
-      const profile = await getProfile(user.id);
+          <div class="stack">
+            <div>
+              <div class="label">Email</div>
+              <input value="${user.email}" disabled />
+            </div>
 
-      if(!profile || !profile.role_id){
-        app.innerHTML = roleUI(user);
-        return;
-      }
+            <div>
+              <div class="label">Full name</div>
+              <input id="full-name" placeholder="Your full name" />
+            </div>
 
-      app.innerHTML = dashboard(user,profile);
-    }
+            <div>
+              <div class="label">Role</div>
+              <select id="role-id">
+                <option value="">Choose your role</option>
+                ${ROLE_OPTIONS.map(role => `
+                  <option value="${role.id}">${role.title} — ${role.team}</option>
+                `).join("")}
+              </select>
+            </div>
 
-    init();
-  </script>
+            <button class="primary" onclick="saveProfile()">Save and Continue</button>
+          </div>
+
+          <div class="note">For now, each organizer selects their role once. We can make this admin-assigned later.</div>
+        </div>
+      `;
+    }
+
+    function renderDashboard(user, profile) {
+      return `
+        <div class="dashboard-shell">
+          <div class="topbar">
+            <div>
+              <h1>MIST Dallas Portal</h1>
+              <p>Welcome back, ${profile.full_name || user.email}</p>
+            </div>
+            <button class="ghost" onclick="logout()">Log Out</button>
+          </div>
+
+          <div class="panel">
+            <h2>Organizer Dashboard</h2>
+            <p>Your portal is connected. Next we’ll wire this into the workbook and progress board.</p>
+
+            <div class="grid">
+              <div class="stat">
+                <div class="stat-title">Email</div>
+                <div class="stat-value">${user.email}</div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-title">Role</div>
+                <div class="stat-value">${profile.role_id || "Not set"}</div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-title">Team</div>
+                <div class="stat-value">${profile.team || "Not set"}</div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-title">Progress Status</div>
+                <div class="stat-value">Coming next</div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="primary" onclick="alert('Next step: role-based workbook')">Open Workbook</button>
+              <button class="secondary" onclick="alert('Next step: shared progress board')">Progress Board</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function init() {
+      const app = document.getElementById("app");
+      const user = await getUser();
+
+      if (!user) {
+        app.innerHTML = renderLogin();
+        return;
+      }
+
+      const profile = await getProfile(user.id);
+
+      if (!profile || !profile.role_id) {
+        app.innerHTML = renderRoleSetup(user);
+        return;
+      }
+
+      app.innerHTML = renderDashboard(user, profile);
+    }
+
+    init();
+  </script>
 </body>
 </html>
