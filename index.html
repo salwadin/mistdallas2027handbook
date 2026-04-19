@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIST Dallas Portal</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, sans-serif;
+      background: #020617;
+      color: white;
+    }
+
+    #app {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      width: 380px;
+      padding: 24px;
+      background: #111827;
+      border-radius: 16px;
+      border: 1px solid #374151;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: 1px solid #374151;
+      background: #1f2937;
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .primary { background: #7c3aed; color: white; }
+    .secondary { background: #2563eb; color: white; }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+
+  <!-- ORDER MATTERS -->
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    // SAFE CLIENT (no naming conflict)
+    const supabaseClient = window.supabase.createClient(
+      window.APP_CONFIG.SUPABASE_URL,
+      window.APP_CONFIG.SUPABASE_ANON_KEY
+    );
+
+    async function getUser() {
+      const { data } = await supabaseClient.auth.getUser();
+      return data.user;
+    }
+
+    async function signUp() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const { error } = await supabaseClient.auth.signUp({
+        email,
+        password
+      });
+
+      if (error) return alert(error.message);
+      alert("Account created");
+    }
+
+    async function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const { error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) return alert(error.message);
+      location.reload();
+    }
+
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      location.reload();
+    }
+
+    function renderLogin() {
+      return `
+        <div class="card">
+          <h2>MIST Dallas Portal</h2>
+
+          <input id="email" placeholder="Email" />
+          <input id="password" type="password" placeholder="Password" />
+
+          <button class="primary" onclick="login()">Log In</button>
+          <button class="secondary" onclick="signUp()">Sign Up</button>
+        </div>
+      `;
+    }
+
+    function renderDashboard(user) {
+      return `
+        <div class="card">
+          <h2>Welcome</h2>
+          <p>${user.email}</p>
+
+          <button class="primary" onclick="logout()">Log Out</button>
+        </div>
+      `;
+    }
+
+    async function init() {
+      const user = await getUser();
+      const app = document.getElementById("app");
+
+      if (!user) {
+        app.innerHTML = renderLogin();
+      } else {
+        app.innerHTML = renderDashboard(user);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
