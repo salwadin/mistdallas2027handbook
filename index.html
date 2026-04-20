@@ -1234,6 +1234,59 @@
         action: "Use role claims, progress board, team pages, deadlines, and Meeting Hub action items as the accountability loop."
       }
     ];
+    const FEEDBACK_NUMERIC_FIELDS = [
+      { key: "overall", label: "Overall", headers: ["Overall"] },
+      { key: "comm_before", label: "Communication Before", headers: ["Comm. Before", "Communication Before"] },
+      { key: "comm_during", label: "Communication During", headers: ["Comm. During", "Communication During"] },
+      { key: "value", label: "Value", headers: ["Value"] },
+      { key: "organizers", label: "Organizers", headers: ["Organizers"] },
+      { key: "volunteers", label: "Volunteers", headers: ["Volunteers"] },
+      { key: "judges", label: "Judges", headers: ["Judges"] },
+      { key: "venue", label: "Venue", headers: ["Venue"] },
+      { key: "food", label: "Food", headers: ["Food"] },
+      { key: "activities", label: "Activities / Workshop", headers: ["Activ./Wrkshp", "Activities", "Workshop"] },
+      { key: "awards", label: "Award Ceremony", headers: ["Award Ceremony"] },
+      { key: "sports", label: "Sports", headers: ["Sports"] },
+      { key: "religion", label: "Religion", headers: ["Religion"] },
+      { key: "community", label: "Community", headers: ["Community"] },
+      { key: "discover", label: "Discover", headers: ["Discover"] },
+      { key: "improve", label: "Improve", headers: ["Improve"] },
+      { key: "recommend", label: "Recommend", headers: ["Reccomend", "Recommend"] },
+      { key: "competitor_rating", label: "Competitor Rating", headers: ["Competitor Rating"] },
+      { key: "competitor_rulebook", label: "Rulebook Accuracy [C]", headers: ["Rulebook Accuracy [C]"] },
+      { key: "judge_rating", label: "Judge Rating", headers: ["Judge Rating"] },
+      { key: "judge_rulebook", label: "Rulebook Accuracy [J]", headers: ["Rulebook Accuracy [J]"] },
+      { key: "ballot_clarity", label: "Ballot Clarity", headers: ["Ballot Clarity"] },
+      { key: "expected_rating", label: "Expected Rating", headers: ["Expected Rating"] },
+      { key: "session_communication", label: "Session Communication", headers: ["Session Communication"] },
+      { key: "session_support", label: "Session Support", headers: ["Session Support"] },
+      { key: "session_venue", label: "Session Venue", headers: ["Session Venue"] },
+      { key: "competitor_engagement", label: "Competitor Engagement", headers: ["Competitor Engagement"] },
+      { key: "return_likelihood", label: "Return Likelihood", headers: ["Return Liklihood", "Return Likelihood"] }
+    ];
+    const FEEDBACK_TEXT_FIELDS = [
+      "Most Enjoyable",
+      "Least Enjoyable",
+      "MyMIST Experience",
+      "Role Experience Improvement",
+      "Final Remarks",
+      "Reccomendations",
+      "Recommendations"
+    ];
+    const FEEDBACK_THEME_KEYWORDS = [
+      { id: "communication", label: "Communication", owner: "PR + Command Center", action: "Single source of truth for updates, earlier schedule releases, and clearer day-of change notices.", words: ["communication", "communicate", "announcement", "notify", "notice", "info", "clarity", "clear"] },
+      { id: "schedule", label: "Schedule & Delays", owner: "Operations + Competitions", action: "Build competition buffers, publish room/time changes live, and protect prayer and meal windows.", words: ["schedule", "delay", "delayed", "late", "waiting", "wait", "time", "timing", "on time", "overlap"] },
+      { id: "judging", label: "Judging Quality", owner: "Competitions + Judge Training", action: "Require judge orientation, conflict checks, rubric calibration, and post-round ballot review.", words: ["judge", "judges", "judging", "bias", "biased", "rubric", "ballot", "score", "fair"] },
+      { id: "rulebook", label: "Rulebook Alignment", owner: "Competitions", action: "Freeze rule interpretations early and give every room a one-page rulebook checklist.", words: ["rulebook", "rules", "rule", "criteria", "guidelines", "clarification"] },
+      { id: "food", label: "Food & Water", owner: "Logistics + Hospitality", action: "Track vendor capacity, water points, closing times, and backup meals before event weekend.", words: ["food", "water", "meal", "lunch", "dinner", "hungry", "vendor", "pizza"] },
+      { id: "mymist", label: "MyMIST / App", owner: "Registration + Tech", action: "Keep printed roster fallbacks, test Android/iPhone flows, and mirror essential app data in the portal.", words: ["mymist", "app", "website", "platform", "crash", "glitch", "android", "login"] },
+      { id: "rooms", label: "Rooms & Directions", owner: "Operations", action: "Publish maps, room captains, signs, and room-change protocols before students arrive.", words: ["room", "rooms", "building", "map", "venue", "location", "directions", "campus"] },
+      { id: "sports", label: "Sports", owner: "Sports Directors + Safety", action: "Finalize venues, bracket rules, emergency protocol, and referee expectations earlier.", words: ["sports", "soccer", "basketball", "volleyball", "field", "referee", "refs"] },
+      { id: "workshops", label: "Workshops & Activities", owner: "Programs + Spirit", action: "Use interactive formats, better room sizing, and downtime activities that connect schools.", words: ["workshop", "workshops", "activities", "activity", "boring", "lecture"] },
+      { id: "safety", label: "Safety & Emergency", owner: "Safety + Command Center", action: "Write emergency roles, communication trees, and site-specific escalation procedures.", words: ["security", "safety", "shooting", "emergency", "incident"] },
+      { id: "values", label: "Islamic Environment", owner: "Programs + Leadership", action: "Clarify expectations around salah, gender flow, modesty, noise, and event atmosphere.", words: ["music", "free mixing", "gender", "boys", "girls", "salah", "islamic", "modesty"] },
+      { id: "awards", label: "Awards Ceremony", owner: "Awards + DT", action: "Run slide QA, recipient verification, room plan, and stage flow rehearsal before ceremony.", words: ["award", "awards", "ceremony", "slides", "trophy", "projector"] }
+    ];
     const APPLICATION_QUESTIONS = [
       { id: "understand_not_guarantee", section: "Commitments", type: "radio", label: "I understand that this is an application and not a guarantee.", options: ["Yes"], required: true },
       { id: "volunteering_time", section: "Commitments", type: "radio", label: "I understand that I am volunteering my time and efforts.", options: ["Yes"], required: true },
@@ -1298,6 +1351,7 @@
       selectedTeam: null,
       knowledgeQuery: "",
       feedbackFilter: "all",
+      feedbackDataset: loadFeedbackDataset(),
       announcements: DEFAULT_ANNOUNCEMENTS,
       progress: {},
       saveTimers: {}
@@ -5108,6 +5162,8 @@
       const customFeedback = getLocalRecords("mist_feedback_addressal");
       const allItems = [...customFeedback, ...FEEDBACK_THEMES];
       const filter = APP_STATE.feedbackFilter || "all";
+      const feedbackRecords = APP_STATE.feedbackDataset || [];
+      const analytics = buildFeedbackAnalytics(feedbackRecords);
       const visibleItems = filter === "all"
         ? allItems
         : allItems.filter(item => String(item.phase || "").toLowerCase() === filter || String(item.status || "").toLowerCase() === filter);
@@ -5128,26 +5184,26 @@
             <div class="phase-header">
               <div>
                 <h2>Feedback Intelligence</h2>
-                <p>Use this page as the bridge between debrief notes and actual planning changes.</p>
+                <p>Paste a Google Sheets export to turn survey rows into averages, lowest-rated areas, trends, themes, and owners.</p>
               </div>
-              <span class="phase-chip">${allItems.length} feedback theme${allItems.length === 1 ? "" : "s"}</span>
+              <span class="phase-chip">${analytics.responseCount || allItems.length} feedback record${analytics.responseCount === 1 ? "" : "s"}</span>
             </div>
             <div class="metric-row">
               <div class="stat">
-                <div class="stat-title">Themes Logged</div>
-                <div class="stat-value">${allItems.length}</div>
+                <div class="stat-title">Responses</div>
+                <div class="stat-value">${analytics.responseCount || "No data yet"}</div>
               </div>
               <div class="stat">
-                <div class="stat-title">Active Responses</div>
-                <div class="stat-value">${addressed}</div>
+                <div class="stat-title">Avg Overall</div>
+                <div class="stat-value">${formatScore(analytics.avgOverall)}</div>
               </div>
               <div class="stat">
-                <div class="stat-title">Custom Entries</div>
-                <div class="stat-value">${customFeedback.length}</div>
+                <div class="stat-title">Avg Communication</div>
+                <div class="stat-value">${formatScore(analytics.avgCommunication)}</div>
               </div>
               <div class="stat">
-                <div class="stat-title">Primary Use</div>
-                <div class="stat-value">Debrief to action</div>
+                <div class="stat-title">Low Overall Scores</div>
+                <div class="stat-value">${analytics.lowScoreCount || 0}</div>
               </div>
             </div>
             <div class="inline-actions">
@@ -5159,6 +5215,83 @@
               <button class="ghost" onclick="downloadFeedbackCsv()">Export CSV</button>
             </div>
           </div>
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Feedback Data Analyzer</h2>
+                <p>Raw pasted rows stay in this browser. The GitHub site only stores the analyzer, not participant names, MIST IDs, or comments.</p>
+              </div>
+              <span class="phase-chip">${analytics.yearRange || "Paste TSV or CSV"}</span>
+            </div>
+            ${canEdit ? `
+              <form class="admin-form" onsubmit="importFeedbackDataset(event)">
+                <textarea id="feedback-data-import" placeholder="Paste the Google Sheets feedback export here. TSV works best: copy the whole sheet, including the header row."></textarea>
+                <button class="primary" type="submit">Analyze Feedback Export</button>
+              </form>
+              <div class="inline-actions">
+                <button class="secondary" onclick="downloadFeedbackAnalyticsCsv()">Export Aggregate Summary</button>
+                <button class="ghost" onclick="clearFeedbackDataset()">Clear Local Dataset</button>
+              </div>
+            ` : `
+              <p>Log in to paste a feedback export and generate local analytics on this device.</p>
+              <div class="inline-actions"><button class="primary" onclick="openLogin()">Log In / Sign Up</button></div>
+            `}
+          </div>
+
+          ${feedbackRecords.length ? `
+            <div class="panel">
+              <div class="phase-header">
+                <div>
+                  <h2>Score Diagnostics</h2>
+                  <p>Sorted by lowest average so weak spots rise to the top first.</p>
+                </div>
+                <span class="phase-chip">${analytics.categoryAverages.length} scored fields</span>
+              </div>
+              ${renderFeedbackScoreTable(analytics.categoryAverages)}
+            </div>
+
+            <div class="panel">
+              <div class="phase-header">
+                <div>
+                  <h2>Breakdowns</h2>
+                  <p>Quick view by year and role so leadership can tell where feedback is coming from.</p>
+                </div>
+                <span class="phase-chip">${Object.keys(analytics.roleCounts).length} role group${Object.keys(analytics.roleCounts).length === 1 ? "" : "s"}</span>
+              </div>
+              <div class="runbook-grid">
+                ${renderFeedbackYearTrend(analytics.yearStats)}
+                ${renderFeedbackRoleBreakdown(analytics.roleCounts)}
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="phase-header">
+                <div>
+                  <h2>Theme Counts</h2>
+                  <p>Keyword counts from open-ended responses. Treat these as triage signals, then read source comments before final decisions.</p>
+                </div>
+                <span class="phase-chip">${analytics.themeCounts.reduce((sum, item) => sum + item.count, 0)} mentions</span>
+              </div>
+              ${renderFeedbackThemeAnalytics(analytics.themeCounts, analytics.responseCount)}
+            </div>
+
+            <div class="panel">
+              <div class="phase-header">
+                <div>
+                  <h2>Numbers To Action</h2>
+                  <p>Top recurring issues mapped to likely owners and planning responses.</p>
+                </div>
+                <span class="phase-chip">Action matrix</span>
+              </div>
+              ${renderFeedbackActionMatrix(analytics.themeCounts)}
+            </div>
+          ` : `
+            <div class="panel">
+              <h2>No Survey Export Loaded Yet</h2>
+              <p>Paste the 2023-2026 sheet export above and the page will calculate score averages, low-score counts, role/year trends, keyword themes, and owner-level action priorities.</p>
+            </div>
+          `}
 
           ${canEdit ? `
             <div class="panel">
@@ -5197,7 +5330,7 @@
             <div class="phase-header">
               <div>
                 <h2>Feedback Themes & Response Plans</h2>
-                <p>Each card should answer: what did we hear, who owns it, when does it matter, and what are we changing?</p>
+                <p>These are the human-readable commitments that should come from the numeric signals above.</p>
               </div>
               <span class="phase-chip">${visibleItems.length} shown</span>
             </div>
@@ -5248,6 +5381,104 @@
             <span class="phase-chip">${escapeHtml(formatPhase(item.phase || "foundations"))}</span>
           </div>
         </div>
+      `;
+    }
+
+    function renderFeedbackScoreTable(items) {
+      const rows = items.slice(0, 14);
+      return `
+        <table class="list-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Average</th>
+              <th>Responses</th>
+              <th>Signal</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(item => `
+              <tr>
+                <td>${escapeHtml(item.label)}</td>
+                <td>${formatScore(item.average)}</td>
+                <td>${item.count}</td>
+                <td>
+                  <div class="progress-track" aria-label="${escapeHtml(item.label)} average">
+                    <div class="progress-fill" style="width:${Math.min(100, Math.max(0, (item.average / 5) * 100))}%"></div>
+                  </div>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderFeedbackYearTrend(yearStats) {
+      const years = Object.keys(yearStats).sort();
+      return `
+        <div class="runbook-card" style="--runbook-color:#1f8a9b">
+          <div class="stat-title">Year Trend</div>
+          ${years.map(year => `
+            <p><strong>${escapeHtml(year)}:</strong> ${yearStats[year].count} response${yearStats[year].count === 1 ? "" : "s"}, ${formatScore(yearStats[year].averageOverall)} avg overall</p>
+          `).join("") || `<p>No timestamp data found.</p>`}
+        </div>
+      `;
+    }
+
+    function renderFeedbackRoleBreakdown(roleCounts) {
+      const roles = Object.entries(roleCounts).sort((a, b) => b[1] - a[1]);
+      return `
+        <div class="runbook-card" style="--runbook-color:#c9972b">
+          <div class="stat-title">Role Mix</div>
+          ${roles.slice(0, 8).map(([role, count]) => `
+            <p><strong>${escapeHtml(role)}:</strong> ${count}</p>
+          `).join("") || `<p>No role data found.</p>`}
+        </div>
+      `;
+    }
+
+    function renderFeedbackThemeAnalytics(themeCounts, responseCount) {
+      const visible = themeCounts.filter(item => item.count > 0).slice(0, 10);
+      return `
+        <div class="log-list">
+          ${visible.map(item => `
+            <div class="feedback-card" style="--feedback-color:#247a52">
+              <div class="phase-header">
+                <div>
+                  <div class="stat-title">${Math.round((item.count / Math.max(1, responseCount)) * 100)}% of responses</div>
+                  <h3>${escapeHtml(item.label)}</h3>
+                </div>
+                <span class="status-pill">${item.count} mention${item.count === 1 ? "" : "s"}</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" style="width:${Math.min(100, (item.count / Math.max(1, responseCount)) * 100)}%"></div></div>
+            </div>
+          `).join("") || `<p>No keyword themes were detected yet.</p>`}
+        </div>
+      `;
+    }
+
+    function renderFeedbackActionMatrix(themeCounts) {
+      const rows = themeCounts.filter(item => item.count > 0).slice(0, 8);
+      return `
+        <table class="list-table">
+          <thead>
+            <tr>
+              <th>Priority</th>
+              <th>Owner</th>
+              <th>Response</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(item => `
+              <tr>
+                <td>${escapeHtml(item.label)}<br><span class="muted">${item.count} mention${item.count === 1 ? "" : "s"}</span></td>
+                <td>${escapeHtml(item.owner)}</td>
+                <td>${escapeHtml(item.action)}</td>
+              </tr>
+            `).join("") || `<tr><td colspan="3">Import feedback data to generate the action matrix.</td></tr>`}
+          </tbody>
+        </table>
       `;
     }
 
@@ -5788,6 +6019,208 @@
       return (hours || 0) * 60 + (minutes || 0);
     }
 
+    function parseFeedbackText(text) {
+      const trimmed = String(text || "").trim();
+      if (!trimmed) return [];
+      const firstLine = trimmed.split(/\r?\n/).find(line => line.trim()) || "";
+      const rows = firstLine.includes("\t") ? parseDelimited(trimmed, "\t") : parseCsv(trimmed);
+      if (rows.length < 2) return [];
+      const headers = rows[0].map(header => String(header || "").trim());
+
+      return rows.slice(1)
+        .map(row => sanitizeFeedbackRow(headers, row))
+        .filter(Boolean);
+    }
+
+    function parseDelimited(text, delimiter) {
+      const rows = [];
+      let row = [];
+      let value = "";
+      let insideQuotes = false;
+
+      for (let index = 0; index < text.length; index += 1) {
+        const char = text[index];
+        const next = text[index + 1];
+
+        if (char === '"' && insideQuotes && next === '"') {
+          value += '"';
+          index += 1;
+        } else if (char === '"') {
+          insideQuotes = !insideQuotes;
+        } else if (char === delimiter && !insideQuotes) {
+          row.push(value);
+          value = "";
+        } else if ((char === "\n" || char === "\r") && !insideQuotes) {
+          if (char === "\r" && next === "\n") index += 1;
+          row.push(value);
+          if (row.some(cell => String(cell || "").trim())) rows.push(row);
+          row = [];
+          value = "";
+        } else {
+          value += char;
+        }
+      }
+
+      row.push(value);
+      if (row.some(cell => String(cell || "").trim())) rows.push(row);
+      return rows;
+    }
+
+    function sanitizeFeedbackRow(headers, row) {
+      const byHeader = {};
+      headers.forEach((header, index) => {
+        byHeader[header] = row[index] || "";
+        byHeader[normalizeHeader(header)] = row[index] || "";
+      });
+
+      const timestamp = feedbackValue(byHeader, ["Timestamp"]);
+      const year = feedbackYear(timestamp);
+      const role = feedbackValue(byHeader, ["Role"]) || "Unknown";
+      const scores = {};
+
+      FEEDBACK_NUMERIC_FIELDS.forEach(field => {
+        const score = toFeedbackScore(feedbackValue(byHeader, field.headers));
+        if (score !== null) scores[field.key] = score;
+      });
+
+      const openText = FEEDBACK_TEXT_FIELDS
+        .map(field => feedbackValue(byHeader, [field]))
+        .filter(Boolean)
+        .join(" ");
+      const themes = detectFeedbackThemes(openText);
+      const hasSignal = timestamp || role !== "Unknown" || Object.keys(scores).length || Object.keys(themes).length;
+
+      if (!hasSignal) return null;
+      return {
+        timestamp: timestamp || "",
+        year,
+        role: cleanFeedbackLabel(role, "Unknown"),
+        scores,
+        themes
+      };
+    }
+
+    function feedbackValue(row, labels) {
+      for (const label of labels) {
+        if (row[label] !== undefined && String(row[label]).trim()) return String(row[label]).trim();
+        const normalized = normalizeHeader(label);
+        if (row[normalized] !== undefined && String(row[normalized]).trim()) return String(row[normalized]).trim();
+      }
+      return "";
+    }
+
+    function feedbackYear(value) {
+      const text = String(value || "").trim();
+      const match = text.match(/\b(20\d{2})\b/);
+      if (match) return match[1];
+      const date = new Date(text);
+      return Number.isFinite(date.getTime()) ? String(date.getFullYear()) : "Unknown";
+    }
+
+    function cleanFeedbackLabel(value, fallback = "Unknown") {
+      const text = String(value || "").trim();
+      if (!text) return fallback;
+      return text.slice(0, 60);
+    }
+
+    function toFeedbackScore(value) {
+      const text = String(value || "").trim();
+      if (!text) return null;
+      const match = text.match(/-?\d+(\.\d+)?/);
+      if (!match) return null;
+      const number = Number(match[0]);
+      if (!Number.isFinite(number) || number < 0 || number > 5) return null;
+      return number;
+    }
+
+    function detectFeedbackThemes(text) {
+      const lowered = String(text || "").toLowerCase();
+      const themes = {};
+      if (!lowered.trim()) return themes;
+
+      FEEDBACK_THEME_KEYWORDS.forEach(theme => {
+        const matched = theme.words.some(word => lowered.includes(word.toLowerCase()));
+        if (matched) themes[theme.id] = 1;
+      });
+
+      return themes;
+    }
+
+    function buildFeedbackAnalytics(records) {
+      const safeRecords = Array.isArray(records) ? records : [];
+      const roleCounts = {};
+      const yearBuckets = {};
+      const categoryAverages = [];
+      const themeCounts = FEEDBACK_THEME_KEYWORDS.map(theme => ({ ...theme, count: 0 }));
+      let lowScoreCount = 0;
+
+      safeRecords.forEach(record => {
+        const role = cleanFeedbackLabel(record.role, "Unknown");
+        roleCounts[role] = (roleCounts[role] || 0) + 1;
+
+        const year = record.year || "Unknown";
+        if (!yearBuckets[year]) yearBuckets[year] = { count: 0, overallScores: [] };
+        yearBuckets[year].count += 1;
+        if (record.scores?.overall !== undefined) {
+          yearBuckets[year].overallScores.push(record.scores.overall);
+          if (record.scores.overall <= 2) lowScoreCount += 1;
+        }
+
+        themeCounts.forEach(theme => {
+          if (record.themes?.[theme.id]) theme.count += 1;
+        });
+      });
+
+      FEEDBACK_NUMERIC_FIELDS.forEach(field => {
+        const values = safeRecords
+          .map(record => record.scores?.[field.key])
+          .filter(value => Number.isFinite(value));
+        if (values.length) {
+          categoryAverages.push({
+            key: field.key,
+            label: field.label,
+            average: average(values),
+            count: values.length
+          });
+        }
+      });
+
+      const yearStats = Object.fromEntries(Object.entries(yearBuckets).map(([year, item]) => [
+        year,
+        {
+          count: item.count,
+          averageOverall: average(item.overallScores)
+        }
+      ]));
+      const years = Object.keys(yearStats).filter(year => year !== "Unknown").sort();
+      const communicationValues = [
+        ...safeRecords.map(record => record.scores?.comm_before).filter(Number.isFinite),
+        ...safeRecords.map(record => record.scores?.comm_during).filter(Number.isFinite)
+      ];
+
+      return {
+        responseCount: safeRecords.length,
+        avgOverall: average(safeRecords.map(record => record.scores?.overall).filter(Number.isFinite)),
+        avgRecommend: average(safeRecords.map(record => record.scores?.recommend).filter(Number.isFinite)),
+        avgCommunication: average(communicationValues),
+        lowScoreCount,
+        roleCounts,
+        yearStats,
+        yearRange: years.length ? `${years[0]}-${years[years.length - 1]}` : "",
+        categoryAverages: categoryAverages.sort((a, b) => a.average - b.average),
+        themeCounts: themeCounts.sort((a, b) => b.count - a.count)
+      };
+    }
+
+    function average(values) {
+      if (!values.length) return null;
+      return values.reduce((sum, value) => sum + value, 0) / values.length;
+    }
+
+    function formatScore(value) {
+      return Number.isFinite(value) ? `${value.toFixed(2)} / 5` : "No data";
+    }
+
     function parseCsv(text) {
       const rows = [];
       let row = [];
@@ -5904,6 +6337,31 @@
       localStorage.setItem(key, JSON.stringify(records));
     }
 
+    function loadFeedbackDataset() {
+      return getLocalRecords("mist_feedback_dataset");
+    }
+
+    function saveFeedbackDataset(records) {
+      setLocalRecords("mist_feedback_dataset", records.slice(0, 5000));
+      APP_STATE.feedbackDataset = records.slice(0, 5000);
+    }
+
+    function importFeedbackDataset(event) {
+      event.preventDefault();
+      const text = document.getElementById("feedback-data-import").value;
+      const records = parseFeedbackText(text);
+      if (!records.length) return alert("No usable feedback rows found. Make sure the header row is included.");
+      saveFeedbackDataset(records);
+      alert(`Imported ${records.length} sanitized feedback rows. Names, MIST IDs, and raw comments were not saved.`);
+      renderApp();
+    }
+
+    function clearFeedbackDataset() {
+      localStorage.removeItem("mist_feedback_dataset");
+      APP_STATE.feedbackDataset = [];
+      renderApp();
+    }
+
     function saveMeetingNote(event) {
       event.preventDefault();
       const item = {
@@ -6012,6 +6470,36 @@
           item.action
         ])
       ]);
+    }
+
+    function downloadFeedbackAnalyticsCsv() {
+      const analytics = buildFeedbackAnalytics(APP_STATE.feedbackDataset || []);
+      const rows = [
+        ["section", "metric", "value", "count_or_owner", "action"]
+      ];
+
+      rows.push(["summary", "responses", analytics.responseCount, "", ""]);
+      rows.push(["summary", "average_overall", formatScore(analytics.avgOverall), "", ""]);
+      rows.push(["summary", "average_communication", formatScore(analytics.avgCommunication), "", ""]);
+      rows.push(["summary", "low_overall_scores", analytics.lowScoreCount, "", ""]);
+
+      analytics.categoryAverages.forEach(item => {
+        rows.push(["score", item.label, formatScore(item.average), item.count, ""]);
+      });
+
+      Object.entries(analytics.yearStats).forEach(([year, item]) => {
+        rows.push(["year", year, formatScore(item.averageOverall), item.count, ""]);
+      });
+
+      Object.entries(analytics.roleCounts).forEach(([role, count]) => {
+        rows.push(["role", role, count, "", ""]);
+      });
+
+      analytics.themeCounts.forEach(item => {
+        rows.push(["theme", item.label, item.count, item.owner, item.action]);
+      });
+
+      downloadCsv("mist-feedback-analytics-summary.csv", rows);
     }
 
     function searchRulebook(query) {
