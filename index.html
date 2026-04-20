@@ -707,6 +707,21 @@
       background: rgba(255,255,255,.028);
     }
 
+    .code-card {
+      border: 1px dashed color-mix(in srgb, var(--gold) 50%, var(--border));
+      border-radius: 12px;
+      padding: 12px;
+      background: color-mix(in srgb, var(--gold) 8%, rgba(255,255,255,.025));
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      word-break: break-all;
+    }
+
+    .conflict-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
     .status-pill {
       display: inline-flex;
       align-items: center;
@@ -906,6 +921,12 @@
         assignments: [],
         scans: []
       },
+      mymist: {
+        batches: [],
+        participants: [],
+        schools: [],
+        judges: []
+      },
       statusResults: null,
       selectedTeam: null,
       announcements: DEFAULT_ANNOUNCEMENTS,
@@ -913,7 +934,7 @@
       saveTimers: {}
     };
 
-    const PUBLIC_VIEWS = new Set(["dashboard", "command", "tournament", "progress", "directory", "teams", "timeline", "calendar", "login", "apply", "application-status"]);
+    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "calendar", "login", "apply", "application-status"]);
 
     function buildPhaseLookup(data) {
       if (data.PHASE_META) {
@@ -1182,6 +1203,31 @@
     }
 
     async function selectTournamentRows(table, columns, orderColumn, ascending = true, limit = null) {
+      let query = supabaseClient.from(table).select(columns);
+      if (orderColumn) query = query.order(orderColumn, { ascending });
+      if (limit) query = query.limit(limit);
+
+      const { data, error } = await query;
+      if (error) {
+        console.warn(`${table} unavailable:`, error.message || error);
+        return [];
+      }
+
+      return data || [];
+    }
+
+    async function getMyMistData(includePrivate = false) {
+      if (!includePrivate) return { batches: [], participants: [], schools: [], judges: [] };
+
+      const batches = await selectIntegrationRows("mymist_import_batches", "id,source_name,import_type,row_count,notes,created_at", "created_at", false, 20);
+      const participants = await selectIntegrationRows("mymist_participants", "id,external_participant_id,full_name,email,school,grade_level,gender_label,competitions,badge_code,nfc_uid,created_at,updated_at", "full_name");
+      const schools = await selectIntegrationRows("mymist_schools", "id,school_name,city,state,primary_contact,contact_email,participant_count,updated_at", "school_name");
+      const judges = await selectIntegrationRows("mymist_judges", "id,full_name,email,phone,competition_areas,availability,status,updated_at", "full_name");
+
+      return { batches, participants, schools, judges };
+    }
+
+    async function selectIntegrationRows(table, columns, orderColumn, ascending = true, limit = null) {
       let query = supabaseClient.from(table).select(columns);
       if (orderColumn) query = query.order(orderColumn, { ascending });
       if (limit) query = query.limit(limit);
@@ -1621,6 +1667,127 @@
       renderApp();
     }
 
+    async function importStudentsCsv(event) {
+      event.preventDefault();
+      const profile = await getProfile((await getUser()).id);
+      if (!profile?.is_admin) return alert("Only admins can import student registrations.");
+
+      const file = document.getElementById("tm-student-csv-file")?.files?.[0];
+      const pasted = document.getElementById("tm-student-csv")?.value.trim();
+      const text = file ? await file.text() : pasted;
+      if (!text) return alert("Choose a CSV file or paste CSV rows first.");
+
+      const rows = parseCsv(text);
+      if (rows.length < 2) return alert("CSV needs a header row and at least one student row.");
+
+      const headers = rows[0].map(header => header.trim().toLowerCase());
+      const records = rows.slice(1).map(row => Object.fromEntries(headers.map((header, index) => [header, row[index] || ""])));
+      const students = records
+        .filter(record => record.full_name || record.name)
+        .map(record => {
+          const competitions = String(record.competitions || "")
+            .split("|")
+            .map(item => item.trim())
+            .filter(Boolean);
+          return {
+            external_student_id: record.external_student_id || record.student_id || null,
+            full_name: record.full_name || record.name,
+            email: record.email || "",
+            school: record.school || "",
+            grade_level: record.grade_level || record.grade || "",
+            gender_label: record.gender_label || record.gender || "",
+            nfc_uid: record.nfc_uid || record.nfc || null,
+            registration_data: { competitions },
+            updated_at: new Date().toISOString()
+          };
+        });
+
+      if (!students.length) return alert("No valid students found. Include a full_name column.");
+
+      const { data, error } = await supabaseClient
+        .from("student_registrations")
+        .upsert(students, { onConflict: "external_student_id" })
+        .select("id,external_student_id,registration_data");
+
+      if (error) return alert(error.message);
+
+      const entries = (data || []).flatMap(student => {
+        const competitions = student.registration_data?.competitions || [];
+        return competitions.map(name => ({
+          student_id: student.id,
+          competition_name: name,
+          registration_status: "registered"
+        }));
+      });
+
+      if (entries.length) {
+        const { error: entryError } = await supabaseClient.from("student_competition_entries").upsert(entries);
+        if (entryError) return alert(entryError.message);
+      }
+
+      alert(`${students.length} student record${students.length === 1 ? "" : "s"} imported.`);
+      renderApp();
+    }
+
+    async function importMyMistParticipantsCsv(event) {
+      event.preventDefault();
+      const profile = await getProfile((await getUser()).id);
+      if (!profile?.is_admin) return alert("Only admins can import MyMIST exports.");
+
+      const file = document.getElementById("mymist-participant-file")?.files?.[0];
+      const pasted = document.getElementById("mymist-participant-csv")?.value.trim();
+      const text = file ? await file.text() : pasted;
+      if (!text) return alert("Choose a CSV file or paste MyMIST participant rows.");
+
+      const rows = parseCsv(text);
+      if (rows.length < 2) return alert("CSV needs a header row and at least one participant row.");
+
+      const headers = rows[0].map(header => normalizeHeader(header));
+      const records = rows.slice(1).map(row => Object.fromEntries(headers.map((header, index) => [header, row[index] || ""])));
+      const participants = records
+        .filter(record => record.full_name || record.name || record.participant_name)
+        .map(record => {
+          const competitions = String(record.competitions || record.competition || record.events || "")
+            .split(/[|;]/)
+            .map(item => item.trim())
+            .filter(Boolean);
+          return {
+            external_participant_id: record.external_participant_id || record.participant_id || record.student_id || null,
+            full_name: record.full_name || record.name || record.participant_name,
+            email: record.email || record.participant_email || "",
+            school: record.school || record.organization || "",
+            grade_level: record.grade_level || record.grade || "",
+            gender_label: record.gender_label || record.gender || "",
+            competitions,
+            badge_code: record.badge_code || record.badge_id || record.checkin_code || null,
+            nfc_uid: record.nfc_uid || record.nfc || null,
+            raw_data: record,
+            updated_at: new Date().toISOString()
+          };
+        });
+
+      if (!participants.length) return alert("No valid participants found. Include a full_name/name column.");
+
+      const batchId = `mymist-${Date.now()}`;
+      const { error: batchError } = await supabaseClient.from("mymist_import_batches").insert({
+        id: batchId,
+        source_name: file?.name || "Pasted MyMIST CSV",
+        import_type: "participants",
+        row_count: participants.length,
+        notes: document.getElementById("mymist-import-notes")?.value.trim() || ""
+      });
+      if (batchError) return alert(batchError.message);
+
+      const withBatch = participants.map(item => ({ ...item, import_batch_id: batchId }));
+      const { error } = await supabaseClient
+        .from("mymist_participants")
+        .upsert(withBatch, { onConflict: "external_participant_id" });
+
+      if (error) return alert(error.message);
+      alert(`${participants.length} MyMIST participant record${participants.length === 1 ? "" : "s"} imported.`);
+      renderApp();
+    }
+
     async function saveRoomAssignment(event) {
       event.preventDefault();
       const profile = await getProfile((await getUser()).id);
@@ -1651,9 +1818,20 @@
       const nfcUid = document.getElementById("tm-scan-nfc").value.trim();
       if (!nfcUid) return alert("Enter or scan an NFC UID.");
 
-      const studentId = document.getElementById("tm-scan-student")?.value || null;
+      const manualStudentId = document.getElementById("tm-scan-student")?.value || null;
+      const matchedStudent = (APP_STATE.tournament.students || []).find(student =>
+        String(student.nfc_uid || "").trim().toLowerCase() === nfcUid.toLowerCase()
+          || String(student.external_student_id || "").trim().toLowerCase() === nfcUid.toLowerCase()
+      );
+      const studentId = manualStudentId || matchedStudent?.id || null;
       const blockId = document.getElementById("tm-scan-block").value || null;
       const roomId = document.getElementById("tm-scan-room").value || null;
+      const assignment = (APP_STATE.tournament.assignments || []).find(item =>
+        item.student_id === studentId && item.competition_block_id === blockId
+      );
+      const scanResult = studentId
+        ? (blockId && !assignment ? "wrong_room" : "accepted")
+        : "unknown_tag";
 
       const { error } = await supabaseClient.from("nfc_scan_logs").insert({
         nfc_uid: nfcUid,
@@ -1661,7 +1839,7 @@
         room_id: roomId,
         competition_block_id: blockId,
         scan_type: document.getElementById("tm-scan-type").value,
-        scan_result: studentId || !document.getElementById("tm-scan-student") ? "accepted" : "manual_review",
+        scan_result: scanResult,
         scanned_by: user.id,
         notes: document.getElementById("tm-scan-notes").value.trim()
       });
@@ -1680,8 +1858,64 @@
           .eq("competition_block_id", blockId);
       }
 
-      alert("NFC scan logged.");
+      alert(scanResult === "accepted" ? "NFC scan logged." : `NFC scan logged as ${scanResult}.`);
       renderApp();
+    }
+
+    async function startNfcRead(inputId = "tm-scan-nfc") {
+      const input = document.getElementById(inputId);
+      if (!input) return alert("NFC input field was not found.");
+
+      if (!("NDEFReader" in window)) {
+        return alert("This browser does not support Web NFC. Use a USB/Bluetooth NFC reader that types the tag value, or type the UID manually.");
+      }
+
+      if (window.location.protocol !== "https:" && window.location.protocol !== "http:" && window.location.protocol !== "file:") {
+        return alert("NFC scanning requires a secure browser context.");
+      }
+
+      try {
+        const reader = new NDEFReader();
+        await reader.scan();
+        setNfcStatus("Ready. Hold an NFC tag near the device.", "saving");
+
+        reader.onreadingerror = () => {
+          setNfcStatus("Could not read that tag. Try again.", "offline");
+        };
+
+        reader.onreading = event => {
+          const tagValue = event.serialNumber || firstNdefRecordText(event.message) || "";
+          if (!tagValue) {
+            setNfcStatus("Tag read, but no serial/text value was available.", "offline");
+            return;
+          }
+
+          input.value = tagValue;
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          setNfcStatus(`Tag captured: ${tagValue}`, "saved");
+        };
+      } catch (error) {
+        console.error("NFC read error:", error);
+        setNfcStatus(error.message || "Could not start NFC reader.", "offline");
+      }
+    }
+
+    function firstNdefRecordText(message) {
+      const record = message?.records?.[0];
+      if (!record?.data) return "";
+
+      try {
+        return new TextDecoder(record.encoding || "utf-8").decode(record.data);
+      } catch (_) {
+        return "";
+      }
+    }
+
+    function setNfcStatus(message, mode = "saved") {
+      const target = document.getElementById("tm-nfc-status");
+      if (!target) return;
+      target.textContent = message;
+      target.className = `save-status ${mode}`;
     }
 
     async function saveReminderPreference() {
@@ -1758,6 +1992,11 @@
 
     function openCommandCenter() {
       APP_STATE.view = "command";
+      renderApp();
+    }
+
+    function openIntegrations() {
+      APP_STATE.view = "integrations";
       renderApp();
     }
 
@@ -2309,6 +2548,10 @@
               <button class="nav-card" onclick="openCommandCenter()">
                 <strong>Command Center</strong>
                 <span>Review open seats, deadline risk, team readiness, and the next operational checks.</span>
+              </button>
+              <button class="nav-card" onclick="openIntegrations()">
+                <strong>MyMIST Integration Center</strong>
+                <span>Stage exports for participants, schools, judges, badges, competitions, and rosters.</span>
               </button>
               <button class="nav-card" onclick="openTournamentManager()">
                 <strong>Weekend Tournament Manager</strong>
@@ -3217,6 +3460,8 @@
               ${tournamentDeadlines.length ? tournamentDeadlines.map(item => renderDeadlineCard(item)).join("") : `<p>No tournament-specific deadlines found yet. Add room and competition milestones in Calendar.</p>`}
             </div>
           </div>
+
+          ${renderTournamentOperationsChecks(rooms, availability, blocks, students, assignments)}
         </div>
       `;
     }
@@ -3309,6 +3554,17 @@
               </div>
             </form>
 
+            <form class="stat" onsubmit="importStudentsCsv(event)">
+              <h3>Bulk Student CSV</h3>
+              <p>Headers: external_student_id, full_name, email, school, grade_level, gender_label, nfc_uid, competitions. Separate competitions with |.</p>
+              <div class="stack">
+                <input id="tm-student-csv-file" type="file" accept=".csv,text/csv" />
+                <textarea id="tm-student-csv" placeholder="Paste CSV here if not uploading a file"></textarea>
+                <button class="primary" type="submit">Import CSV</button>
+                <button class="secondary" type="button" onclick="downloadStudentCsvTemplate()">Download Template</button>
+              </div>
+            </form>
+
             <form class="stat" onsubmit="saveRoomAssignment(event)">
               <h3>Room Assignment</h3>
               <div class="stack">
@@ -3336,6 +3592,241 @@
       `;
     }
 
+    function renderTournamentOperationsChecks(rooms, availability, blocks, students, assignments) {
+      const conflicts = detectTournamentConflicts(rooms, availability, blocks, assignments);
+      const unassignedBlocks = blocks.filter(block => !block.room_id);
+      const unassignedStudents = students.filter(student =>
+        !assignments.some(assignment => assignment.student_id === student.id)
+      );
+
+      return `
+        <div class="panel">
+          <div class="phase-header">
+            <div>
+              <h2>Operations Checks</h2>
+              <p>Automated checks for the most common tournament-week issues.</p>
+            </div>
+            <span class="phase-chip">${conflicts.length} conflict${conflicts.length === 1 ? "" : "s"}</span>
+          </div>
+
+          <div class="grid">
+            <div class="stat">
+              <div class="stat-title">Room Conflicts</div>
+              <div class="stat-value">${conflicts.length}</div>
+              <p>Double-bookings, out-of-window blocks, and capacity issues.</p>
+            </div>
+            <div class="stat">
+              <div class="stat-title">Unassigned Blocks</div>
+              <div class="stat-value">${unassignedBlocks.length}</div>
+              <p>Competition blocks still waiting for a room.</p>
+            </div>
+            <div class="stat">
+              <div class="stat-title">Unassigned Students</div>
+              <div class="stat-value">${unassignedStudents.length}</div>
+              <p>Imported students without any room assignment yet.</p>
+            </div>
+          </div>
+
+          <div class="conflict-list">
+            ${conflicts.map(item => `
+              <div class="readiness-row ${item.severity === "high" ? "urgent" : "warning"}">
+                <div>
+                  <h3>${escapeHtml(item.title)}</h3>
+                  <p>${escapeHtml(item.detail)}</p>
+                </div>
+                <span class="phase-chip">${escapeHtml(item.type)}</span>
+              </div>
+            `).join("") || `<p>No conflicts detected yet.</p>`}
+          </div>
+
+          <div class="inline-actions">
+            <button class="secondary" onclick="downloadTournamentScheduleCsv()">Export Schedule CSV</button>
+            <button class="secondary" onclick="downloadRoomCsvTemplate()">Room Template</button>
+            <button class="secondary" onclick="downloadBlockCsvTemplate()">Block Template</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderMyMistIntegration(data = APP_STATE.mymist, user = null, profile = null) {
+      const isAdmin = !!profile?.is_admin;
+      const participants = data.participants || [];
+      const schools = data.schools || [];
+      const judges = data.judges || [];
+      const batches = data.batches || [];
+      const withBadge = participants.filter(item => item.badge_code || item.nfc_uid).length;
+      const competitionCount = new Set(participants.flatMap(item => item.competitions || [])).size;
+
+      return `
+        <div class="dashboard-shell">
+          <div class="topbar">
+            <div>
+              <h1>MyMIST Integration Center</h1>
+              <p>Stage MyMIST exports here, then feed participant, school, judge, competition, badge, and check-in data into operations.</p>
+            </div>
+            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
+          </div>
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Integration Map</h2>
+                <p>MyMIST stays the source of truth. This portal turns exports into planning dashboards, room rosters, badges, and event-week check-in tools.</p>
+              </div>
+              <span class="phase-chip">${participants.length} participants staged</span>
+            </div>
+            <div class="ops-flow">
+              <div class="ops-step" style="--ops-color:#1f8a9b">
+                <div class="ops-step-number">1</div>
+                <div class="stat-title">Export</div>
+                <h3>Pull MyMIST data</h3>
+                <p>Use MyMIST exports for participants, competitions, schools, judges, and registration status.</p>
+              </div>
+              <div class="ops-step" style="--ops-color:#c9972b">
+                <div class="ops-step-number">2</div>
+                <div class="stat-title">Stage</div>
+                <h3>Import into portal</h3>
+                <p>Keep raw MyMIST rows available while mapping them into operational tables.</p>
+              </div>
+              <div class="ops-step" style="--ops-color:#7b61ff">
+                <div class="ops-step-number">3</div>
+                <div class="stat-title">Map</div>
+                <h3>Build rosters</h3>
+                <p>Connect participants to competition blocks, room assignments, badges, and check-in codes.</p>
+              </div>
+              <div class="ops-step" style="--ops-color:#b13f4a">
+                <div class="ops-step-number">4</div>
+                <div class="stat-title">Operate</div>
+                <h3>Run event weekend</h3>
+                <p>Use staged data for room check-ins, missing student lists, school counts, and escalation tracking.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="grid">
+              <div class="stat">
+                <div class="stat-title">Participants</div>
+                <div class="stat-value">${participants.length}</div>
+                <p>Imported from MyMIST registration exports.</p>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Schools</div>
+                <div class="stat-value">${schools.length || new Set(participants.map(item => item.school).filter(Boolean)).size}</div>
+                <p>Used for school check-in, reporting, and group issues.</p>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Competitions</div>
+                <div class="stat-value">${competitionCount}</div>
+                <p>Participant competition entries found in staged data.</p>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Badge / Tag Ready</div>
+                <div class="stat-value">${withBadge}</div>
+                <p>Participants with badge code or NFC UID.</p>
+              </div>
+            </div>
+          </div>
+
+          ${isAdmin ? `
+            <div class="panel">
+              <div class="phase-header">
+                <div>
+                  <h2>Import MyMIST Participants</h2>
+                  <p>Use this for MyMIST participant exports. Columns can be flexible: name/full_name, email, school, competitions, badge_code, nfc_uid.</p>
+                </div>
+                <button class="secondary" onclick="downloadMyMistParticipantTemplate()">Download Template</button>
+              </div>
+              <form class="admin-form" onsubmit="importMyMistParticipantsCsv(event)">
+                <input id="mymist-participant-file" type="file" accept=".csv,text/csv" />
+                <input id="mymist-import-notes" placeholder="Import notes optional" />
+                <textarea id="mymist-participant-csv" placeholder="Paste MyMIST participant CSV here"></textarea>
+                <button class="primary" type="submit">Import MyMIST CSV</button>
+              </form>
+            </div>
+          ` : `
+            <div class="panel">
+              <h2>Admin Import Required</h2>
+              <p>Log in as an admin to import MyMIST exports. Public users can only see high-level portal sections.</p>
+            </div>
+          `}
+
+          <div class="console-grid">
+            <div class="panel">
+              <h2>Recent MyMIST Imports</h2>
+              <div class="readiness-list">
+                ${batches.map(batch => `
+                  <div class="readiness-row">
+                    <div>
+                      <h3>${escapeHtml(batch.source_name || batch.id)}</h3>
+                      <p>${escapeHtml(batch.import_type)} • ${batch.row_count || 0} rows • ${escapeHtml(formatDate(batch.created_at))}</p>
+                    </div>
+                    <span class="phase-chip">${escapeHtml(batch.id)}</span>
+                  </div>
+                `).join("") || `<p>No MyMIST imports staged yet. Run supabase-mymist-only.sql, then import a CSV.</p>`}
+              </div>
+            </div>
+
+            <div class="panel">
+              <h2>Badge / NFC Plan</h2>
+              <div class="readiness-list">
+                <div class="readiness-row">
+                  <div>
+                    <h3>Badge code fallback</h3>
+                    <p>Use printed badge codes or QR values when NFC hardware is not available.</p>
+                  </div>
+                </div>
+                <div class="readiness-row">
+                  <div>
+                    <h3>NFC tag mapping</h3>
+                    <p>Store tag UID on participant rows, then scan it in Weekend Tournament Manager.</p>
+                  </div>
+                </div>
+                <div class="readiness-row">
+                  <div>
+                    <h3>MyMIST remains source</h3>
+                    <p>Use portal imports as staging snapshots, not a replacement for MyMIST registration authority.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Staged Participants</h2>
+                <p>Admin-only participant staging preview from the latest MyMIST data available in Supabase.</p>
+              </div>
+              <button class="secondary" onclick="downloadMyMistParticipantTemplate()">Template</button>
+            </div>
+            <div class="list-table-wrap">
+              <table class="list-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>School</th>
+                    <th>Competitions</th>
+                    <th>Badge / NFC</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${participants.slice(0, 40).map(item => `
+                    <tr>
+                      <td>${escapeHtml(item.full_name || "")}<br><span class="muted">${escapeHtml(item.email || "")}</span></td>
+                      <td>${escapeHtml(item.school || "-")}</td>
+                      <td>${escapeHtml((item.competitions || []).join(", ") || "-")}</td>
+                      <td>${escapeHtml(item.badge_code || item.nfc_uid || "-")}</td>
+                    </tr>
+                  `).join("") || `<tr><td colspan="4">No participant data staged yet.</td></tr>`}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     function renderNfcCheckInPanel(rooms, blocks, students, scans, isAdmin) {
       return `
         <div class="panel">
@@ -3348,7 +3839,10 @@
           </div>
 
           <form class="admin-form" onsubmit="logNfcScan(event)">
-            <input id="tm-scan-nfc" placeholder="NFC UID / tag value" autofocus />
+            <div>
+              <input id="tm-scan-nfc" placeholder="NFC UID / tag value" autofocus />
+              <div id="tm-nfc-status" class="save-status">Use Web NFC on supported Android browsers, or type/scan with an external reader.</div>
+            </div>
             <select id="tm-scan-room">
               <option value="">Room optional</option>
               ${rooms.map(room => `<option value="${escapeHtml(room.id)}">${escapeHtml(room.room_name)}</option>`).join("")}
@@ -3370,6 +3864,7 @@
               <option value="manual_override">Manual Override</option>
             </select>
             <input id="tm-scan-notes" placeholder="Scan notes optional" />
+            <button class="secondary" type="button" onclick="startNfcRead()">Read NFC Tag</button>
             <button class="primary" type="submit">Log Scan</button>
           </form>
 
@@ -4357,6 +4852,200 @@
       return `${date} ${start}${end ? `-${end}` : ""}`.trim();
     }
 
+    function detectTournamentConflicts(rooms, availability, blocks, assignments) {
+      const conflicts = [];
+
+      blocks.forEach(block => {
+        const room = rooms.find(item => item.id === block.room_id);
+        const blockAssignments = assignments.filter(item => item.competition_block_id === block.id);
+
+        if (!block.room_id) {
+          conflicts.push({
+            type: "room",
+            severity: "medium",
+            title: `${block.competition_name} has no room`,
+            detail: `${formatBlockTime(block)} needs a room assignment.`
+          });
+        }
+
+        if (room && Number(block.capacity || 0) > Number(room.capacity || 0) && Number(room.capacity || 0) > 0) {
+          conflicts.push({
+            type: "capacity",
+            severity: "high",
+            title: `${block.competition_name} exceeds room capacity`,
+            detail: `${room.room_name} holds ${room.capacity}; block capacity is ${block.capacity}.`
+          });
+        }
+
+        if (Number(block.capacity || 0) > 0 && blockAssignments.length > Number(block.capacity || 0)) {
+          conflicts.push({
+            type: "roster",
+            severity: "high",
+            title: `${block.competition_name} roster exceeds block capacity`,
+            detail: `${blockAssignments.length} assigned; capacity is ${block.capacity}.`
+          });
+        }
+
+        const matchingWindows = availability.filter(item =>
+          item.room_id === block.room_id
+            && item.available_date === block.block_date
+            && String(item.starts_at).slice(0,5) <= String(block.starts_at).slice(0,5)
+            && String(item.ends_at).slice(0,5) >= String(block.ends_at).slice(0,5)
+        );
+
+        if (block.room_id && !matchingWindows.length) {
+          conflicts.push({
+            type: "availability",
+            severity: "medium",
+            title: `${block.competition_name} is outside room availability`,
+            detail: `${formatBlockTime(block)} does not match a saved availability window.`
+          });
+        }
+      });
+
+      blocks.forEach((block, index) => {
+        blocks.slice(index + 1).forEach(other => {
+          if (!block.room_id || block.room_id !== other.room_id || block.block_date !== other.block_date) return;
+          if (timeRangesOverlap(block.starts_at, block.ends_at, other.starts_at, other.ends_at)) {
+            const room = rooms.find(item => item.id === block.room_id);
+            conflicts.push({
+              type: "double-booked",
+              severity: "high",
+              title: `${room?.room_name || "Room"} double-booked`,
+              detail: `${block.competition_name} overlaps ${other.competition_name} on ${formatBlockTime(block)}.`
+            });
+          }
+        });
+      });
+
+      return conflicts;
+    }
+
+    function timeRangesOverlap(startA, endA, startB, endB) {
+      const aStart = minutesFromTime(startA);
+      const aEnd = minutesFromTime(endA);
+      const bStart = minutesFromTime(startB);
+      const bEnd = minutesFromTime(endB);
+      return aStart < bEnd && bStart < aEnd;
+    }
+
+    function minutesFromTime(value) {
+      const [hours, minutes] = String(value || "00:00").split(":").map(Number);
+      return (hours || 0) * 60 + (minutes || 0);
+    }
+
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let value = "";
+      let insideQuotes = false;
+
+      for (let index = 0; index < text.length; index += 1) {
+        const char = text[index];
+        const next = text[index + 1];
+
+        if (char === '"' && insideQuotes && next === '"') {
+          value += '"';
+          index += 1;
+        } else if (char === '"') {
+          insideQuotes = !insideQuotes;
+        } else if (char === "," && !insideQuotes) {
+          row.push(value);
+          value = "";
+        } else if ((char === "\n" || char === "\r") && !insideQuotes) {
+          if (char === "\r" && next === "\n") index += 1;
+          row.push(value);
+          if (row.some(cell => cell.trim())) rows.push(row);
+          row = [];
+          value = "";
+        } else {
+          value += char;
+        }
+      }
+
+      row.push(value);
+      if (row.some(cell => cell.trim())) rows.push(row);
+      return rows;
+    }
+
+    function csvEscape(value) {
+      const text = String(value ?? "");
+      return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    }
+
+    function downloadCsv(filename, rows) {
+      const content = rows.map(row => row.map(csvEscape).join(",")).join("\n");
+      const blob = new Blob([content], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadStudentCsvTemplate() {
+      downloadCsv("mist-student-import-template.csv", [
+        ["external_student_id", "full_name", "email", "school", "grade_level", "gender_label", "nfc_uid", "competitions"],
+        ["S-1001", "Sample Student", "student@example.com", "Sample School", "11", "Sister", "TAG-1001", "Quran|Poetry|Basketball"]
+      ]);
+    }
+
+    function downloadRoomCsvTemplate() {
+      downloadCsv("mist-room-template.csv", [
+        ["id", "room_name", "building", "floor_label", "capacity", "room_type", "privacy_notes", "av_notes", "setup_notes", "room_captain_role"],
+        ["room-101", "Room 101", "Venue TBD", "Level 1", "40", "Competition Room", "Standard room", "Projector preferred", "Classroom setup", "Competitions Director"]
+      ]);
+    }
+
+    function downloadBlockCsvTemplate() {
+      downloadCsv("mist-competition-block-template.csv", [
+        ["competition_name", "round_label", "division", "room_id", "block_date", "starts_at", "ends_at", "capacity", "judge_count", "materials", "status"],
+        ["Poetry", "Round 1", "High School", "room-101", "2027-01-24", "10:00", "11:00", "30", "3", "Timer, score sheets", "scheduled"]
+      ]);
+    }
+
+    function downloadTournamentScheduleCsv() {
+      const { rooms = [], blocks = [] } = APP_STATE.tournament || {};
+      const rows = [
+        ["competition_name", "round_label", "division", "room", "date", "starts_at", "ends_at", "capacity", "status"]
+      ];
+
+      blocks.forEach(block => {
+        const room = rooms.find(item => item.id === block.room_id);
+        rows.push([
+          block.competition_name,
+          block.round_label,
+          block.division,
+          room?.room_name || "Unassigned",
+          block.block_date,
+          block.starts_at,
+          block.ends_at,
+          block.capacity,
+          block.status
+        ]);
+      });
+
+      downloadCsv("mist-tournament-schedule.csv", rows);
+    }
+
+    function downloadMyMistParticipantTemplate() {
+      downloadCsv("mymist-participant-import-template.csv", [
+        ["external_participant_id", "full_name", "email", "school", "grade_level", "gender_label", "competitions", "badge_code", "nfc_uid"],
+        ["M-1001", "Sample Participant", "participant@example.com", "Sample School", "11", "Sister", "Quran|Poetry|Basketball", "BADGE-1001", "TAG-1001"]
+      ]);
+    }
+
+    function normalizeHeader(value) {
+      return String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_|_$/g, "");
+    }
+
     function escapeHtml(value) {
       return String(value)
         .replace(/&/g, "&amp;")
@@ -4401,6 +5090,11 @@
           const progressRows = await getAllWorkbookProgress();
           const deadlines = await getDeadlines();
           app.innerHTML = renderCommandCenter(rows, progressRows, deadlines, null, null);
+          return;
+        }
+
+        if (APP_STATE.view === "integrations") {
+          app.innerHTML = renderMyMistIntegration(APP_STATE.mymist, null, null);
           return;
         }
 
@@ -4476,6 +5170,13 @@
         const progressRows = await getAllWorkbookProgress();
         const deadlines = await getDeadlines();
         app.innerHTML = renderCommandCenter(rows, progressRows, deadlines, user, profile);
+        return;
+      }
+
+      if (APP_STATE.view === "integrations") {
+        const mymist = await getMyMistData(!!profile?.is_admin);
+        APP_STATE.mymist = mymist;
+        app.innerHTML = renderMyMistIntegration(mymist, user, profile);
         return;
       }
 

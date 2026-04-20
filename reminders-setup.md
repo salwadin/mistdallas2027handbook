@@ -6,6 +6,7 @@ The portal now has:
 - `reminder_preferences` for each user's email reminder settings
 - `reminder_deliveries` to prevent duplicate sends
 - `supabase/functions/send-deadline-reminders/index.ts` for email delivery
+- `supabase/functions/send-application-decision/index.ts` for application approval/decline emails
 
 ## Supabase SQL
 
@@ -46,9 +47,12 @@ Dashboard path:
 
 ```bash
 supabase functions deploy send-deadline-reminders
+supabase functions deploy send-application-decision
 ```
 
 Deploy with JWT verification disabled only if your scheduler cannot send a Supabase auth token. Keep `CRON_SECRET` set either way.
+
+The application decision function is called from the portal by logged-in admins, so keep JWT verification enabled for that function.
 
 ## Schedule
 

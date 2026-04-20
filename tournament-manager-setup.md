@@ -39,13 +39,24 @@ This creates:
 
 The portal schema supports NFC tags through the `nfc_uid` field on `student_registrations`.
 
-A future scanner screen should:
+The portal now has a scanner panel in Weekend Tournament Manager. It supports two input styles:
+
+- Web NFC button: works only in browsers/devices that expose `NDEFReader`.
+- External reader/manual input: works with USB/Bluetooth NFC readers that type the tag value into the field.
+
+The scanner flow should:
 
 - read or type an NFC UID
 - match it to a student
 - check whether that student belongs in the selected room/time block
 - insert a row into `nfc_scan_logs`
 - update `room_assignments.assignment_status` to `checked_in` when valid
+
+## Hardware Recommendation
+
+For event reliability, use USB or Bluetooth NFC readers that act like keyboards. They are more predictable than browser-native NFC and work on laptops at check-in stations.
+
+Use Web NFC as a convenience option for supported mobile devices, not as the only check-in method.
 
 ## Privacy Note
 
