@@ -488,6 +488,22 @@
       background: rgba(255,255,255,.028);
     }
 
+    .feedback-card {
+      border: 1px solid color-mix(in srgb, var(--feedback-color, var(--blue)) 36%, var(--border));
+      border-left: 5px solid var(--feedback-color, var(--blue));
+      border-radius: 12px;
+      padding: 13px;
+      background:
+        linear-gradient(135deg, color-mix(in srgb, var(--feedback-color, var(--blue)) 10%, transparent), rgba(255,255,255,.026));
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
     .directory-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -1161,6 +1177,63 @@
         keywords: ["mymist", "registration", "export", "participants", "rosters"]
       }
     ];
+    const FEEDBACK_THEMES = [
+      {
+        id: "communication",
+        theme: "Communication Clarity",
+        source: "Previous organizer and participant feedback",
+        sentiment: "People need fewer conflicting updates and clearer source-of-truth messaging.",
+        owner: "Ops 2 + PR",
+        phase: "build",
+        status: "In progress",
+        color: "#1f8a9b",
+        action: "Centralize announcements through Command Center, publish one approved update per change, and use the Calendar page for deadline clarity."
+      },
+      {
+        id: "room-flow",
+        theme: "Room Flow & Competition Timing",
+        source: "Event weekend debriefs",
+        sentiment: "Room changes, late starts, and unclear competition locations create stress for students and volunteers.",
+        owner: "Operations + Competitions",
+        phase: "stabilization",
+        status: "In build",
+        color: "#7b61ff",
+        action: "Use Weekend Tournament Manager for room inventory, competition blocks, room rosters, and live schedule conflict checks."
+      },
+      {
+        id: "training",
+        theme: "Organizer Training",
+        source: "Past board reflections",
+        sentiment: "New organizers need clearer expectations before event week, not just during event week.",
+        owner: "RD / ADs + Directors",
+        phase: "foundations",
+        status: "Needs owner check",
+        color: "#247a52",
+        action: "Use role workbooks, team pages, meeting templates, and execution runbook training before January."
+      },
+      {
+        id: "registration",
+        theme: "Registration Data Accuracy",
+        source: "Check-in and roster issues",
+        sentiment: "Wrong names, missing competitions, and unclear status slow down check-in and room entry.",
+        owner: "Registration + MyMIST leads",
+        phase: "build",
+        status: "Staged",
+        color: "#c9972b",
+        action: "Import MyMIST snapshots into the portal, audit fields before event week, and map badge/NFC IDs to participant records."
+      },
+      {
+        id: "accountability",
+        theme: "Role Accountability",
+        source: "Leadership debriefs",
+        sentiment: "It should be easier to tell who owns what, what is late, and where support is needed.",
+        owner: "RD / ADs",
+        phase: "foundations",
+        status: "Live",
+        color: "#b13f4a",
+        action: "Use role claims, progress board, team pages, deadlines, and Meeting Hub action items as the accountability loop."
+      }
+    ];
     const APPLICATION_QUESTIONS = [
       { id: "understand_not_guarantee", section: "Commitments", type: "radio", label: "I understand that this is an application and not a guarantee.", options: ["Yes"], required: true },
       { id: "volunteering_time", section: "Commitments", type: "radio", label: "I understand that I am volunteering my time and efforts.", options: ["Yes"], required: true },
@@ -1224,12 +1297,13 @@
       statusResults: null,
       selectedTeam: null,
       knowledgeQuery: "",
+      feedbackFilter: "all",
       announcements: DEFAULT_ANNOUNCEMENTS,
       progress: {},
       saveTimers: {}
     };
 
-    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "calendar", "login", "apply", "application-status", "meetings", "runbook", "knowledge"]);
+    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "calendar", "login", "apply", "application-status", "meetings", "runbook", "knowledge", "feedback"]);
 
     function buildPhaseLookup(data) {
       if (data.PHASE_META) {
@@ -2336,6 +2410,11 @@
       renderApp();
     }
 
+    function openFeedback() {
+      APP_STATE.view = "feedback";
+      renderApp();
+    }
+
     function openApply(roleId) {
       APP_STATE.view = "apply";
       APP_STATE.applicationRoleId = roleId;
@@ -2876,6 +2955,7 @@
             { title: "Command Center", body: "Open seats, deadline risk, team readiness, and operational checks.", action: "openCommandCenter()" },
             { title: "Meeting Hub", body: "Agendas, blockers, action items, and meeting memory.", action: "openMeetings()" },
             { title: "Decision Log", body: "Track approved decisions, owners, impact, and follow-up.", action: "openMeetings()" },
+            { title: "Feedback Addressal", body: "Turn past-year feedback into themes, owners, action plans, and status.", action: "openFeedback()" },
             { title: "Timeline", body: "Foundations, Build, Stabilization, and Execution at a glance.", action: "openTimeline()" },
             { title: "Calendar", body: "Deadline cards, calendar export, and reminder preferences.", action: "openCalendar()" }
           ]
@@ -5024,6 +5104,153 @@
       `;
     }
 
+    function renderFeedbackAddressal(user = null, profile = null) {
+      const customFeedback = getLocalRecords("mist_feedback_addressal");
+      const allItems = [...customFeedback, ...FEEDBACK_THEMES];
+      const filter = APP_STATE.feedbackFilter || "all";
+      const visibleItems = filter === "all"
+        ? allItems
+        : allItems.filter(item => String(item.phase || "").toLowerCase() === filter || String(item.status || "").toLowerCase() === filter);
+      const addressed = allItems.filter(item => /live|progress|build|staged/i.test(item.status || "")).length;
+      const canEdit = !!user;
+
+      return `
+        <div class="dashboard-shell">
+          <div class="topbar">
+            <div>
+              <h1>Feedback Addressal</h1>
+              <p>Convert feedback from last year and previous years into visible actions, owners, phases, and follow-through.</p>
+            </div>
+            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
+          </div>
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Feedback Intelligence</h2>
+                <p>Use this page as the bridge between debrief notes and actual planning changes.</p>
+              </div>
+              <span class="phase-chip">${allItems.length} feedback theme${allItems.length === 1 ? "" : "s"}</span>
+            </div>
+            <div class="metric-row">
+              <div class="stat">
+                <div class="stat-title">Themes Logged</div>
+                <div class="stat-value">${allItems.length}</div>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Active Responses</div>
+                <div class="stat-value">${addressed}</div>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Custom Entries</div>
+                <div class="stat-value">${customFeedback.length}</div>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Primary Use</div>
+                <div class="stat-value">Debrief to action</div>
+              </div>
+            </div>
+            <div class="inline-actions">
+              <button class="secondary" onclick="setFeedbackFilter('all')">All</button>
+              <button class="ghost" onclick="setFeedbackFilter('foundations')">Foundations</button>
+              <button class="ghost" onclick="setFeedbackFilter('build')">Build</button>
+              <button class="ghost" onclick="setFeedbackFilter('stabilization')">Stabilization</button>
+              <button class="ghost" onclick="setFeedbackFilter('execution')">Execution</button>
+              <button class="ghost" onclick="downloadFeedbackCsv()">Export CSV</button>
+            </div>
+          </div>
+
+          ${canEdit ? `
+            <div class="panel">
+              <h2>Add Feedback Theme</h2>
+              <p>Add a point from a debrief, survey, chat, or previous-year organizer note, then assign how it will be addressed.</p>
+              <form class="admin-form" onsubmit="saveFeedbackTheme(event)">
+                <input id="feedback-theme" placeholder="Feedback theme" />
+                <input id="feedback-source" placeholder="Source, e.g. 2026 debrief, student survey" />
+                <select id="feedback-phase">
+                  ${Object.keys(PHASES).map(phaseId => `<option value="${phaseId}">${escapeHtml(formatPhase(phaseId))}</option>`).join("")}
+                </select>
+                <select id="feedback-status">
+                  <option value="Needs owner check">Needs owner check</option>
+                  <option value="Staged">Staged</option>
+                  <option value="In build">In build</option>
+                  <option value="In progress">In progress</option>
+                  <option value="Live">Live</option>
+                </select>
+                <input id="feedback-owner" placeholder="Owner / team" value="${escapeHtml(profile?.team || "")}" />
+                <textarea id="feedback-sentiment" placeholder="What people said / key point taken"></textarea>
+                <textarea id="feedback-action" placeholder="How we will address it"></textarea>
+                <button class="primary" type="submit">Save Feedback Response</button>
+              </form>
+            </div>
+          ` : `
+            <div class="panel">
+              <h2>Feedback Is Public, Editing Requires Login</h2>
+              <p>Everyone can see how feedback is being addressed. Log in to add new feedback themes on this device.</p>
+              <div class="inline-actions">
+                <button class="primary" onclick="openLogin()">Log In / Sign Up</button>
+              </div>
+            </div>
+          `}
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Feedback Themes & Response Plans</h2>
+                <p>Each card should answer: what did we hear, who owns it, when does it matter, and what are we changing?</p>
+              </div>
+              <span class="phase-chip">${visibleItems.length} shown</span>
+            </div>
+            <div class="log-list">
+              ${visibleItems.map(item => renderFeedbackCard(item)).join("") || `<p>No feedback themes match this filter.</p>`}
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>How To Use This With Real Feedback</h2>
+            <div class="runbook-grid">
+              <div class="runbook-card" style="--runbook-color:#1f8a9b">
+                <div class="stat-title">1. Collect</div>
+                <p>Pull points from prior debriefs, surveys, organizer notes, parent/student comments, and AD reflections.</p>
+              </div>
+              <div class="runbook-card" style="--runbook-color:#c9972b">
+                <div class="stat-title">2. Group</div>
+                <p>Combine similar feedback into themes like communication, room flow, training, registration, or accountability.</p>
+              </div>
+              <div class="runbook-card" style="--runbook-color:#247a52">
+                <div class="stat-title">3. Assign</div>
+                <p>Give each theme an owner/team, phase, and concrete response plan. Avoid vague “we should improve” notes.</p>
+              </div>
+              <div class="runbook-card" style="--runbook-color:#b13f4a">
+                <div class="stat-title">4. Review</div>
+                <p>Use this during meetings so leadership can check whether past feedback is actually being addressed.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderFeedbackCard(item) {
+      return `
+        <div class="feedback-card" style="--feedback-color:${item.color || phaseColor(item.phase) || "#1f8a9b"}">
+          <div class="phase-header">
+            <div>
+              <div class="stat-title">${escapeHtml(item.source || "Feedback source")}</div>
+              <h3>${escapeHtml(item.theme || "Feedback theme")}</h3>
+            </div>
+            <span class="status-pill">${escapeHtml(item.status || "Needs owner check")}</span>
+          </div>
+          <p><strong>Key point:</strong> ${escapeHtml(item.sentiment || "—")}</p>
+          <p><strong>How it will be addressed:</strong> ${escapeHtml(item.action || "—")}</p>
+          <div class="deadline-meta">
+            <span class="phase-chip">${escapeHtml(item.owner || "Unassigned")}</span>
+            <span class="phase-chip">${escapeHtml(formatPhase(item.phase || "foundations"))}</span>
+          </div>
+        </div>
+      `;
+    }
+
     function renderCalendar(deadlines = CALENDAR_DEADLINES, user = null, profile = null, reminderPreference = null) {
       APP_STATE.currentDeadlines = deadlines;
       const grouped = deadlines.reduce((map, item) => {
@@ -5737,6 +5964,56 @@
       ]);
     }
 
+    function saveFeedbackTheme(event) {
+      event.preventDefault();
+      const item = {
+        id: `feedback-${Date.now()}`,
+        theme: document.getElementById("feedback-theme").value.trim(),
+        source: document.getElementById("feedback-source").value.trim(),
+        phase: document.getElementById("feedback-phase").value,
+        status: document.getElementById("feedback-status").value,
+        owner: document.getElementById("feedback-owner").value.trim(),
+        sentiment: document.getElementById("feedback-sentiment").value.trim(),
+        action: document.getElementById("feedback-action").value.trim(),
+        color: phaseColor(document.getElementById("feedback-phase").value),
+        created_at: new Date().toISOString()
+      };
+
+      if (!item.theme || !item.sentiment || !item.action) {
+        return alert("Theme, key point, and action plan are required.");
+      }
+
+      const records = getLocalRecords("mist_feedback_addressal");
+      records.unshift(item);
+      setLocalRecords("mist_feedback_addressal", records.slice(0, 100));
+      alert("Feedback response saved on this device.");
+      renderApp();
+    }
+
+    function setFeedbackFilter(filter) {
+      APP_STATE.feedbackFilter = filter;
+      renderApp();
+    }
+
+    function downloadFeedbackCsv() {
+      const records = [
+        ...getLocalRecords("mist_feedback_addressal"),
+        ...FEEDBACK_THEMES
+      ];
+      downloadCsv("mist-feedback-addressal.csv", [
+        ["theme", "source", "key_point", "owner", "phase", "status", "action_plan"],
+        ...records.map(item => [
+          item.theme,
+          item.source,
+          item.sentiment,
+          item.owner,
+          item.phase,
+          item.status,
+          item.action
+        ])
+      ]);
+    }
+
     function searchRulebook(query) {
       const needle = String(query || "").trim().toLowerCase();
       if (!needle) return RULEBOOK_ENTRIES;
@@ -5884,6 +6161,11 @@
           return;
         }
 
+        if (APP_STATE.view === "feedback") {
+          app.innerHTML = renderFeedbackAddressal(null, null);
+          return;
+        }
+
         if (APP_STATE.view === "calendar") {
           const deadlines = await getDeadlines();
           app.innerHTML = renderCalendar(deadlines, null, null, null);
@@ -5978,6 +6260,11 @@
 
       if (APP_STATE.view === "knowledge") {
         app.innerHTML = renderKnowledgeBase();
+        return;
+      }
+
+      if (APP_STATE.view === "feedback") {
+        app.innerHTML = renderFeedbackAddressal(user, profile);
         return;
       }
 
