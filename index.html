@@ -364,15 +364,40 @@
       margin-top: 12px;
     }
 
+    .nav-section {
+      margin-top: 16px;
+    }
+
+    .nav-section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-section-head strong {
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--section-color, var(--blue)) 72%, #ffffff);
+    }
+
+    .nav-section-head span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
     .nav-card {
-      min-height: 110px;
-      padding: 13px;
+      min-height: 92px;
+      padding: 12px;
       border: 1px solid var(--border);
       border-radius: 12px;
       background: rgba(255, 255, 255, 0.04);
       color: var(--text);
       text-align: left;
-      border-top: 3px solid var(--blue);
+      border-top: 3px solid var(--section-color, var(--blue));
     }
 
     .nav-card strong {
@@ -387,6 +412,36 @@
       font-weight: 500;
       line-height: 1.35;
       font-size: 12px;
+    }
+
+    .roadmap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .roadmap-card {
+      border: 1px solid color-mix(in srgb, var(--roadmap-color, var(--blue)) 38%, var(--border));
+      border-left: 5px solid var(--roadmap-color, var(--blue));
+      border-radius: 12px;
+      padding: 13px;
+      background:
+        linear-gradient(135deg, color-mix(in srgb, var(--roadmap-color, var(--blue)) 12%, transparent), rgba(255,255,255,.026));
+    }
+
+    .roadmap-status {
+      display: inline-flex;
+      width: fit-content;
+      margin-bottom: 8px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      color: #111318;
+      background: var(--roadmap-color, var(--blue));
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
     }
 
     .directory-grid {
@@ -865,6 +920,56 @@
         color: "#b13f4a",
         title: "Check students into rooms live",
         body: "Use NFC cards, wristbands, or phone-based tags to verify arrival at event check-in and room-level competition entry."
+      }
+    ];
+    const INTEGRATION_ROADMAP = [
+      {
+        title: "Role Applications",
+        status: "Live",
+        color: "#247a52",
+        body: "Applicants can apply for open roles, check status, and admins can approve or decline from the portal.",
+        action: "openTeamPages()",
+        cta: "Open Roles"
+      },
+      {
+        title: "Calendar & Deadlines",
+        status: "Live",
+        color: "#c9972b",
+        body: "Deadlines are grouped by phase, export to calendar files, and support reminder preferences.",
+        action: "openCalendar()",
+        cta: "Calendar"
+      },
+      {
+        title: "MyMIST Imports",
+        status: "Staging",
+        color: "#1f8a9b",
+        body: "Use exports as snapshots for participants, competitions, schools, badge codes, and operational rosters.",
+        action: "openIntegrations()",
+        cta: "Integration Center"
+      },
+      {
+        title: "Weekend Manager",
+        status: "In Build",
+        color: "#7b61ff",
+        body: "Rooms, availability, competition blocks, student placement, conflicts, and live check-in sit here.",
+        action: "openTournamentManager()",
+        cta: "Weekend Manager"
+      },
+      {
+        title: "NFC / Badge Check-In",
+        status: "Pilot",
+        color: "#b13f4a",
+        body: "Badge tags or typed scanner IDs can log main check-in and room-entry scans against participant records.",
+        action: "openTournamentManager()",
+        cta: "Scanner"
+      },
+      {
+        title: "Reminder Emails",
+        status: "Pending Domain",
+        color: "#c44f7a",
+        body: "Once sender verification is complete, deadline and application emails can run through Supabase functions.",
+        action: "openCalendar()",
+        cta: "Reminder Setup"
       }
     ];
     const APPLICATION_QUESTIONS = [
@@ -2533,60 +2638,102 @@
               </div>
             </div>
 
-            <div class="nav-grid">
-              ${signedIn && hasProfile ? `<button class="nav-card" onclick="openWorkbook()">
-                <strong>My Workbook</strong>
-                <span>Open your role-specific planning checklist, notes, and autosave progress.</span>
-              </button>` : `<button class="nav-card" onclick="openLogin()">
-                <strong>Claim a Role</strong>
-                <span>Log in or create an account, then choose an open organizer role.</span>
-              </button>`}
-              <button class="nav-card" onclick="openProgressBoard()">
-                <strong>Progress Board</strong>
-                <span>See each organizer's completion percentage and most recent saved activity.</span>
-              </button>
-              <button class="nav-card" onclick="openCommandCenter()">
-                <strong>Command Center</strong>
-                <span>Review open seats, deadline risk, team readiness, and the next operational checks.</span>
-              </button>
-              <button class="nav-card" onclick="openIntegrations()">
-                <strong>MyMIST Integration Center</strong>
-                <span>Stage exports for participants, schools, judges, badges, competitions, and rosters.</span>
-              </button>
-              <button class="nav-card" onclick="openTournamentManager()">
-                <strong>Weekend Tournament Manager</strong>
-                <span>Plan rooms, competition blocks, student placement, and NFC room check-ins.</span>
-              </button>
-              <button class="nav-card" onclick="openDirectory()">
-                <strong>Directory</strong>
-                <span>View the full organizer directory with names, roles, teams, and emails.</span>
-              </button>
-              <button class="nav-card" onclick="openTeamPages()">
-                <strong>Team Pages</strong>
-                <span>Open focused pages for each team with roles, tasks, start phases, and claim status.</span>
-              </button>
-              <button class="nav-card" onclick="openTimeline()">
-                <strong>Timeline</strong>
-                <span>Track the season phases, deadlines, and major planning milestones.</span>
-              </button>
-              <button class="nav-card" onclick="openCalendar()">
-                <strong>Calendar</strong>
-                <span>See deadline cards by phase. Email reminders can plug into these dates later.</span>
-              </button>
-              <button class="nav-card" onclick="openApplicationStatus()">
-                <strong>Application Status</strong>
-                <span>Check whether an application is pending, approved, or declined by email.</span>
-              </button>
-              ${profile?.is_admin ? `<button class="nav-card" onclick="openApplications()">
-                <strong>Applications</strong>
-                <span>Review open-role applications and mark them pending, approved, or declined.</span>
-              </button>` : ""}
-            </div>
+            ${renderDashboardNav(signedIn, hasProfile, profile)}
           </div>
 
           ${renderPlanningConsole(user, profile, rows, progressRows, deadlines)}
+          ${renderSystemsRoadmap()}
           ${renderAnnouncements(profile)}
           ${renderMyNextActions(user, profile, rows, progressRows, deadlines)}
+        </div>
+      `;
+    }
+
+    function renderDashboardNav(signedIn, hasProfile, profile) {
+      const sections = [
+        {
+          label: "Do The Work",
+          hint: "Daily planning tools",
+          color: "#247a52",
+          cards: [
+            signedIn && hasProfile
+              ? { title: "My Workbook", body: "Role checklist, notes, phase plans, and autosave progress.", action: "openWorkbook()" }
+              : { title: "Claim a Role", body: "Log in or create an account, then choose an open organizer role.", action: "openLogin()" },
+            { title: "Team Pages", body: "Focused team hubs with roles, tasks, start phases, and claim status.", action: "openTeamPages()" },
+            { title: "Progress Board", body: "Shared completion percentages and recent saved activity.", action: "openProgressBoard()" }
+          ]
+        },
+        {
+          label: "Coordinate",
+          hint: "Leadership visibility",
+          color: "#c9972b",
+          cards: [
+            { title: "Command Center", body: "Open seats, deadline risk, team readiness, and operational checks.", action: "openCommandCenter()" },
+            { title: "Timeline", body: "Foundations, Build, Stabilization, and Execution at a glance.", action: "openTimeline()" },
+            { title: "Calendar", body: "Deadline cards, calendar export, and reminder preferences.", action: "openCalendar()" }
+          ]
+        },
+        {
+          label: "Operate",
+          hint: "Event systems",
+          color: "#7b61ff",
+          cards: [
+            { title: "MyMIST Integration Center", body: "Stage exports for participants, schools, badges, and rosters.", action: "openIntegrations()" },
+            { title: "Weekend Tournament Manager", body: "Rooms, competition blocks, student placement, and NFC check-ins.", action: "openTournamentManager()" },
+            { title: "Directory", body: "Names, roles, teams, emails, and unclaimed role seats.", action: "openDirectory()" }
+          ]
+        },
+        {
+          label: "Applications",
+          hint: "Recruit and assign",
+          color: "#b13f4a",
+          cards: [
+            { title: "Application Status", body: "Check whether an application is pending, approved, or declined.", action: "openApplicationStatus()" },
+            ...(profile?.is_admin ? [{ title: "Review Applications", body: "Approve, decline, and email role applicants.", action: "openApplications()" }] : [])
+          ]
+        }
+      ];
+
+      return sections.map(section => `
+        <div class="nav-section" style="--section-color:${section.color}">
+          <div class="nav-section-head">
+            <strong>${escapeHtml(section.label)}</strong>
+            <span>${escapeHtml(section.hint)}</span>
+          </div>
+          <div class="nav-grid">
+            ${section.cards.map(card => `
+              <button class="nav-card" onclick="${card.action}">
+                <strong>${escapeHtml(card.title)}</strong>
+                <span>${escapeHtml(card.body)}</span>
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderSystemsRoadmap() {
+      return `
+        <div class="panel">
+          <div class="phase-header">
+            <div>
+              <h2>Systems Roadmap</h2>
+              <p>What is live now, what is being staged, and what plugs into the weekend tournament workflow next.</p>
+            </div>
+            <span class="phase-chip">Portal build plan</span>
+          </div>
+          <div class="roadmap-grid">
+            ${INTEGRATION_ROADMAP.map(item => `
+              <div class="roadmap-card" style="--roadmap-color:${item.color}">
+                <div class="roadmap-status">${escapeHtml(item.status)}</div>
+                <h3>${escapeHtml(item.title)}</h3>
+                <p>${escapeHtml(item.body)}</p>
+                <div class="inline-actions">
+                  <button class="ghost" onclick="${item.action}">${escapeHtml(item.cta)}</button>
+                </div>
+              </div>
+            `).join("")}
+          </div>
         </div>
       `;
     }
