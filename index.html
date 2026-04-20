@@ -898,6 +898,14 @@
       activePhase: "foundations",
       applicationRoleId: null,
       currentDeadlines: [],
+      tournament: {
+        rooms: [],
+        availability: [],
+        blocks: [],
+        students: [],
+        assignments: [],
+        scans: []
+      },
       statusResults: null,
       selectedTeam: null,
       announcements: DEFAULT_ANNOUNCEMENTS,
@@ -1159,6 +1167,32 @@
       }
 
       return data;
+    }
+
+    async function getTournamentData(includePrivate = false) {
+      const rooms = await selectTournamentRows("tournament_rooms", "id,room_name,building,floor_label,capacity,room_type,privacy_notes,av_notes,setup_notes,room_captain_role,is_active,updated_at", "room_name");
+      const availability = await selectTournamentRows("room_availability", "id,room_id,available_date,starts_at,ends_at,notes", "available_date");
+      const blocks = await selectTournamentRows("competition_blocks", "id,competition_name,round_label,division,room_id,block_date,starts_at,ends_at,capacity,judge_count,materials,status", "block_date");
+      const students = includePrivate ? await selectTournamentRows("student_registrations", "id,external_student_id,full_name,email,school,grade_level,gender_label,nfc_uid,registration_data,updated_at", "full_name") : [];
+      const entries = includePrivate ? await selectTournamentRows("student_competition_entries", "id,student_id,competition_name,division,registration_status", "competition_name") : [];
+      const assignments = includePrivate ? await selectTournamentRows("room_assignments", "id,student_id,competition_block_id,assignment_status,checked_in_at,notes,updated_at", "updated_at", false) : [];
+      const scans = includePrivate ? await selectTournamentRows("nfc_scan_logs", "id,nfc_uid,student_id,room_id,competition_block_id,scan_type,scan_result,notes,scanned_at", "scanned_at", false, 25) : [];
+
+      return { rooms, availability, blocks, students, entries, assignments, scans };
+    }
+
+    async function selectTournamentRows(table, columns, orderColumn, ascending = true, limit = null) {
+      let query = supabaseClient.from(table).select(columns);
+      if (orderColumn) query = query.order(orderColumn, { ascending });
+      if (limit) query = query.limit(limit);
+
+      const { data, error } = await query;
+      if (error) {
+        console.warn(`${table} unavailable:`, error.message || error);
+        return [];
+      }
+
+      return data || [];
     }
 
     async function signUp() {
@@ -1455,6 +1489,198 @@
         return alert(error.message);
       }
 
+      renderApp();
+    }
+
+    async function saveTournamentRoom(event) {
+      event.preventDefault();
+      const profile = await getProfile((await getUser()).id);
+      if (!profile?.is_admin) return alert("Only admins can manage rooms.");
+
+      const roomName = document.getElementById("tm-room-name").value.trim();
+      const id = document.getElementById("tm-room-id").value.trim() || slugify(roomName || `room-${Date.now()}`);
+      if (!roomName) return alert("Enter a room name.");
+
+      const { error } = await supabaseClient.from("tournament_rooms").upsert({
+        id,
+        room_name: roomName,
+        building: document.getElementById("tm-room-building").value.trim(),
+        floor_label: document.getElementById("tm-room-floor").value.trim(),
+        capacity: Number(document.getElementById("tm-room-capacity").value || 0),
+        room_type: document.getElementById("tm-room-type").value.trim() || "Competition Room",
+        privacy_notes: document.getElementById("tm-room-privacy").value.trim(),
+        av_notes: document.getElementById("tm-room-av").value.trim(),
+        setup_notes: document.getElementById("tm-room-setup").value.trim(),
+        room_captain_role: document.getElementById("tm-room-captain").value.trim(),
+        is_active: true,
+        updated_at: new Date().toISOString()
+      }, { onConflict: "id" });
+
+      if (error) return alert(error.message);
+      alert("Room saved.");
+      renderApp();
+    }
+
+    async function saveRoomAvailability(event) {
+      event.preventDefault();
+      const profile = await getProfile((await getUser()).id);
+      if (!profile?.is_admin) return alert("Only admins can manage room availability.");
+
+      const roomId = document.getElementById("tm-availability-room").value;
+      const availableDate = document.getElementById("tm-availability-date").value;
+      const startsAt = document.getElementById("tm-availability-start").value;
+      const endsAt = document.getElementById("tm-availability-end").value;
+      if (!roomId || !availableDate || !startsAt || !endsAt) return alert("Choose room, date, start, and end.");
+
+      const { error } = await supabaseClient.from("room_availability").insert({
+        room_id: roomId,
+        available_date: availableDate,
+        starts_at: startsAt,
+        ends_at: endsAt,
+        notes: document.getElementById("tm-availability-notes").value.trim()
+      });
+
+      if (error) return alert(error.message);
+      alert("Room availability saved.");
+      renderApp();
+    }
+
+    async function saveCompetitionBlock(event) {
+      event.preventDefault();
+      const profile = await getProfile((await getUser()).id);
+      if (!profile?.is_admin) return alert("Only admins can manage competition blocks.");
+
+      const competitionName = document.getElementById("tm-block-name").value.trim();
+      const blockDate = document.getElementById("tm-block-date").value;
+      const startsAt = document.getElementById("tm-block-start").value;
+      const endsAt = document.getElementById("tm-block-end").value;
+      if (!competitionName || !blockDate || !startsAt || !endsAt) return alert("Enter competition, date, start, and end.");
+
+      const { error } = await supabaseClient.from("competition_blocks").insert({
+        competition_name: competitionName,
+        round_label: document.getElementById("tm-block-round").value.trim() || "Round 1",
+        division: document.getElementById("tm-block-division").value.trim(),
+        room_id: document.getElementById("tm-block-room").value || null,
+        block_date: blockDate,
+        starts_at: startsAt,
+        ends_at: endsAt,
+        capacity: Number(document.getElementById("tm-block-capacity").value || 0),
+        judge_count: Number(document.getElementById("tm-block-judges").value || 0),
+        materials: document.getElementById("tm-block-materials").value.trim(),
+        status: document.getElementById("tm-block-status").value
+      });
+
+      if (error) return alert(error.message);
+      alert("Competition block saved.");
+      renderApp();
+    }
+
+    async function importStudentRegistration(event) {
+      event.preventDefault();
+      const profile = await getProfile((await getUser()).id);
+      if (!profile?.is_admin) return alert("Only admins can import student registrations.");
+
+      const fullName = document.getElementById("tm-student-name").value.trim();
+      if (!fullName) return alert("Enter student name.");
+
+      const competitions = document.getElementById("tm-student-competitions").value
+        .split(",")
+        .map(item => item.trim())
+        .filter(Boolean);
+
+      const payload = {
+        external_student_id: document.getElementById("tm-student-external-id").value.trim() || null,
+        full_name: fullName,
+        email: document.getElementById("tm-student-email").value.trim(),
+        school: document.getElementById("tm-student-school").value.trim(),
+        grade_level: document.getElementById("tm-student-grade").value.trim(),
+        gender_label: document.getElementById("tm-student-gender").value.trim(),
+        nfc_uid: document.getElementById("tm-student-nfc").value.trim() || null,
+        registration_data: { competitions },
+        updated_at: new Date().toISOString()
+      };
+
+      const write = payload.external_student_id
+        ? supabaseClient.from("student_registrations").upsert(payload, { onConflict: "external_student_id" })
+        : supabaseClient.from("student_registrations").insert(payload);
+
+      const { data, error } = await write.select("id").maybeSingle();
+      if (error) return alert(error.message);
+
+      if (data?.id && competitions.length) {
+        const entries = competitions.map(name => ({
+          student_id: data.id,
+          competition_name: name,
+          registration_status: "registered"
+        }));
+        const { error: entryError } = await supabaseClient.from("student_competition_entries").upsert(entries);
+        if (entryError) return alert(entryError.message);
+      }
+
+      alert("Student registration saved.");
+      renderApp();
+    }
+
+    async function saveRoomAssignment(event) {
+      event.preventDefault();
+      const profile = await getProfile((await getUser()).id);
+      if (!profile?.is_admin) return alert("Only admins can create room assignments.");
+
+      const studentId = document.getElementById("tm-assignment-student").value;
+      const blockId = document.getElementById("tm-assignment-block").value;
+      if (!studentId || !blockId) return alert("Choose a student and competition block.");
+
+      const { error } = await supabaseClient.from("room_assignments").upsert({
+        student_id: studentId,
+        competition_block_id: blockId,
+        assignment_status: document.getElementById("tm-assignment-status").value,
+        notes: document.getElementById("tm-assignment-notes").value.trim(),
+        updated_at: new Date().toISOString()
+      });
+
+      if (error) return alert(error.message);
+      alert("Room assignment saved.");
+      renderApp();
+    }
+
+    async function logNfcScan(event) {
+      event.preventDefault();
+      const user = await getUser();
+      if (!user) return alert("Log in before scanning.");
+
+      const nfcUid = document.getElementById("tm-scan-nfc").value.trim();
+      if (!nfcUid) return alert("Enter or scan an NFC UID.");
+
+      const studentId = document.getElementById("tm-scan-student")?.value || null;
+      const blockId = document.getElementById("tm-scan-block").value || null;
+      const roomId = document.getElementById("tm-scan-room").value || null;
+
+      const { error } = await supabaseClient.from("nfc_scan_logs").insert({
+        nfc_uid: nfcUid,
+        student_id: studentId,
+        room_id: roomId,
+        competition_block_id: blockId,
+        scan_type: document.getElementById("tm-scan-type").value,
+        scan_result: studentId || !document.getElementById("tm-scan-student") ? "accepted" : "manual_review",
+        scanned_by: user.id,
+        notes: document.getElementById("tm-scan-notes").value.trim()
+      });
+
+      if (error) return alert(error.message);
+
+      if (studentId && blockId) {
+        await supabaseClient
+          .from("room_assignments")
+          .update({
+            assignment_status: "checked_in",
+            checked_in_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .eq("student_id", studentId)
+          .eq("competition_block_id", blockId);
+      }
+
+      alert("NFC scan logged.");
       renderApp();
     }
 
@@ -2801,9 +3027,17 @@
       });
     }
 
-    function renderTournamentManager(rows = [], deadlines = CALENDAR_DEADLINES) {
+    function renderTournamentManager(rows = [], deadlines = CALENDAR_DEADLINES, tournamentData = APP_STATE.tournament, user = null, profile = null) {
       const opsRows = rows.filter(row => String(row.team || "").toLowerCase().includes("operations"));
       const compsRows = rows.filter(row => String(row.team || "").toLowerCase().includes("competition"));
+      const isAdmin = !!profile?.is_admin;
+      const canScan = !!profile?.role_id;
+      const rooms = tournamentData.rooms || [];
+      const availability = tournamentData.availability || [];
+      const blocks = tournamentData.blocks || [];
+      const students = tournamentData.students || [];
+      const assignments = tournamentData.assignments || [];
+      const scans = tournamentData.scans || [];
       const tournamentDeadlines = upcomingDeadlines(deadlines, 4).filter(item => {
         const text = `${item.title || ""} ${item.detail || ""} ${item.owner_label || ""}`.toLowerCase();
         return text.includes("room") || text.includes("competition") || text.includes("schedule") || text.includes("event") || text.includes("all teams");
@@ -2814,7 +3048,7 @@
           <div class="topbar">
             <div>
               <h1>Weekend Tournament Manager</h1>
-              <p>The future event-week command layer for rooms, competitions, registered students, and NFC check-ins.</p>
+              <p>Event-week command layer for rooms, competitions, registered students, and NFC check-ins.</p>
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
@@ -2823,7 +3057,7 @@
             <div class="phase-header">
               <div>
                 <h2>Operations Blueprint</h2>
-                <p>This page is the planning scaffold. The next build can turn each module into live tables once room and registration data are ready.</p>
+                <p>Build the live tournament map in order: rooms first, then time blocks, then student rosters, then room-level check-in.</p>
               </div>
               <span class="phase-chip">Weekend of Tournament</span>
             </div>
@@ -2839,6 +3073,51 @@
               `).join("")}
             </div>
           </div>
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Live Tournament Data</h2>
+                <p>${rooms.length || blocks.length ? "Connected to tournament tables." : "Run supabase-tournament-only.sql to activate the live database tables."}</p>
+              </div>
+              <span class="phase-chip">${rooms.length} rooms • ${blocks.length} blocks • ${students.length} students</span>
+            </div>
+            <div class="grid">
+              <div class="stat">
+                <div class="stat-title">Rooms</div>
+                <div class="stat-value">${rooms.length}</div>
+                <p>${availability.length} availability window${availability.length === 1 ? "" : "s"} logged.</p>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Competition Blocks</div>
+                <div class="stat-value">${blocks.length}</div>
+                <p>${blocks.filter(block => block.status === "locked").length} locked for event use.</p>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Student Records</div>
+                <div class="stat-value">${students.length}</div>
+                <p>${assignments.length} room assignment${assignments.length === 1 ? "" : "s"} created.</p>
+              </div>
+              <div class="stat">
+                <div class="stat-title">NFC Scans</div>
+                <div class="stat-value">${scans.length}</div>
+                <p>Recent scan logs visible to admins.</p>
+              </div>
+            </div>
+          </div>
+
+          ${isAdmin ? renderTournamentAdminForms(rooms, blocks, students) : ""}
+          ${canScan ? renderNfcCheckInPanel(rooms, blocks, students, scans, isAdmin) : `
+            <div class="panel">
+              <h2>NFC Check-In</h2>
+              <p>Log in and claim a role before using scanner tools.</p>
+              <div class="inline-actions">
+                <button class="primary" onclick="openLogin()">Log In / Sign Up</button>
+              </div>
+            </div>
+          `}
+
+          ${renderTournamentLiveTables(rooms, availability, blocks, students, assignments, scans, isAdmin)}
 
           <div class="console-grid">
             <div class="panel">
@@ -2938,6 +3217,275 @@
               ${tournamentDeadlines.length ? tournamentDeadlines.map(item => renderDeadlineCard(item)).join("") : `<p>No tournament-specific deadlines found yet. Add room and competition milestones in Calendar.</p>`}
             </div>
           </div>
+        </div>
+      `;
+    }
+
+    function renderTournamentAdminForms(rooms, blocks, students) {
+      return `
+        <div class="panel">
+          <div class="phase-header">
+            <div>
+              <h2>Tournament Admin Tools</h2>
+              <p>Add the core tournament data directly from the portal.</p>
+            </div>
+            <span class="phase-chip">Admin</span>
+          </div>
+
+          <div class="grid">
+            <form class="stat" onsubmit="saveTournamentRoom(event)">
+              <h3>Room Inventory</h3>
+              <div class="stack">
+                <input id="tm-room-id" placeholder="Room ID optional" />
+                <input id="tm-room-name" placeholder="Room name" />
+                <input id="tm-room-building" placeholder="Building / venue" />
+                <input id="tm-room-floor" placeholder="Floor / area" />
+                <input id="tm-room-capacity" type="number" min="0" placeholder="Capacity" />
+                <input id="tm-room-type" placeholder="Room type" />
+                <input id="tm-room-captain" placeholder="Room captain role" />
+                <textarea id="tm-room-privacy" placeholder="Privacy notes"></textarea>
+                <textarea id="tm-room-av" placeholder="AV notes"></textarea>
+                <textarea id="tm-room-setup" placeholder="Setup notes"></textarea>
+                <button class="primary" type="submit">Save Room</button>
+              </div>
+            </form>
+
+            <form class="stat" onsubmit="saveRoomAvailability(event)">
+              <h3>Availability Window</h3>
+              <div class="stack">
+                <select id="tm-availability-room">
+                  <option value="">Choose room</option>
+                  ${rooms.map(room => `<option value="${escapeHtml(room.id)}">${escapeHtml(room.room_name)}</option>`).join("")}
+                </select>
+                <input id="tm-availability-date" type="date" />
+                <input id="tm-availability-start" type="time" />
+                <input id="tm-availability-end" type="time" />
+                <textarea id="tm-availability-notes" placeholder="Availability notes"></textarea>
+                <button class="primary" type="submit">Save Availability</button>
+              </div>
+            </form>
+
+            <form class="stat" onsubmit="saveCompetitionBlock(event)">
+              <h3>Competition Block</h3>
+              <div class="stack">
+                <input id="tm-block-name" placeholder="Competition name" />
+                <input id="tm-block-round" placeholder="Round label" />
+                <input id="tm-block-division" placeholder="Division optional" />
+                <select id="tm-block-room">
+                  <option value="">No room yet</option>
+                  ${rooms.map(room => `<option value="${escapeHtml(room.id)}">${escapeHtml(room.room_name)}</option>`).join("")}
+                </select>
+                <input id="tm-block-date" type="date" />
+                <input id="tm-block-start" type="time" />
+                <input id="tm-block-end" type="time" />
+                <input id="tm-block-capacity" type="number" min="0" placeholder="Participant capacity" />
+                <input id="tm-block-judges" type="number" min="0" placeholder="Judge count" />
+                <select id="tm-block-status">
+                  <option value="draft">Draft</option>
+                  <option value="scheduled">Scheduled</option>
+                  <option value="locked">Locked</option>
+                  <option value="complete">Complete</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <textarea id="tm-block-materials" placeholder="Materials / setup needs"></textarea>
+                <button class="primary" type="submit">Save Block</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="grid">
+            <form class="stat" onsubmit="importStudentRegistration(event)">
+              <h3>Student Import</h3>
+              <div class="stack">
+                <input id="tm-student-external-id" placeholder="External student ID optional" />
+                <input id="tm-student-name" placeholder="Student full name" />
+                <input id="tm-student-email" type="email" placeholder="Student email" />
+                <input id="tm-student-school" placeholder="School" />
+                <input id="tm-student-grade" placeholder="Grade level" />
+                <input id="tm-student-gender" placeholder="Gender label" />
+                <input id="tm-student-nfc" placeholder="NFC UID optional" />
+                <textarea id="tm-student-competitions" placeholder="Competitions, separated by commas"></textarea>
+                <button class="primary" type="submit">Save Student</button>
+              </div>
+            </form>
+
+            <form class="stat" onsubmit="saveRoomAssignment(event)">
+              <h3>Room Assignment</h3>
+              <div class="stack">
+                <select id="tm-assignment-student">
+                  <option value="">Choose student</option>
+                  ${students.map(student => `<option value="${escapeHtml(student.id)}">${escapeHtml(student.full_name)}${student.school ? ` - ${escapeHtml(student.school)}` : ""}</option>`).join("")}
+                </select>
+                <select id="tm-assignment-block">
+                  <option value="">Choose competition block</option>
+                  ${blocks.map(block => `<option value="${escapeHtml(block.id)}">${escapeHtml(block.competition_name)} - ${escapeHtml(formatBlockTime(block))}</option>`).join("")}
+                </select>
+                <select id="tm-assignment-status">
+                  <option value="assigned">Assigned</option>
+                  <option value="checked_in">Checked In</option>
+                  <option value="missed">Missed</option>
+                  <option value="excused">Excused</option>
+                  <option value="removed">Removed</option>
+                </select>
+                <textarea id="tm-assignment-notes" placeholder="Assignment notes"></textarea>
+                <button class="primary" type="submit">Save Assignment</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderNfcCheckInPanel(rooms, blocks, students, scans, isAdmin) {
+      return `
+        <div class="panel">
+          <div class="phase-header">
+            <div>
+              <h2>NFC Check-In</h2>
+              <p>Scan or type a tag UID, choose room/block context, and log entry.</p>
+            </div>
+            <span class="phase-chip">Live Operations</span>
+          </div>
+
+          <form class="admin-form" onsubmit="logNfcScan(event)">
+            <input id="tm-scan-nfc" placeholder="NFC UID / tag value" autofocus />
+            <select id="tm-scan-room">
+              <option value="">Room optional</option>
+              ${rooms.map(room => `<option value="${escapeHtml(room.id)}">${escapeHtml(room.room_name)}</option>`).join("")}
+            </select>
+            <select id="tm-scan-block">
+              <option value="">Competition block optional</option>
+              ${blocks.map(block => `<option value="${escapeHtml(block.id)}">${escapeHtml(block.competition_name)} - ${escapeHtml(formatBlockTime(block))}</option>`).join("")}
+            </select>
+            ${isAdmin ? `
+              <select id="tm-scan-student">
+                <option value="">Student optional</option>
+                ${students.map(student => `<option value="${escapeHtml(student.id)}">${escapeHtml(student.full_name)}${student.nfc_uid ? ` - ${escapeHtml(student.nfc_uid)}` : ""}</option>`).join("")}
+              </select>
+            ` : ""}
+            <select id="tm-scan-type">
+              <option value="event_checkin">Event Check-In</option>
+              <option value="room_entry" selected>Room Entry</option>
+              <option value="room_exit">Room Exit</option>
+              <option value="manual_override">Manual Override</option>
+            </select>
+            <input id="tm-scan-notes" placeholder="Scan notes optional" />
+            <button class="primary" type="submit">Log Scan</button>
+          </form>
+
+          ${isAdmin ? `
+            <div class="list-table-wrap">
+              <table class="list-table">
+                <thead>
+                  <tr>
+                    <th>Tag</th>
+                    <th>Type</th>
+                    <th>Result</th>
+                    <th>Scanned</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${scans.map(scan => `
+                    <tr>
+                      <td>${escapeHtml(scan.nfc_uid)}</td>
+                      <td>${escapeHtml(scan.scan_type)}</td>
+                      <td>${escapeHtml(scan.scan_result)}</td>
+                      <td>${escapeHtml(formatDate(scan.scanned_at))}</td>
+                    </tr>
+                  `).join("") || `<tr><td colspan="4">No scans logged yet.</td></tr>`}
+                </tbody>
+              </table>
+            </div>
+          ` : ""}
+        </div>
+      `;
+    }
+
+    function renderTournamentLiveTables(rooms, availability, blocks, students, assignments, scans, isAdmin) {
+      return `
+        <div class="panel">
+          <div class="phase-header">
+            <div>
+              <h2>Live Rooms & Blocks</h2>
+              <p>Public-safe event structure. Student rosters only show for admins.</p>
+            </div>
+          </div>
+
+          <div class="room-grid">
+            ${rooms.map(room => {
+              const roomWindows = availability.filter(item => item.room_id === room.id);
+              const roomBlocks = blocks.filter(item => item.room_id === room.id);
+              return `
+                <div class="room-card" style="--ops-color:#1f8a9b">
+                  <div class="stat-title">${escapeHtml(room.room_type || "Room")}</div>
+                  <h3>${escapeHtml(room.room_name)}</h3>
+                  <p>${escapeHtml(room.building || "Venue TBD")} ${room.floor_label ? `• ${escapeHtml(room.floor_label)}` : ""}</p>
+                  <div class="role-meta-row">
+                    <span class="phase-chip">Capacity ${Number(room.capacity || 0)}</span>
+                    <span class="phase-chip">${roomWindows.length} windows</span>
+                    <span class="phase-chip">${roomBlocks.length} blocks</span>
+                  </div>
+                  <p>${escapeHtml(room.setup_notes || room.av_notes || room.privacy_notes || "No setup notes yet.")}</p>
+                </div>
+              `;
+            }).join("") || `<p>No rooms added yet.</p>`}
+          </div>
+
+          <div class="list-table-wrap">
+            <table class="list-table">
+              <thead>
+                <tr>
+                  <th>Competition</th>
+                  <th>Room</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                  <th>Capacity</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${blocks.map(block => {
+                  const room = rooms.find(item => item.id === block.room_id);
+                  return `
+                    <tr>
+                      <td>${escapeHtml(block.competition_name)}<br><span class="muted">${escapeHtml(block.round_label || "")} ${block.division ? `• ${escapeHtml(block.division)}` : ""}</span></td>
+                      <td>${escapeHtml(room?.room_name || "Unassigned")}</td>
+                      <td>${escapeHtml(formatBlockTime(block))}</td>
+                      <td>${escapeHtml(block.status)}</td>
+                      <td>${Number(block.capacity || 0)}</td>
+                    </tr>
+                  `;
+                }).join("") || `<tr><td colspan="5">No competition blocks added yet.</td></tr>`}
+              </tbody>
+            </table>
+          </div>
+
+          ${isAdmin ? `
+            <div class="list-table-wrap">
+              <table class="list-table">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>School</th>
+                    <th>NFC</th>
+                    <th>Assignments</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${students.map(student => {
+                    const count = assignments.filter(item => item.student_id === student.id).length;
+                    return `
+                      <tr>
+                        <td>${escapeHtml(student.full_name)}</td>
+                        <td>${escapeHtml(student.school || "-")}</td>
+                        <td>${escapeHtml(student.nfc_uid || "-")}</td>
+                        <td>${count}</td>
+                      </tr>
+                    `;
+                  }).join("") || `<tr><td colspan="4">No students imported yet.</td></tr>`}
+                </tbody>
+              </table>
+            </div>
+          ` : ""}
         </div>
       `;
     }
@@ -3801,6 +4349,14 @@
       return date.toLocaleDateString([], { month: "short", day: "numeric" });
     }
 
+    function formatBlockTime(block) {
+      if (!block) return "";
+      const date = block.block_date ? formatDeadlineDate(block.block_date) : "No date";
+      const start = String(block.starts_at || "").slice(0, 5);
+      const end = String(block.ends_at || "").slice(0, 5);
+      return `${date} ${start}${end ? `-${end}` : ""}`.trim();
+    }
+
     function escapeHtml(value) {
       return String(value)
         .replace(/&/g, "&amp;")
@@ -3850,7 +4406,9 @@
 
         if (APP_STATE.view === "tournament") {
           const deadlines = await getDeadlines();
-          app.innerHTML = renderTournamentManager(rows, deadlines);
+          const tournamentData = await getTournamentData(false);
+          APP_STATE.tournament = tournamentData;
+          app.innerHTML = renderTournamentManager(rows, deadlines, tournamentData, null, null);
           return;
         }
 
@@ -3923,7 +4481,9 @@
 
       if (APP_STATE.view === "tournament") {
         const deadlines = await getDeadlines();
-        app.innerHTML = renderTournamentManager(rows, deadlines);
+        const tournamentData = await getTournamentData(!!profile?.is_admin);
+        APP_STATE.tournament = tournamentData;
+        app.innerHTML = renderTournamentManager(rows, deadlines, tournamentData, user, profile);
         return;
       }
 
