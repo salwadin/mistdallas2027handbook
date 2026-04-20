@@ -1287,6 +1287,66 @@
       { id: "values", label: "Islamic Environment", owner: "Programs + Leadership", action: "Clarify expectations around salah, gender flow, modesty, noise, and event atmosphere.", words: ["music", "free mixing", "gender", "boys", "girls", "salah", "islamic", "modesty"] },
       { id: "awards", label: "Awards Ceremony", owner: "Awards + DT", action: "Run slide QA, recipient verification, room plan, and stage flow rehearsal before ceremony.", words: ["award", "awards", "ceremony", "slides", "trophy", "projector"] }
     ];
+    const DEFAULT_FEEDBACK_ANALYTICS = {
+      sourceLabel: "Dallas feedback TSV, 2023-2026",
+      responseCount: 1028,
+      avgOverall: 3.8812,
+      avgRecommend: 4.2794,
+      avgCommunication: 3.5391,
+      lowScoreCount: 77,
+      roleCounts: { Organizer: 5, Judge: 7, Competitor: 887, Coach: 90, Volunteer: 18, Guest: 20, Speaker: 1 },
+      yearStats: {
+        "2023": { count: 70, averageOverall: 3.6 },
+        "2024": { count: 244, averageOverall: 3.9671 },
+        "2025": { count: 160, averageOverall: 3.7628 },
+        "2026": { count: 554, averageOverall: 3.9131 }
+      },
+      yearRange: "2023-2026",
+      categoryAverages: [
+        { key: "session_communication", label: "Session Communication", average: 1, count: 1 },
+        { key: "session_support", label: "Session Support", average: 1, count: 1 },
+        { key: "session_venue", label: "Session Venue", average: 1, count: 1 },
+        { key: "competitor_engagement", label: "Competitor Engagement", average: 1, count: 1 },
+        { key: "return_likelihood", label: "Return Likelihood", average: 3, count: 1 },
+        { key: "sports", label: "Sports", average: 3.2186, count: 700 },
+        { key: "food", label: "Food", average: 3.3353, count: 1011 },
+        { key: "discover", label: "Discover", average: 3.384, count: 1013 },
+        { key: "activities", label: "Activities / Workshop", average: 3.4287, count: 870 },
+        { key: "comm_during", label: "Communication During", average: 3.5376, count: 1010 },
+        { key: "comm_before", label: "Communication Before", average: 3.5406, count: 1010 },
+        { key: "competitor_rulebook", label: "Rulebook Accuracy [C]", average: 3.6178, count: 471 },
+        { key: "religion", label: "Religion", average: 3.7009, count: 1013 },
+        { key: "value", label: "Value", average: 3.7096, count: 551 },
+        { key: "judges", label: "Judges", average: 3.7245, count: 933 },
+        { key: "awards", label: "Award Ceremony", average: 3.8514, count: 848 },
+        { key: "overall", label: "Overall", average: 3.8812, count: 1010 },
+        { key: "improve", label: "Improve", average: 3.9023, count: 1013 },
+        { key: "competitor_rating", label: "Competitor Rating", average: 3.9274, count: 882 },
+        { key: "judge_rating", label: "Judge Rating", average: 4, count: 7 },
+        { key: "expected_rating", label: "Expected Rating", average: 4, count: 5 },
+        { key: "organizers", label: "Organizers", average: 4.0393, count: 941 },
+        { key: "venue", label: "Venue", average: 4.1602, count: 1011 },
+        { key: "volunteers", label: "Volunteers", average: 4.1909, count: 906 },
+        { key: "community", label: "Community", average: 4.1955, count: 1013 },
+        { key: "recommend", label: "Recommend", average: 4.2794, count: 1013 },
+        { key: "judge_rulebook", label: "Rulebook Accuracy [J]", average: 5, count: 2 },
+        { key: "ballot_clarity", label: "Ballot Clarity", average: 5, count: 2 }
+      ],
+      themeCounts: [
+        { id: "schedule", label: "Schedule & Delays", owner: "Operations + Competitions", action: "Build competition buffers, publish room/time changes live, and protect prayer and meal windows.", count: 426 },
+        { id: "mymist", label: "MyMIST / App", owner: "Registration + Tech", action: "Keep printed roster fallbacks, test Android/iPhone flows, and mirror essential app data in the portal.", count: 283 },
+        { id: "food", label: "Food & Water", owner: "Logistics + Hospitality", action: "Track vendor capacity, water points, closing times, and backup meals before event weekend.", count: 234 },
+        { id: "communication", label: "Communication", owner: "PR + Command Center", action: "Single source of truth for updates, earlier schedule releases, and clearer day-of change notices.", count: 212 },
+        { id: "judging", label: "Judging Quality", owner: "Competitions + Judge Training", action: "Require judge orientation, conflict checks, rubric calibration, and post-round ballot review.", count: 178 },
+        { id: "sports", label: "Sports", owner: "Sports Directors + Safety", action: "Finalize venues, bracket rules, emergency protocol, and referee expectations earlier.", count: 159 },
+        { id: "workshops", label: "Workshops & Activities", owner: "Programs + Spirit", action: "Use interactive formats, better room sizing, and downtime activities that connect schools.", count: 156 },
+        { id: "rooms", label: "Rooms & Directions", owner: "Operations", action: "Publish maps, room captains, signs, and room-change protocols before students arrive.", count: 146 },
+        { id: "values", label: "Islamic Environment", owner: "Programs + Leadership", action: "Clarify expectations around salah, gender flow, modesty, noise, and event atmosphere.", count: 78 },
+        { id: "rulebook", label: "Rulebook Alignment", owner: "Competitions", action: "Freeze rule interpretations early and give every room a one-page rulebook checklist.", count: 72 },
+        { id: "awards", label: "Awards Ceremony", owner: "Awards + DT", action: "Run slide QA, recipient verification, room plan, and stage flow rehearsal before ceremony.", count: 64 },
+        { id: "safety", label: "Safety & Emergency", owner: "Safety + Command Center", action: "Write emergency roles, communication trees, and site-specific escalation procedures.", count: 20 }
+      ]
+    };
     const APPLICATION_QUESTIONS = [
       { id: "understand_not_guarantee", section: "Commitments", type: "radio", label: "I understand that this is an application and not a guarantee.", options: ["Yes"], required: true },
       { id: "volunteering_time", section: "Commitments", type: "radio", label: "I understand that I am volunteering my time and efforts.", options: ["Yes"], required: true },
@@ -5162,8 +5222,7 @@
       const customFeedback = getLocalRecords("mist_feedback_addressal");
       const allItems = [...customFeedback, ...FEEDBACK_THEMES];
       const filter = APP_STATE.feedbackFilter || "all";
-      const feedbackRecords = APP_STATE.feedbackDataset || [];
-      const analytics = buildFeedbackAnalytics(feedbackRecords);
+      const analytics = DEFAULT_FEEDBACK_ANALYTICS;
       const visibleItems = filter === "all"
         ? allItems
         : allItems.filter(item => String(item.phase || "").toLowerCase() === filter || String(item.status || "").toLowerCase() === filter);
@@ -5184,9 +5243,9 @@
             <div class="phase-header">
               <div>
                 <h2>Feedback Intelligence</h2>
-                <p>Paste a Google Sheets export to turn survey rows into averages, lowest-rated areas, trends, themes, and owners.</p>
+                <p>Numbers from the Dallas feedback data since 2023, turned into averages, lowest-rated areas, trends, themes, and owners.</p>
               </div>
-              <span class="phase-chip">${analytics.responseCount || allItems.length} feedback record${analytics.responseCount === 1 ? "" : "s"}</span>
+              <span class="phase-chip">${escapeHtml(analytics.sourceLabel)}</span>
             </div>
             <div class="metric-row">
               <div class="stat">
@@ -5219,32 +5278,22 @@
           <div class="panel">
             <div class="phase-header">
               <div>
-                <h2>Feedback Data Analyzer</h2>
-                <p>Raw pasted rows stay in this browser. The GitHub site only stores the analyzer, not participant names, MIST IDs, or comments.</p>
+                <h2>Built-In Data Set</h2>
+                <p>This page is already loaded with the aggregate 2023-2026 Dallas feedback data. Raw participant names, MIST IDs, and comments are not published in the site code.</p>
               </div>
-              <span class="phase-chip">${analytics.yearRange || "Paste TSV or CSV"}</span>
+              <span class="phase-chip">${analytics.yearRange}</span>
             </div>
-            ${canEdit ? `
-              <form class="admin-form" onsubmit="importFeedbackDataset(event)">
-                <textarea id="feedback-data-import" placeholder="Paste the Google Sheets feedback export here. TSV works best: copy the whole sheet, including the header row."></textarea>
-                <button class="primary" type="submit">Analyze Feedback Export</button>
-              </form>
-              <div class="inline-actions">
-                <button class="secondary" onclick="downloadFeedbackAnalyticsCsv()">Export Aggregate Summary</button>
-                <button class="ghost" onclick="clearFeedbackDataset()">Clear Local Dataset</button>
-              </div>
-            ` : `
-              <p>Log in to paste a feedback export and generate local analytics on this device.</p>
-              <div class="inline-actions"><button class="primary" onclick="openLogin()">Log In / Sign Up</button></div>
-            `}
+            <div class="inline-actions">
+              <button class="secondary" onclick="downloadFeedbackAnalyticsCsv()">Export Aggregate Summary</button>
+            </div>
           </div>
 
-          ${feedbackRecords.length ? `
+          ${analytics.responseCount ? `
             <div class="panel">
               <div class="phase-header">
                 <div>
                   <h2>Score Diagnostics</h2>
-                  <p>Sorted by lowest average so weak spots rise to the top first.</p>
+                  <p>Sorted by lowest average so weak spots rise to the top first. Main table hides tiny role-specific fields with fewer than 5 responses.</p>
                 </div>
                 <span class="phase-chip">${analytics.categoryAverages.length} scored fields</span>
               </div>
@@ -5385,7 +5434,7 @@
     }
 
     function renderFeedbackScoreTable(items) {
-      const rows = items.slice(0, 14);
+      const rows = items.filter(item => item.count >= 5).slice(0, 14);
       return `
         <table class="list-table">
           <thead>
@@ -6473,7 +6522,7 @@
     }
 
     function downloadFeedbackAnalyticsCsv() {
-      const analytics = buildFeedbackAnalytics(APP_STATE.feedbackDataset || []);
+      const analytics = DEFAULT_FEEDBACK_ANALYTICS;
       const rows = [
         ["section", "metric", "value", "count_or_owner", "action"]
       ];
