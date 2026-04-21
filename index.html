@@ -1617,16 +1617,16 @@
         dashboard: "Home",
         workbook: "My Workbook",
         progress: "Progress Board",
-        command: "Command Center",
+        command: "Planning & Command",
         integrations: "MyMIST",
         tournament: "Weekend Manager",
         directory: "Directory",
         teams: "Team Hubs",
         timeline: "Timeline",
-        calendar: "Calendar",
+        calendar: "Planning & Command",
         meetings: "Meetings",
-        runbook: "Runbook",
-        knowledge: "Rulebook Search",
+        runbook: "Operations & Answers",
+        knowledge: "Operations & Answers",
         feedback: "Feedback",
         onboarding: "Onboarding",
         release: "Release Checklist",
@@ -3383,7 +3383,7 @@
           hint: "Shared planning and accountability",
           color: "#c9972b",
           cards: [
-            { title: "Command Center", body: "Open seats, deadline risk, team readiness, and operational checks.", action: "openCommandCenter()" },
+            { title: "Planning & Command Center", body: "Open seats, deadline risk, team readiness, calendar health, and operational checks.", action: "openCommandCenter()" },
             { title: "Meetings & Decisions", body: "Agendas, blockers, approvals, and follow-up in one place.", action: "openMeetings()" },
             { title: "Feedback & Actions", body: "Turn feedback into owned actions and 2027 targets.", action: "openFeedback()" },
             { title: "Onboarding & Release", body: "Train new organizers and run leadership launch checks.", action: "openOnboarding()" },
@@ -3405,7 +3405,7 @@
           hint: "Search rules and manage roles",
           color: "#1f8a9b",
           cards: [
-            { title: "Rulebook Search", body: "Search competition rules, judging guidance, and jump straight to the right workspace.", action: "openKnowledge()" },
+            { title: "Operations & Answers Hub", body: "Search competition rules, weekend procedures, and jump straight to the right workspace.", action: "openKnowledge()" },
             { title: "Application Status", body: "Check whether an application is pending, approved, or declined.", action: "openApplicationStatus()" },
             ...(profile?.is_admin ? [{ title: "Review Applications", body: "Approve, decline, and email role applicants.", action: "openApplications()" }] : [])
           ]
@@ -3980,7 +3980,7 @@
       `;
     }
 
-    function renderCommandCenter(rows, progressRows = [], deadlines = CALENDAR_DEADLINES, user = null, profile = null) {
+    function renderCommandCenter(rows, progressRows = [], deadlines = CALENDAR_DEADLINES, user = null, profile = null, reminderPreference = null) {
       const progressByUser = groupProgressByUser(progressRows);
       const teamRows = buildTeamReadinessRows(rows, progressByUser);
       const claimed = rows.filter(row => row.claimed).length;
@@ -3998,8 +3998,8 @@
         <div class="dashboard-shell">
           <div class="topbar">
             <div>
-              <h1>Command Center</h1>
-              <p>One place to scan staffing, deadlines, readiness, and next operational checks.</p>
+              <h1>Planning & Command Center</h1>
+              <p>One place to scan staffing, deadlines, readiness, and the planning signals leadership actually needs.</p>
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
@@ -4118,6 +4118,49 @@
               </div>
             </div>
           </div>
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Deadline Health</h2>
+                <p>Calendar visibility now lives here so staffing, timing, and deadline risk stay in the same decision view.</p>
+              </div>
+              <span class="phase-chip">${deadlines.length} deadline${deadlines.length === 1 ? "" : "s"}</span>
+            </div>
+            ${renderDeadlineHealth(deadlines)}
+            <div class="inline-actions">
+              <button class="primary" onclick="downloadAllDeadlinesIcs()">Download All Deadlines (.ics)</button>
+              <button class="secondary" onclick="openGoogleCalendarForAllDeadlines()">Open Google Calendar Links</button>
+              <button class="ghost" onclick="downloadDeadlineHealthCsv()">Export Deadline Health</button>
+            </div>
+          </div>
+
+          ${deadlines.length ? Object.keys(PHASES).map(phaseId => `
+            <div class="panel phase-panel" style="--phase-color:${phaseColor(phaseId)};--phase-gradient:${phaseGradient(phaseId)}">
+              <div class="phase-header">
+                <div>
+                  <h2>${escapeHtml(formatPhase(phaseId))}</h2>
+                  <p>${escapeHtml(PHASES[phaseId].dates || "")}</p>
+                </div>
+                <span class="phase-chip">${deadlines.filter(item => item.phase === phaseId).length} deadlines</span>
+              </div>
+              <div class="calendar-grid">
+                ${deadlines.filter(item => item.phase === phaseId).map(item => renderDeadlineCard(item)).join("")}
+              </div>
+            </div>
+          `).join("") : renderEmptyState("No deadlines loaded", "Add your first phase deadline in the admin manager so the planning center has a source of truth.")}
+
+          ${user ? renderReminderPreferences(reminderPreference) : `
+            <div class="panel">
+              <h2>Email Reminders</h2>
+              <p>Log in and claim a role to choose reminder preferences for deadline emails.</p>
+              <div class="inline-actions">
+                <button class="primary" onclick="openLogin()">Log In / Sign Up</button>
+              </div>
+            </div>
+          `}
+
+          ${isAdmin ? renderDeadlineAdmin(deadlines) : ""}
         </div>
       `;
     }
@@ -5534,12 +5577,14 @@
     }
 
     function renderRunbook() {
+      const query = APP_STATE.knowledgeQuery || "";
+      const results = searchRulebook(query);
       return `
         <div class="dashboard-shell">
           <div class="topbar">
             <div>
-              <h1>Event Weekend Runbook</h1>
-              <p>The quick operating guide for check-in, rooms, communications, and escalation.</p>
+              <h1>Operations & Answers Hub</h1>
+              <p>The quick operating guide for event weekend, plus searchable rulebook answers in one place.</p>
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
@@ -5603,34 +5648,21 @@
             <div class="inline-actions">
               <button class="primary" onclick="openCommandCenter()">Command Center</button>
               <button class="secondary" onclick="openTournamentManager()">Weekend Manager</button>
-              <button class="secondary" onclick="openCalendar()">Calendar</button>
-              <button class="ghost" onclick="openKnowledge()">Rulebook Search</button>
+              <button class="secondary" onclick="openCalendar()">Planning Center</button>
+              <button class="ghost" onclick="clearKnowledgeSearch()">Clear Answers Search</button>
             </div>
           </div>
-        </div>
-      `;
-    }
-
-    function renderKnowledgeBase() {
-      const query = APP_STATE.knowledgeQuery || "";
-      const results = searchRulebook(query);
-      return `
-        <div class="dashboard-shell">
-          <div class="topbar">
-            <div>
-              <h1>Competitions Rulebook Search</h1>
-              <p>Search competition rules, judging guidance, eligibility questions, and room-level scenarios without digging through chats.</p>
-            </div>
-            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
-          </div>
-
-          ${renderPortalUtilityBar("knowledge")}
 
           <div class="panel">
-            <h2>Ask The Rulebook</h2>
-            <p>Type keywords like no-show, rubric, tie, bias, early submission, roster, ballot, or escalation.</p>
+            <div class="phase-header">
+              <div>
+                <h2>Ask The Rulebook</h2>
+                <p>Search competition rules, judging guidance, eligibility questions, and room-level scenarios without digging through chats.</p>
+              </div>
+              <span class="phase-chip">Latest rules ${PORTAL_RULEBOOK_VERSION}</span>
+            </div>
             <div class="knowledge-search">
-              <input id="knowledge-search" value="${escapeHtml(query)}" placeholder="Search competition rules and FAQs..." oninput="updateKnowledgeSearch(this.value)" />
+              <input id="knowledge-search" value="${escapeHtml(query)}" placeholder="Search no-show, rubric, tie, bias, early submission, roster, ballot..." oninput="updateKnowledgeSearch(this.value)" />
               <button class="secondary" onclick="clearKnowledgeSearch()">Clear</button>
             </div>
           </div>
@@ -5641,7 +5673,7 @@
                 <h2>${query ? "Search Results" : "Competition FAQ"}</h2>
                 <p>${results.length} answer${results.length === 1 ? "" : "s"} available.</p>
               </div>
-              <span class="phase-chip">Latest rules ${PORTAL_RULEBOOK_VERSION}</span>
+              <button class="ghost" onclick="downloadRulebookCsv()">Export Starter CSV</button>
             </div>
             <div class="log-list">
               ${results.map(entry => `
@@ -5656,17 +5688,12 @@
               `).join("") || `<p>No answer found yet. Add this question to the official rulebook source.</p>`}
             </div>
           </div>
-
-          <div class="panel">
-            <h2>Competition Rulebook Integration Plan</h2>
-            <p>Next, we can add the official competition rulebook as a structured source: paste sections, upload CSV/JSON, or create a Supabase rulebook table. The search page can then pull from that live source instead of only these starter entries.</p>
-            <div class="inline-actions">
-              <button class="primary" onclick="downloadRulebookCsv()">Download Rulebook Starter CSV</button>
-              <button class="secondary" onclick="openRunbook()">Open Event Runbook</button>
-            </div>
-          </div>
         </div>
       `;
+    }
+
+    function renderKnowledgeBase() {
+      return renderRunbook();
     }
 
     function renderFeedbackAddressal(user = null, profile = null) {
@@ -6131,75 +6158,9 @@
     }
 
     function renderCalendar(deadlines = CALENDAR_DEADLINES, user = null, profile = null, reminderPreference = null) {
-      APP_STATE.currentDeadlines = deadlines;
-      const grouped = deadlines.reduce((map, item) => {
-        if (!map[item.phase]) map[item.phase] = [];
-        map[item.phase].push(item);
-        return map;
-      }, {});
-      const isAdmin = !!profile?.is_admin;
-
-      return `
-        <div class="dashboard-shell">
-          <div class="topbar">
-            <div>
-              <h1>Calendar & Deadlines</h1>
-              <p>Planning deadlines by phase. Reminder emails can connect to these deadlines after the email service is added.</p>
-            </div>
-            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
-          </div>
-
-          ${renderPortalUtilityBar("calendar")}
-
-          <div class="panel">
-            <div class="phase-header">
-              <div>
-                <h2>Deadline Health</h2>
-                <p>See whether the deadline system is healthy before diving into the phase-by-phase list.</p>
-              </div>
-              <span class="phase-chip">${deadlines.length} deadline${deadlines.length === 1 ? "" : "s"}</span>
-            </div>
-            ${renderDeadlineHealth(deadlines)}
-            <div class="inline-actions">
-              <button class="primary" onclick="downloadAllDeadlinesIcs()">Download All Deadlines (.ics)</button>
-              <button class="secondary" onclick="openGoogleCalendarForAllDeadlines()">Open Google Calendar Links</button>
-              <button class="ghost" onclick="downloadDeadlineHealthCsv()">Export Deadline Health</button>
-            </div>
-          </div>
-
-          ${deadlines.length ? Object.keys(PHASES).map(phaseId => `
-            <div class="panel phase-panel" style="--phase-color:${phaseColor(phaseId)};--phase-gradient:${phaseGradient(phaseId)}">
-              <div class="phase-header">
-                <div>
-                  <h2>${escapeHtml(formatPhase(phaseId))}</h2>
-                  <p>${escapeHtml(PHASES[phaseId].dates || "")}</p>
-                </div>
-                <span class="phase-chip">${(grouped[phaseId] || []).length} deadlines</span>
-              </div>
-              <div class="calendar-grid">
-                ${(grouped[phaseId] || []).map(item => renderDeadlineCard(item)).join("")}
-              </div>
-            </div>
-          `).join("") : renderEmptyState("No deadlines loaded", "Add your first phase deadline in the admin manager so the calendar, reminders, and health view all have a source of truth.")}
-
-          ${user ? renderReminderPreferences(reminderPreference) : `
-            <div class="panel">
-              <h2>Email Reminders</h2>
-              <p>Log in and claim a role to choose reminder preferences for deadline emails.</p>
-              <div class="inline-actions">
-                <button class="primary" onclick="openLogin()">Log In / Sign Up</button>
-              </div>
-            </div>
-          `}
-
-          ${isAdmin ? renderDeadlineAdmin(deadlines) : ""}
-
-          <div class="panel">
-            <h2>Reminder Integration Plan</h2>
-            <p>Deadlines and user preferences are ready for Supabase. To send emails, deploy the included Edge Function and add an email provider API key in Supabase secrets.</p>
-          </div>
-        </div>
-      `;
+      const rows = buildRoleDirectoryRows([]);
+      const progressRows = [];
+      return renderCommandCenter(rows, progressRows, deadlines, user, profile, reminderPreference);
     }
 
     function renderDeadlineCard(item) {
@@ -7532,7 +7493,7 @@
         if (APP_STATE.view === "command") {
           const progressRows = await getAllWorkbookProgress();
           const deadlines = await getDeadlines();
-          app.innerHTML = renderCommandCenter(rows, progressRows, deadlines, null, null);
+          app.innerHTML = renderCommandCenter(rows, progressRows, deadlines, null, null, null);
           return;
         }
 
@@ -7599,8 +7560,9 @@
         }
 
         if (APP_STATE.view === "calendar") {
+          const progressRows = await getAllWorkbookProgress();
           const deadlines = await getDeadlines();
-          app.innerHTML = renderCalendar(deadlines, null, null, null);
+          app.innerHTML = renderCommandCenter(rows, progressRows, deadlines, null, null, null);
           return;
         }
 
@@ -7643,7 +7605,8 @@
       if (APP_STATE.view === "command") {
         const progressRows = await getAllWorkbookProgress();
         const deadlines = await getDeadlines();
-        app.innerHTML = renderCommandCenter(rows, progressRows, deadlines, user, profile);
+        const reminderPreference = await getReminderPreference(user.id);
+        app.innerHTML = renderCommandCenter(rows, progressRows, deadlines, user, profile, reminderPreference);
         return;
       }
 
@@ -7712,9 +7675,10 @@
       }
 
       if (APP_STATE.view === "calendar") {
+        const progressRows = await getAllWorkbookProgress();
         const deadlines = await getDeadlines();
         const reminderPreference = await getReminderPreference(user.id);
-        app.innerHTML = renderCalendar(deadlines, user, profile, reminderPreference);
+        app.innerHTML = renderCommandCenter(rows, progressRows, deadlines, user, profile, reminderPreference);
         return;
       }
 
