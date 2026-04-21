@@ -3,62 +3,232 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MIST Dallas Portal</title>
-  <link rel="icon" href="data:,">
+  <title>MIST Dallas 2027 · Organizer Portal</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2318798a'/><text x='16' y='23' font-family='system-ui,sans-serif' font-size='19' font-weight='900' fill='white' text-anchor='middle'>M</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    /* ==============================================
+       MIST DALLAS 2027 — DESIGN SYSTEM
+       Warm · Light · Human
+       ============================================== */
+
     :root {
-      --bg: #151a22;
-      --card: rgba(31, 35, 45, 0.9);
-      --border: rgba(223, 228, 238, 0.18);
-      --text: #f7f8fb;
-      --muted: #bec7d4;
-      --input: rgba(42, 47, 58, 0.94);
-      --purple: #7b61ff;
-      --pink: #c44f7a;
-      --blue: #1f8a9b;
-      --blue2: #2457a6;
-      --green: #247a52;
-      --gold: #c9972b;
-      --red: #b13f4a;
-      --ink: #18191f;
-      --paper: #f4efe7;
+      /* — Base — */
+      --bg:          #ede8df;
+      --surface:     #ffffff;
+      --surface2:    #f7f3ee;
+      --border:      #e2d9ce;
+      --border-lt:   #ede8e0;
+      --text:        #1c1914;
+      --muted:       #78706a;
+      --faint:       #b0a89f;
+
+      /* — Brand — */
+      --teal:        #18798a;
+      --teal-dim:    #e4f2f4;
+      --green:       #1c6b43;
+      --green-dim:   #e3f0ea;
+      --gold:        #b88216;
+      --gold-dim:    #fdf1d0;
+      --purple:      #6950e4;
+      --purple-dim:  #ece8fc;
+      --red:         #a5364a;
+      --red-dim:     #fce3e7;
+      --pink:        #b23d6c;
+      --pink-dim:    #fce2ee;
+      --blue:        #1e86a0;
+      --blue2:       #2255a2;
+
+      /* — Legacy aliases (JS uses these names) — */
+      --ink:   #1c1914;
+      --paper: #ede8df;
+      --input: #f7f3ee;
+      --card:  #ffffff;
+
+      /* — Elevation — */
+      --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 3px 10px rgba(0,0,0,0.05);
+      --shadow:    0 1px 4px rgba(0,0,0,0.06), 0 6px 20px rgba(0,0,0,0.07);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.07), 0 14px 36px rgba(0,0,0,0.09);
+
+      /* — Radius — */
+      --r-sm:   8px;
+      --r-md:   12px;
+      --r-lg:   16px;
+      --r-xl:   20px;
+      --r-pill: 999px;
     }
 
-    * { box-sizing: border-box; }
+    /* ==============================================
+       RESET + BASE
+       ============================================== */
+
+    *, *::before, *::after { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100%; }
 
     body {
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: "Plus Jakarta Sans", Inter, system-ui, -apple-system,
+                   BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
       color: var(--text);
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 180px),
-        radial-gradient(circle at top left, rgba(31, 138, 155, 0.24), transparent 34%),
-        radial-gradient(circle at top right, rgba(123, 97, 255, 0.16), transparent 28%),
-        radial-gradient(circle at bottom right, rgba(201, 151, 43, 0.16), transparent 34%),
-        var(--bg);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
     }
 
-    #app {
-      min-height: 100vh;
-      width: 100%;
-      padding: 18px;
+    /* ==============================================
+       GLOBAL NAV
+       ============================================== */
+
+    #global-nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-xs);
+    }
+
+    .nav-bar {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 20px;
+      height: 56px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 6px;
     }
 
-    .card, .panel {
-      background: var(--card);
+    .nav-wordmark {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 6px 8px 6px 4px;
+      border-radius: var(--r-md);
+      font-family: inherit;
+      transition: background 0.12s;
+      flex-shrink: 0;
+      margin-right: 8px;
+    }
+
+    .nav-wordmark:hover { background: var(--surface2); transform: none; box-shadow: none; }
+
+    .nav-wordmark-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--r-sm);
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      color: white;
+      flex-shrink: 0;
+      font-weight: 900;
+    }
+
+    .nav-wordmark-year {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--faint);
+      padding: 2px 6px;
+      background: var(--surface2);
+      border-radius: var(--r-pill);
+      border: 1px solid var(--border-lt);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex: 1;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .nav-links::-webkit-scrollbar { display: none; }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 10px;
+      border-radius: var(--r-md);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.12s, color 0.12s;
+      font-family: inherit;
+    }
+
+    .nav-link:hover { background: var(--surface2); color: var(--text); transform: none; box-shadow: none; }
+
+    .nav-link.active {
+      background: var(--teal-dim);
+      color: var(--teal);
+      font-weight: 700;
+    }
+
+    .nav-end {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .nav-user-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 10px 4px 4px;
+      border-radius: var(--r-pill);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.24);
-      backdrop-filter: blur(14px);
+      background: var(--surface2);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.12s;
+      font-family: inherit;
     }
 
-    .card {
+    .nav-user-pill:hover { background: var(--border-lt); transform: none; box-shadow: none; }
+
+    .nav-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal), var(--purple));
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    /* ==============================================
+       APP SHELL
+       ============================================== */
+
+    #app {
       width: 100%;
-      max-width: 460px;
-      padding: 22px;
+      min-height: calc(100vh - 56px);
+      padding: 28px 20px 64px;
     }
 
     .dashboard-shell {
@@ -67,344 +237,359 @@
       margin: 0 auto;
     }
 
-    .panel {
-      padding: 16px;
-      margin-bottom: 12px;
+    /* ==============================================
+       SURFACES
+       ============================================== */
+
+    .card, .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
     }
 
-    h1, h2, h3 { margin: 0; }
-    h1 {
-      font-size: 24px;
-      line-height: 1.05;
-      letter-spacing: -0.02em;
-      margin-bottom: 10px;
+    .card {
+      width: 100%;
+      max-width: 440px;
+      padding: 32px;
+      margin: 48px auto 0;
     }
+
+    .panel {
+      padding: 22px 24px;
+      margin-bottom: 14px;
+    }
+
+    /* ==============================================
+       TYPOGRAPHY
+       ============================================== */
+
+    h1, h2, h3 { margin: 0; font-weight: 700; line-height: 1.15; }
+
+    h1 {
+      font-size: 26px;
+      letter-spacing: -0.025em;
+      margin-bottom: 6px;
+    }
+
     h2 {
       font-size: 18px;
-      line-height: 1.1;
-      margin-bottom: 10px;
+      letter-spacing: -0.015em;
+      margin-bottom: 6px;
     }
-    h3 { font-size: 15px; line-height: 1.25; }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
 
     p {
       margin: 0;
       color: var(--muted);
-      line-height: 1.45;
-      font-size: 13px;
+      line-height: 1.6;
+      font-size: 14px;
     }
+
+    .label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--faint);
+      margin-bottom: 6px;
+    }
+
+    .muted { color: var(--muted); }
+    .faint { color: var(--faint); }
+
+    .subtext {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .note {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ==============================================
+       LAYOUT HELPERS
+       ============================================== */
 
     .stack {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-top: 14px;
+      gap: 12px;
+      margin-top: 16px;
     }
 
-    .label {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      margin-bottom: 6px;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
     }
 
-    input, select, textarea {
-      width: 100%;
-      border: 1px solid var(--border);
-      background: var(--input);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 10px 11px;
-      font-size: 13px;
-      outline: none;
-      appearance: none;
-      -webkit-appearance: none;
-      font-family: inherit;
-    }
-
-    textarea {
-      min-height: 120px;
-      resize: vertical;
-      line-height: 1.55;
-    }
-
-    input::placeholder, textarea::placeholder { color: #94a3b8; }
-    input:disabled { opacity: 0.8; cursor: not-allowed; }
-
-    button {
-      border: none;
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 13px;
-      font-weight: 700;
-      color: white;
-      cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.15s ease;
-      font-family: inherit;
-    }
-
-    button:hover { transform: translateY(-1px); opacity: 0.96; }
-    .full { width: 100%; }
-    .primary { background: linear-gradient(90deg, #1f8a9b, #247a52); }
-    .secondary { background: linear-gradient(90deg, #8a6f2a, #c9972b); color: #111318; }
-    .ghost {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid var(--border);
-      width: auto;
-      min-width: 130px;
-    }
-
-    .subtext { margin-top: 8px; font-size: 13px; }
     .topbar {
       display: flex;
       justify-content: space-between;
       gap: 12px;
       align-items: flex-start;
-      margin-bottom: 14px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
-    }
-
-    .utility-panel {
-      padding: 10px 12px;
-      margin-bottom: 10px;
-    }
-
-    .utility-bar {
-      display: grid;
-      grid-template-columns: minmax(220px, 1fr) auto;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .utility-search {
-      display: grid;
-      gap: 8px;
-    }
-
-    .utility-search-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .utility-search-row input {
-      padding: 9px 11px;
-    }
-
-    .utility-results {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .utility-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 9px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .utility-links {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .section-summary {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .stat {
-      background: rgba(255, 255, 255, 0.035);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 13px;
-    }
-
-    .stat-title {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .stat-value {
-      font-size: 15px;
-      font-weight: 800;
-      line-height: 1.3;
-      color: var(--text);
-      word-break: break-word;
     }
 
     .actions {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-top: 16px;
+      margin-top: 18px;
     }
 
-    .actions button { min-width: 170px; }
+    .actions button { min-width: 150px; }
 
-    .note {
-      margin-top: 10px;
-      font-size: 13px;
-      color: #cbd5e1;
-    }
-
-    .tabs {
+    .inline-actions {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
-      margin: 18px 0 24px;
+      margin-top: 12px;
+    }
+
+    .inline-actions button { width: auto; min-width: 100px; }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    /* ==============================================
+       FORMS
+       ============================================== */
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      border-radius: var(--r-md);
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: inherit;
+      transition: border-color 0.12s, box-shadow 0.12s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(24, 121, 138, 0.12);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    input::placeholder, textarea::placeholder { color: var(--faint); }
+    input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* ==============================================
+       BUTTONS
+       ============================================== */
+
+    button {
+      border: none;
+      border-radius: var(--r-md);
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+      font-family: inherit;
+      line-height: 1;
+    }
+
+    button:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+    button:active { transform: translateY(0); }
+
+    .full { width: 100%; }
+
+    .primary {
+      background: var(--teal);
+      color: white;
+    }
+
+    .primary:hover { background: #1a8899; }
+
+    .secondary {
+      background: var(--gold-dim);
+      color: var(--gold);
+      border: 1px solid rgba(184, 130, 22, 0.22);
+    }
+
+    .secondary:hover { background: #fce8a8; }
+
+    .ghost {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: auto;
+      min-width: 100px;
+    }
+
+    .ghost:hover { background: var(--border-lt); }
+
+    .danger { background: var(--red); color: white; }
+    .success { background: var(--green); color: white; }
+
+    /* ==============================================
+       TABS
+       ============================================== */
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin: 18px 0 22px;
+      padding: 4px;
+      background: var(--surface2);
+      border: 1px solid var(--border-lt);
+      border-radius: var(--r-lg);
+      width: fit-content;
+      max-width: 100%;
     }
 
     .tab-btn {
-      background: rgba(255,255,255,.06);
-      border: 1px solid color-mix(in srgb, var(--phase-color, #94a3b8) 35%, var(--border));
-      color: var(--text);
-      min-width: 130px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      min-width: 110px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: var(--r-md);
+      box-shadow: none;
     }
+
+    .tab-btn:hover { background: var(--border-lt); color: var(--text); transform: none; box-shadow: none; }
 
     .tab-btn.active {
-      background: var(--phase-gradient, linear-gradient(90deg, rgba(124,58,237,.9), rgba(217,70,239,.9)));
-      border-color: transparent;
-      box-shadow:
-        0 12px 26px color-mix(in srgb, var(--phase-color, #38bdf8) 25%, transparent),
-        inset 0 0 0 1px rgba(255,255,255,.16);
-    }
-
-    .check-row {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      padding: 12px 14px;
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--shadow-xs);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      background: rgba(255,255,255,.03);
-      margin-bottom: 10px;
-      cursor: pointer;
+      font-weight: 700;
     }
 
-    .check-row input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      margin-top: 2px;
-      accent-color: var(--phase-color, var(--purple));
-      flex-shrink: 0;
-      padding: 0;
-      border-radius: 4px;
-      appearance: auto;
-      -webkit-appearance: checkbox;
-      cursor: pointer;
+    /* ==============================================
+       STATS
+       ============================================== */
+
+    .stat {
+      background: var(--surface2);
+      border: 1px solid var(--border-lt);
+      border-radius: var(--r-lg);
+      padding: 18px;
     }
+
+    .stat-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--faint);
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      word-break: break-word;
+    }
+
+    /* ==============================================
+       PROGRESS
+       ============================================== */
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      overflow: hidden;
+      border-radius: var(--r-pill);
+      background: var(--border);
+      margin-top: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: var(--r-pill);
+      background: var(--teal);
+      transition: width 0.4s ease;
+    }
+
+    .save-status {
+      min-height: 20px;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ==============================================
+       PHASE SYSTEM
+       ============================================== */
 
     .phase-header {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 12px;
+      margin-bottom: 18px;
       flex-wrap: wrap;
     }
 
     .phase-chip {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--phase-color, #38bdf8) 16%, rgba(255,255,255,.055));
-      border: 1px solid color-mix(in srgb, var(--phase-color, #38bdf8) 38%, var(--border));
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: var(--r-pill);
+      background: color-mix(in srgb, var(--phase-color, var(--teal)) 10%, var(--surface2));
+      border: 1px solid color-mix(in srgb, var(--phase-color, var(--teal)) 22%, var(--border));
       font-size: 12px;
-      color: color-mix(in srgb, var(--phase-color, #38bdf8) 78%, #ffffff);
+      color: color-mix(in srgb, var(--phase-color, var(--teal)) 85%, #000000);
       font-weight: 700;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .phase-panel {
       position: relative;
       overflow: hidden;
-      border-color: color-mix(in srgb, var(--phase-color, #38bdf8) 44%, var(--border));
-      background:
-        linear-gradient(135deg, color-mix(in srgb, var(--phase-color, #38bdf8) 13%, transparent), rgba(255,255,255,.025)),
-        var(--card);
+      border-color: color-mix(in srgb, var(--phase-color, var(--teal)) 25%, var(--border));
+      background: color-mix(in srgb, var(--phase-color, var(--teal)) 4%, var(--surface));
     }
 
     .phase-panel::before {
       content: "";
       position: absolute;
       inset: 0 auto 0 0;
-      width: 5px;
-      background: var(--phase-gradient, var(--phase-color, #38bdf8));
+      width: 4px;
+      background: var(--phase-color, var(--teal));
+      border-radius: 4px 0 0 4px;
     }
 
-    .phase-panel > * {
-      position: relative;
-    }
-
-    .muted { color: var(--muted); }
-
-    .list-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .list-table th, .list-table td {
-      text-align: left;
-      padding: 12px 10px;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-    }
-
-    .list-table-wrap {
-      width: 100%;
-      overflow-x: auto;
-      margin-top: 10px;
-    }
-
-    .progress-track {
-      width: 100%;
-      height: 10px;
-      overflow: hidden;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.08);
-      margin-top: 10px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--blue), var(--purple), var(--pink));
-    }
-
-    .save-status {
-      min-height: 20px;
-      margin-top: 12px;
-      font-size: 13px;
-      color: #cbd5e1;
-    }
+    .phase-panel > * { position: relative; }
 
     .phase-progress-grid {
       display: grid;
@@ -414,101 +599,204 @@
     }
 
     .phase-mini {
-      padding: 10px;
-      border: 1px solid color-mix(in srgb, var(--phase-color, #38bdf8) 35%, var(--border));
-      border-radius: 14px;
-      background: color-mix(in srgb, var(--phase-color, #38bdf8) 10%, rgba(255,255,255,.03));
+      padding: 12px;
+      border: 1px solid color-mix(in srgb, var(--phase-color, var(--teal)) 20%, var(--border));
+      border-radius: var(--r-md);
+      background: color-mix(in srgb, var(--phase-color, var(--teal)) 5%, var(--surface));
     }
 
-    .phase-mini strong {
-      display: block;
-      margin-bottom: 4px;
-    }
+    .phase-mini strong { display: block; margin-bottom: 4px; }
+
+    /* ==============================================
+       NAV CARDS
+       ============================================== */
 
     .nav-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
       gap: 10px;
-      margin-top: 12px;
+      margin-top: 10px;
     }
 
-    .nav-section {
-      margin-top: 16px;
-    }
+    .nav-section { margin-top: 22px; }
 
     .nav-section-head {
       display: flex;
       justify-content: space-between;
-      align-items: end;
+      align-items: center;
       gap: 12px;
-      padding-bottom: 8px;
+      padding-bottom: 10px;
       border-bottom: 1px solid var(--border);
+      margin-bottom: 2px;
     }
 
     .nav-section-head strong {
-      font-size: 12px;
-      letter-spacing: .12em;
+      font-size: 11px;
+      letter-spacing: .08em;
       text-transform: uppercase;
-      color: color-mix(in srgb, var(--section-color, var(--blue)) 72%, #ffffff);
+      color: color-mix(in srgb, var(--section-color, var(--teal)) 80%, #000000);
+      font-weight: 800;
     }
 
-    .nav-section-head span {
-      color: var(--muted);
-      font-size: 12px;
-    }
+    .nav-section-head span { color: var(--faint); font-size: 12px; }
 
     .nav-card {
-      min-height: 92px;
-      padding: 12px;
+      min-height: 90px;
+      padding: 14px;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.04);
+      border-radius: var(--r-md);
+      background: var(--surface);
       color: var(--text);
       text-align: left;
-      border-top: 3px solid var(--section-color, var(--blue));
+      border-top: 3px solid var(--section-color, var(--teal));
+      transition: box-shadow 0.12s, transform 0.12s;
+    }
+
+    .nav-card:hover {
+      box-shadow: var(--shadow);
+      transform: translateY(-2px);
+      opacity: 1;
     }
 
     .nav-card strong {
       display: block;
-      margin-bottom: 6px;
-      font-size: 14px;
+      margin-bottom: 5px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
     }
 
     .nav-card span {
       display: block;
       color: var(--muted);
       font-weight: 500;
-      line-height: 1.35;
+      line-height: 1.45;
       font-size: 12px;
     }
+
+    /* ==============================================
+       BADGES
+       ============================================== */
+
+    .priority-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+
+    .priority-pill.high, .priority-pill.critical {
+      background: var(--red-dim);
+      border-color: rgba(165, 54, 74, 0.2);
+      color: var(--red);
+    }
+
+    .priority-pill.medium {
+      background: var(--gold-dim);
+      border-color: rgba(184, 130, 22, 0.2);
+      color: var(--gold);
+    }
+
+    .priority-pill.low {
+      background: var(--green-dim);
+      border-color: rgba(28, 107, 67, 0.2);
+      color: var(--green);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+
+    .status-pill.pending {
+      background: var(--gold-dim);
+      border-color: rgba(184, 130, 22, 0.2);
+      color: var(--gold);
+    }
+
+    .status-pill.approved {
+      background: var(--green-dim);
+      border-color: rgba(28, 107, 67, 0.2);
+      color: var(--green);
+    }
+
+    .status-pill.declined {
+      background: var(--red-dim);
+      border-color: rgba(165, 54, 74, 0.2);
+      color: var(--red);
+    }
+
+    /* ==============================================
+       TABLES
+       ============================================== */
+
+    .list-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .list-table th, .list-table td {
+      text-align: left;
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--border-lt);
+      font-size: 13px;
+    }
+
+    .list-table th {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--faint);
+      background: var(--surface2);
+    }
+
+    /* ==============================================
+       CARD VARIANTS
+       ============================================== */
 
     .roadmap-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 10px;
-      margin-top: 12px;
+      margin-top: 14px;
     }
 
     .roadmap-card {
-      border: 1px solid color-mix(in srgb, var(--roadmap-color, var(--blue)) 38%, var(--border));
-      border-left: 5px solid var(--roadmap-color, var(--blue));
-      border-radius: 12px;
-      padding: 13px;
-      background:
-        linear-gradient(135deg, color-mix(in srgb, var(--roadmap-color, var(--blue)) 12%, transparent), rgba(255,255,255,.026));
+      border: 1px solid color-mix(in srgb, var(--roadmap-color, var(--teal)) 18%, var(--border));
+      border-left: 4px solid var(--roadmap-color, var(--teal));
+      border-radius: var(--r-md);
+      padding: 16px;
+      background: color-mix(in srgb, var(--roadmap-color, var(--teal)) 5%, var(--surface));
     }
 
     .roadmap-status {
       display: inline-flex;
       width: fit-content;
       margin-bottom: 8px;
-      padding: 5px 9px;
-      border-radius: 999px;
-      color: #111318;
-      background: var(--roadmap-color, var(--blue));
+      padding: 3px 8px;
+      border-radius: var(--r-pill);
+      color: color-mix(in srgb, var(--roadmap-color, var(--teal)) 75%, #000000);
+      background: color-mix(in srgb, var(--roadmap-color, var(--teal)) 12%, var(--surface2));
+      border: 1px solid color-mix(in srgb, var(--roadmap-color, var(--teal)) 22%, var(--border));
       font-size: 11px;
-      font-weight: 900;
-      letter-spacing: .04em;
+      font-weight: 800;
+      letter-spacing: .05em;
       text-transform: uppercase;
     }
 
@@ -520,49 +808,43 @@
     }
 
     .knowledge-result {
-      border: 1px solid color-mix(in srgb, var(--knowledge-color, var(--blue)) 34%, var(--border));
-      border-left: 5px solid var(--knowledge-color, var(--blue));
-      border-radius: 12px;
-      padding: 13px;
-      background:
-        linear-gradient(135deg, color-mix(in srgb, var(--knowledge-color, var(--blue)) 11%, transparent), rgba(255,255,255,.026));
+      border: 1px solid color-mix(in srgb, var(--knowledge-color, var(--teal)) 20%, var(--border));
+      border-left: 4px solid var(--knowledge-color, var(--teal));
+      border-radius: var(--r-md);
+      padding: 16px;
+      background: color-mix(in srgb, var(--knowledge-color, var(--teal)) 5%, var(--surface));
     }
 
     .runbook-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
       gap: 10px;
-      margin-top: 12px;
+      margin-top: 14px;
     }
 
     .runbook-card {
       border: 1px solid var(--border);
-      border-top: 4px solid var(--runbook-color, var(--blue));
-      border-radius: 12px;
-      padding: 13px;
-      background: color-mix(in srgb, var(--runbook-color, var(--blue)) 8%, rgba(255,255,255,.026));
+      border-top: 4px solid var(--runbook-color, var(--teal));
+      border-radius: var(--r-md);
+      padding: 16px;
+      background: color-mix(in srgb, var(--runbook-color, var(--teal)) 5%, var(--surface));
     }
 
-    .log-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
+    .log-list { display: grid; gap: 10px; margin-top: 12px; }
 
     .log-card {
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 13px;
-      background: rgba(255,255,255,.028);
+      border-radius: var(--r-md);
+      padding: 16px;
+      background: var(--surface);
     }
 
     .feedback-card {
-      border: 1px solid color-mix(in srgb, var(--feedback-color, var(--blue)) 36%, var(--border));
-      border-left: 5px solid var(--feedback-color, var(--blue));
-      border-radius: 12px;
-      padding: 13px;
-      background:
-        linear-gradient(135deg, color-mix(in srgb, var(--feedback-color, var(--blue)) 10%, transparent), rgba(255,255,255,.026));
+      border: 1px solid color-mix(in srgb, var(--feedback-color, var(--teal)) 20%, var(--border));
+      border-left: 4px solid var(--feedback-color, var(--teal));
+      border-radius: var(--r-md);
+      padding: 16px;
+      background: color-mix(in srgb, var(--feedback-color, var(--teal)) 5%, var(--surface));
     }
 
     .metric-row {
@@ -572,62 +854,63 @@
       margin-top: 12px;
     }
 
+    /* ==============================================
+       DIRECTORY + PEOPLE
+       ============================================== */
+
     .directory-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 10px;
-      margin-top: 12px;
+      margin-top: 14px;
     }
 
     .person-card {
-      min-height: 120px;
-      padding: 13px;
+      min-height: 110px;
+      padding: 14px;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      background: rgba(255,255,255,.035);
-      border-top: 3px solid var(--team-color, var(--blue));
+      border-radius: var(--r-md);
+      background: var(--surface);
+      border-top: 3px solid var(--team-color, var(--teal));
+      transition: box-shadow 0.12s;
     }
 
     .person-card.unclaimed {
       border-style: dashed;
-      background: rgba(255,255,255,.02);
+      background: var(--surface2);
+      opacity: 0.75;
     }
 
-    .person-card h3 {
-      margin-bottom: 8px;
-      word-break: break-word;
-    }
+    .person-card h3 { margin-bottom: 6px; word-break: break-word; }
 
     .role-meta-row {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
-      margin: 9px 0;
+      margin: 8px 0;
     }
 
     .task-list {
-      margin: 9px 0 0;
+      margin: 8px 0 0;
       padding-left: 16px;
       color: var(--muted);
-      line-height: 1.45;
+      line-height: 1.6;
     }
 
-    .task-list li {
-      margin-bottom: 6px;
-    }
+    .task-list li { margin-bottom: 5px; font-size: 13px; }
 
-    .team-board {
-      display: grid;
-      gap: 12px;
-      margin-top: 12px;
-    }
+    /* ==============================================
+       TEAM BOARDS
+       ============================================== */
+
+    .team-board { display: grid; gap: 14px; margin-top: 14px; }
 
     .team-board-section {
       border: 1px solid var(--border);
-      border-radius: 13px;
-      padding: 13px;
-      background: linear-gradient(135deg, color-mix(in srgb, var(--team-color, var(--blue)) 10%, transparent), rgba(255,255,255,.018));
-      border-top: 3px solid var(--team-color, var(--blue));
+      border-radius: var(--r-lg);
+      padding: 20px;
+      background: color-mix(in srgb, var(--team-color, var(--teal)) 4%, var(--surface));
+      border-top: 3px solid var(--team-color, var(--teal));
     }
 
     .team-board-header {
@@ -636,185 +919,146 @@
       gap: 12px;
       align-items: center;
       flex-wrap: wrap;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
-    .timeline {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
+    /* ==============================================
+       TIMELINE
+       ============================================== */
+
+    .timeline { display: grid; gap: 10px; margin-top: 14px; }
 
     .timeline-item {
       display: grid;
       grid-template-columns: 150px 1fr;
-      gap: 12px;
-      padding: 13px;
+      gap: 14px;
+      padding: 14px;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      background:
-        linear-gradient(135deg, color-mix(in srgb, var(--phase-color, var(--blue)) 12%, transparent), rgba(255,255,255,.028));
-      border-left: 6px solid var(--phase-color, var(--blue));
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--phase-color, var(--blue)) 10%, transparent);
+      border-radius: var(--r-md);
+      background: var(--surface);
+      border-left: 5px solid var(--phase-color, var(--teal));
     }
 
     .timeline-date {
-      color: color-mix(in srgb, var(--phase-color, #bfdbfe) 78%, #ffffff);
+      color: color-mix(in srgb, var(--phase-color, var(--teal)) 80%, #000000);
       font-weight: 800;
+      font-size: 13px;
     }
 
-    .pill-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-
-    .onboarding-roles {
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid var(--border);
-    }
+    /* ==============================================
+       CALENDAR + DEADLINES
+       ============================================== */
 
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 10px;
-      margin-top: 12px;
+      margin-top: 14px;
     }
 
     .deadline-card {
-      border: 1px solid color-mix(in srgb, var(--phase-color, var(--blue)) 36%, var(--border));
-      border-top: 6px solid var(--phase-color, var(--blue));
-      border-radius: 12px;
-      padding: 13px;
-      background:
-        linear-gradient(135deg, color-mix(in srgb, var(--phase-color, var(--blue)) 13%, transparent), rgba(255,255,255,.03));
+      border: 1px solid color-mix(in srgb, var(--phase-color, var(--teal)) 20%, var(--border));
+      border-top: 5px solid var(--phase-color, var(--teal));
+      border-radius: var(--r-md);
+      padding: 14px;
+      background: var(--surface);
     }
 
     .deadline-date {
-      color: color-mix(in srgb, var(--phase-color, #e0f2fe) 76%, #ffffff);
+      color: color-mix(in srgb, var(--phase-color, var(--teal)) 80%, #000000);
       font-weight: 800;
-      margin-bottom: 8px;
-      font-size: 14px;
+      margin-bottom: 6px;
+      font-size: 13px;
     }
 
     .deadline-card.overdue {
-      border-color: color-mix(in srgb, var(--red) 55%, var(--border));
+      border-color: rgba(165, 54, 74, 0.3);
       border-top-color: var(--red);
     }
 
-    .deadline-meta {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
+    .deadline-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+
+    /* ==============================================
+       COMMAND CENTER / CONSOLE
+       ============================================== */
 
     .console-grid {
       display: grid;
       grid-template-columns: 1.15fr .85fr;
-      gap: 10px;
-      margin-top: 12px;
+      gap: 12px;
+      margin-top: 14px;
     }
 
-    .console-list {
-      display: grid;
-      gap: 8px;
-      margin-top: 10px;
-    }
+    .console-list { display: grid; gap: 8px; margin-top: 10px; }
 
     .console-item {
       display: grid;
       grid-template-columns: auto 1fr auto;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
-      padding: 10px;
+      padding: 12px 14px;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      background: rgba(255,255,255,.028);
+      border-radius: var(--r-md);
+      background: var(--surface);
+      transition: box-shadow 0.12s;
     }
 
+    .console-item:hover { box-shadow: var(--shadow-sm); }
+
     .console-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
       display: grid;
       place-items: center;
       font-weight: 900;
-      font-size: 13px;
-      background: linear-gradient(135deg, var(--blue), var(--green));
+      font-size: 14px;
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      color: white;
+      flex-shrink: 0;
     }
 
     .console-kicker {
       font-size: 11px;
-      color: var(--muted);
+      color: var(--faint);
       text-transform: uppercase;
       letter-spacing: .08em;
-      font-weight: 800;
+      font-weight: 700;
     }
 
     .console-title {
       margin-top: 2px;
-      font-weight: 800;
-      font-size: 13px;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
     }
 
-    .readiness-list {
-      display: grid;
-      gap: 9px;
-      margin-top: 12px;
-    }
+    .readiness-list { display: grid; gap: 8px; margin-top: 12px; }
 
     .readiness-row {
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 10px;
       align-items: center;
-      padding: 10px 12px;
+      padding: 10px 14px;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      background: rgba(255,255,255,.028);
+      border-radius: var(--r-md);
+      background: var(--surface);
     }
 
     .readiness-row.warning {
-      border-color: color-mix(in srgb, var(--gold) 55%, var(--border));
-      background: color-mix(in srgb, var(--gold) 9%, rgba(255,255,255,.025));
+      border-color: rgba(184, 130, 22, 0.3);
+      background: var(--gold-dim);
     }
 
     .readiness-row.urgent {
-      border-color: color-mix(in srgb, var(--red) 55%, var(--border));
-      background: color-mix(in srgb, var(--red) 9%, rgba(255,255,255,.025));
+      border-color: rgba(165, 54, 74, 0.3);
+      background: var(--red-dim);
     }
 
-    .priority-pill {
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: capitalize;
-    }
-
-    .priority-pill.high,
-    .priority-pill.critical {
-      border-color: color-mix(in srgb, var(--red) 55%, var(--border));
-      color: #fecdd3;
-    }
-
-    .priority-pill.medium {
-      border-color: color-mix(in srgb, var(--gold) 55%, var(--border));
-      color: #fde68a;
-    }
-
-    .priority-pill.low {
-      border-color: color-mix(in srgb, var(--green) 45%, var(--border));
-      color: #bbf7d0;
-    }
+    /* ==============================================
+       FORMS — ADMIN
+       ============================================== */
 
     .admin-form {
       display: grid;
@@ -823,29 +1067,79 @@
       margin-top: 16px;
     }
 
-    .admin-form textarea {
-      min-height: 78px;
-    }
+    .admin-form textarea { min-height: 78px; }
 
-    .inline-actions {
+    /* ==============================================
+       CHECKLIST + OPTIONS
+       ============================================== */
+
+    .check-row {
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 12px;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      background: var(--surface);
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: background 0.1s;
     }
 
-    .inline-actions button {
-      width: auto;
-      min-width: 120px;
+    .check-row:hover { background: var(--surface2); }
+
+    .check-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      accent-color: var(--phase-color, var(--teal));
+      flex-shrink: 0;
+      padding: 0;
+      border-radius: 4px;
+      appearance: auto;
+      -webkit-appearance: checkbox;
+      cursor: pointer;
     }
 
-    .danger {
-      background: linear-gradient(90deg, #e11d48, #f97316);
+    .application-question {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      background: var(--surface);
     }
 
-    .success {
-      background: linear-gradient(90deg, #059669, #34d399);
+    .option-list { display: grid; gap: 6px; margin-top: 10px; }
+
+    .option-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      background: var(--surface2);
+      cursor: pointer;
+      transition: background 0.1s;
     }
+
+    .option-row:hover { background: var(--border-lt); }
+
+    .option-row input {
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      margin-top: 2px;
+      accent-color: var(--purple);
+      appearance: auto;
+      -webkit-appearance: auto;
+      flex-shrink: 0;
+    }
+
+    .answer-list { display: grid; gap: 12px; margin-top: 14px; }
+
+    /* ==============================================
+       OPS FLOW
+       ============================================== */
 
     .ops-flow {
       display: grid;
@@ -855,12 +1149,11 @@
     }
 
     .ops-step {
-      padding: 13px;
+      padding: 16px;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      background:
-        linear-gradient(135deg, color-mix(in srgb, var(--ops-color, var(--blue)) 14%, transparent), rgba(255,255,255,.025));
-      border-top: 4px solid var(--ops-color, var(--blue));
+      border-radius: var(--r-md);
+      background: color-mix(in srgb, var(--ops-color, var(--teal)) 5%, var(--surface));
+      border-top: 4px solid var(--ops-color, var(--teal));
     }
 
     .ops-step-number {
@@ -868,12 +1161,17 @@
       height: 28px;
       display: grid;
       place-items: center;
-      border-radius: 8px;
-      background: var(--ops-color, var(--blue));
-      color: #111318;
+      border-radius: var(--r-sm);
+      background: var(--ops-color, var(--teal));
+      color: white;
       font-weight: 900;
       margin-bottom: 10px;
+      font-size: 13px;
     }
+
+    /* ==============================================
+       ROOMS + CODE
+       ============================================== */
 
     .room-grid {
       display: grid;
@@ -884,146 +1182,180 @@
 
     .room-card {
       border: 1px solid var(--border);
-      border-left: 4px solid var(--ops-color, var(--blue));
-      border-radius: 12px;
-      padding: 13px;
-      background: rgba(255,255,255,.028);
+      border-left: 4px solid var(--ops-color, var(--teal));
+      border-radius: var(--r-md);
+      padding: 14px;
+      background: var(--surface);
     }
 
     .code-card {
-      border: 1px dashed color-mix(in srgb, var(--gold) 50%, var(--border));
-      border-radius: 12px;
-      padding: 12px;
-      background: color-mix(in srgb, var(--gold) 8%, rgba(255,255,255,.025));
+      border: 1px dashed color-mix(in srgb, var(--gold) 40%, var(--border));
+      border-radius: var(--r-md);
+      padding: 14px;
+      background: var(--gold-dim);
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       word-break: break-all;
+      color: var(--gold);
     }
 
-    .conflict-list {
-      display: grid;
-      gap: 8px;
+    .conflict-list { display: grid; gap: 8px; margin-top: 12px; }
+
+    /* ==============================================
+       MISC
+       ============================================== */
+
+    .onboarding-roles {
       margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
     }
 
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: capitalize;
+    /* ==============================================
+       FOCUS RINGS (accessibility)
+       ============================================== */
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
     }
 
-    .status-pill.pending {
-      border-color: color-mix(in srgb, var(--gold) 45%, var(--border));
-      color: #fde68a;
+    /* ==============================================
+       PHASE-TINTED ACTIVE TAB
+       ============================================== */
+
+    .tab-btn.active {
+      background: color-mix(in srgb, var(--phase-color, var(--teal)) 9%, var(--surface));
+      color: color-mix(in srgb, var(--phase-color, var(--teal)) 88%, #000000);
+      box-shadow: var(--shadow-xs);
+      border: 1px solid color-mix(in srgb, var(--phase-color, var(--teal)) 28%, var(--border));
+      font-weight: 700;
     }
 
-    .status-pill.approved {
-      border-color: color-mix(in srgb, var(--green) 45%, var(--border));
-      color: #bbf7d0;
+    /* ==============================================
+       SKELETON LOADER
+       ============================================== */
+
+    @keyframes sk-shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
 
-    .status-pill.declined {
-      border-color: color-mix(in srgb, var(--red) 45%, var(--border));
-      color: #fecdd3;
-    }
-
-    .application-question {
-      padding: 16px;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      background: rgba(255,255,255,.03);
-    }
-
-    .option-list {
+    .skeleton-page {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
       display: grid;
-      gap: 8px;
-      margin-top: 10px;
+      gap: 14px;
     }
 
-    .option-row {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: rgba(255,255,255,.025);
-      cursor: pointer;
+    .sk {
+      border-radius: var(--r-lg);
+      background: linear-gradient(
+        90deg,
+        var(--border-lt) 25%,
+        var(--border)    50%,
+        var(--border-lt) 75%
+      );
+      background-size: 200% 100%;
+      animation: sk-shimmer 1.4s ease-in-out infinite;
     }
 
-    .option-row input {
-      width: 18px;
-      height: 18px;
-      padding: 0;
-      margin-top: 1px;
-      accent-color: var(--purple);
-      appearance: auto;
-      -webkit-appearance: auto;
-      flex-shrink: 0;
-    }
-
-    .answer-list {
+    .sk-bar  { height: 52px; }
+    .sk-panel { height: 180px; }
+    .sk-row  { height: 80px; }
+    .sk-grid {
       display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 12px;
-      margin-top: 14px;
     }
+    .sk-card { height: 110px; border-radius: var(--r-lg); }
 
-    .empty-state {
-      border: 1px dashed var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      background: rgba(255,255,255,.024);
-      margin-top: 12px;
-    }
+    /* ==============================================
+       MOBILE DRAWER
+       ============================================== */
 
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(6, 8, 12, 0.72);
-      display: flex;
+    .nav-hamburger {
+      display: none;
       align-items: center;
       justify-content: center;
-      padding: 18px;
-      z-index: 9999;
-    }
-
-    .modal-card {
-      width: min(100%, 460px);
-      background: var(--card);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r-md);
+      background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.42);
+      color: var(--text);
+      font-size: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.12s;
+      box-shadow: none;
     }
 
-    @media (max-width: 640px) {
-      #app { padding: 16px; }
-      .card, .panel { padding: 15px; }
+    .nav-hamburger:hover { background: var(--border-lt); transform: none; }
+
+    .nav-mobile-drawer {
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      padding: 8px 12px 12px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .nav-mobile-drawer.open { display: flex; }
+
+    .nav-mobile-link {
+      display: flex;
+      align-items: center;
+      padding: 11px 12px;
+      border-radius: var(--r-md);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      transition: background 0.12s, color 0.12s;
+      width: 100%;
+    }
+
+    .nav-mobile-link:hover { background: var(--surface2); color: var(--text); transform: none; box-shadow: none; }
+    .nav-mobile-link.active { color: var(--teal); background: var(--teal-dim); font-weight: 700; }
+
+    /* ==============================================
+       RESPONSIVE
+       ============================================== */
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      #app { padding: 20px 16px 52px; }
+      .card { padding: 24px; margin-top: 16px; }
+      .panel { padding: 18px; }
       h1 { font-size: 22px; }
       h2 { font-size: 17px; }
       .topbar { flex-direction: column; }
-      .utility-bar, .utility-search-row { grid-template-columns: 1fr; }
-      .utility-links { justify-content: flex-start; }
       .actions { flex-direction: column; }
       .actions button, .ghost, .tab-btn { width: 100%; }
       .timeline-item { grid-template-columns: 1fr; }
       .console-grid { grid-template-columns: 1fr; }
-      .admin-form { grid-template-columns: 1fr; }
-      .knowledge-search { grid-template-columns: 1fr; }
-      .readiness-row { grid-template-columns: 1fr; }
-      .ops-flow, .room-grid, .calendar-grid, .runbook-grid, .directory-grid, .grid, .metric-row { grid-template-columns: 1fr; }
       .console-item { grid-template-columns: auto 1fr; }
       .console-item .inline-actions { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 480px) {
+      .tabs { width: 100%; }
+      .tab-btn { min-width: auto; flex: 1; text-align: center; }
     }
   </style>
 </head>
 <body>
+  <nav id="global-nav"></nav>
   <div id="app"></div>
 
   <script src="config.js"></script>
@@ -1174,7 +1506,6 @@
         title: "Command Center",
         color: "#1f8a9b",
         owner: "RD, ADs, Ops",
-        team: "Operations",
         items: [
           "Keep the master schedule, room changes, and escalation log open.",
           "Route every issue to one owner and one next action.",
@@ -1185,7 +1516,6 @@
         title: "Main Check-In",
         color: "#247a52",
         owner: "Registration + Ops",
-        team: "Operations",
         items: [
           "Verify registration status before badge pickup.",
           "Use badge code, QR, or NFC UID as the event-week identity key.",
@@ -1196,7 +1526,6 @@
         title: "Competition Rooms",
         color: "#7b61ff",
         owner: "Competitions + Room Captains",
-        team: "Competitions",
         items: [
           "Check students into the correct room/time block before a round starts.",
           "Report no-shows, wrong-room scans, and judge delays to Command Center.",
@@ -1207,7 +1536,6 @@
         title: "Communications",
         color: "#c9972b",
         owner: "Ops 2 + PR",
-        team: "PR",
         items: [
           "Only send public updates after confirming with Command Center.",
           "Use one message for each change: what changed, who is affected, where to go, and when.",
@@ -1218,7 +1546,6 @@
         title: "Escalations",
         color: "#b13f4a",
         owner: "RD / ADs",
-        team: "Leadership",
         items: [
           "Safety, privacy, parent concerns, and conduct issues go straight to leadership.",
           "Document who reported the issue, what happened, what action was taken, and whether follow-up is needed.",
@@ -1226,115 +1553,70 @@
         ]
       }
     ];
-    const PORTAL_RULEBOOK_VERSION = "v2026.4";
-    const ONBOARDING_CHECKLIST = [
-      { area: "Account", items: ["Claim your role", "Add your full name and team", "Open your workbook once"] },
-      { area: "Systems", items: ["Check Calendar deadlines", "Review Team Page", "Open Meeting Hub", "Read Competition Rulebook Search"] },
-      { area: "Workflow", items: ["Know your start phase", "Find your first three responsibilities", "Confirm who you escalate to"] }
-    ];
-    const RELEASE_CHECKLIST = [
-      { category: "Comms", item: "Announcements reviewed and current", owner: "PR" },
-      { category: "Deadlines", item: "Critical dates and reminders verified", owner: "Operations" },
-      { category: "Competitions", item: "Rulebook guidance, judges, and room assumptions reviewed", owner: "Competitions" },
-      { category: "Weekend Ops", item: "Tournament conflicts checked and reduced", owner: "Operations" },
-      { category: "Training", item: "Onboarding/demo data ready for new organizers", owner: "Leadership" }
-    ];
     const RULEBOOK_ENTRIES = [
       {
-        category: "Eligibility",
-        color: "#1f8a9b",
-        version: PORTAL_RULEBOOK_VERSION,
-        updated_at: "Apr 2026",
-        page: "tournament",
-        page_label: "Weekend Manager",
-        question: "If a student is missing from the room roster but says they are registered, what should the competition team do first?",
-        answer: "Pause the room-level decision, verify the student against the official registration export or lead roster, and only move forward after Registration and Competitions confirm the student status together.",
-        keywords: ["eligibility", "registered", "roster", "missing", "student", "registration"]
+        category: "Confidentiality",
+        color: "#b13f4a",
+        question: "What information can organizers share outside the board?",
+        answer: "Organizer planning, internal discussions, applicant details, registration data, participant records, judge details, and event issues should stay inside approved MIST Dallas channels. Share public-facing information only after leadership or communications approves it.",
+        keywords: ["privacy", "confidential", "parents", "siblings", "outside", "board", "data"]
       },
       {
-        category: "No-Shows",
+        category: "Professionalism",
         color: "#247a52",
-        version: PORTAL_RULEBOOK_VERSION,
-        updated_at: "Apr 2026",
-        page: "runbook",
-        page_label: "Event Runbook",
-        question: "When can a competition begin if one competitor or team has not arrived yet?",
-        answer: "Start according to the official report-time and grace-period rule for that competition. Record the no-show, alert the comp lead, and apply the same process to every school consistently.",
-        keywords: ["no show", "late", "grace period", "report time", "arrival"]
+        question: "What standard are organizers expected to follow?",
+        answer: "Organizers are expected to communicate with ihsan, avoid drama, follow the chain of command, keep commitments, and represent MIST Dallas professionally in meetings, chats, emails, and event spaces.",
+        keywords: ["ihsan", "drama", "professional", "conduct", "behavior"]
       },
       {
-        category: "Judging",
+        category: "Roles",
+        color: "#1f8a9b",
+        question: "How do role claims work?",
+        answer: "Public users can view all roles. Once an organizer signs in and claims or is assigned a role, their name and email appear in the directory and that seat is treated as claimed. Unclaimed roles stay visible with blank personal info.",
+        keywords: ["claim", "role", "directory", "open", "assigned"]
+      },
+      {
+        category: "Applications",
         color: "#c9972b",
-        version: PORTAL_RULEBOOK_VERSION,
-        updated_at: "Apr 2026",
-        page: "knowledge",
-        page_label: "Rulebook Search",
-        question: "What should judges do if the room gives instructions that feel different from the rulebook?",
-        answer: "Use the rulebook and rubric as the source of truth. If anything conflicts, pause and escalate to the competition lead before scoring so every competitor is judged by the same standard.",
-        keywords: ["judge", "judging", "rulebook", "rubric", "conflict", "instructions"]
+        question: "What happens after someone applies?",
+        answer: "Leadership reviews the application, marks it pending, approved, or declined, and can email the decision. If approved before the applicant has an account, they should sign up using the same email so the role can be assigned.",
+        keywords: ["apply", "application", "approved", "declined", "pending", "email"]
       },
       {
-        category: "Early Submission",
+        category: "Deadlines",
         color: "#7b61ff",
-        version: PORTAL_RULEBOOK_VERSION,
-        updated_at: "Apr 2026",
-        page: "tournament",
-        page_label: "Weekend Manager",
-        question: "How should early-submission interviews or reviews be handled on event day?",
-        answer: "Judges should review submissions before interviews when possible, keep interview lengths consistent with the published format, and avoid forcing competitors to explain missing prep that should have been read in advance.",
-        keywords: ["early submission", "interview", "review", "art", "project", "submission"]
+        question: "Where should organizers find deadlines?",
+        answer: "The Calendar page is the deadline source of truth. Deadlines are grouped by phase, can be exported to calendar apps, and can support reminder emails once sender verification is complete.",
+        keywords: ["deadline", "calendar", "reminder", "phase", "export"]
       },
       {
-        category: "Conflicts",
-        color: "#ff7a59",
-        version: PORTAL_RULEBOOK_VERSION,
-        updated_at: "Apr 2026",
-        page: "command",
-        page_label: "Command Center",
-        question: "What happens if a judge has a school connection or recognizes a competitor?",
-        answer: "The competition lead should reassign or adjust the judging setup as soon as possible. Any real or perceived conflict should be handled early so trust in results stays high.",
-        keywords: ["bias", "school connection", "alumni", "conflict", "recognize", "competitor"]
+        category: "Meetings",
+        color: "#247a52",
+        question: "How should meeting decisions be tracked?",
+        answer: "Every meeting should end with decisions, blockers, owners, and next actions. Decisions that affect timeline, budget, roles, rooms, competitions, or public messaging should be added to the Decision Log.",
+        keywords: ["meeting", "decision", "blocker", "agenda", "action item"]
       },
       {
-        category: "Scoring",
-        color: "#1fbf75",
-        version: PORTAL_RULEBOOK_VERSION,
-        updated_at: "Apr 2026",
-        page: "knowledge",
-        page_label: "Rulebook Search",
-        question: "How should ties, rubric questions, or unclear score sheets be resolved?",
-        answer: "Follow the competition-specific tie-break and scoring rules. If the rubric leaves room for interpretation, align judges before finalists begin and document the call for the comp lead.",
-        keywords: ["tie", "tiebreak", "score sheet", "rubric", "clarity", "finalists"]
+        category: "Event Weekend",
+        color: "#b13f4a",
+        question: "Who makes live event decisions?",
+        answer: "Command Center should coordinate live event decisions. Room changes, schedule changes, major registration issues, safety concerns, and participant-facing updates should be approved through the correct lead before being announced.",
+        keywords: ["event", "weekend", "command", "room", "schedule", "live"]
       },
       {
-        category: "Ballots",
-        color: "#f6b93b",
-        version: PORTAL_RULEBOOK_VERSION,
-        updated_at: "Apr 2026",
-        page: "feedback",
-        page_label: "Feedback",
-        question: "What makes a ballot helpful for competitors after the event?",
-        answer: "A strong ballot clearly maps comments to rubric categories, explains both strengths and next steps, and avoids vague one-line reactions that cannot guide improvement.",
-        keywords: ["ballot", "feedback", "comments", "rubric", "helpful"]
-      },
-      {
-        category: "Escalation",
-        color: "#38bdf8",
-        version: PORTAL_RULEBOOK_VERSION,
-        updated_at: "Apr 2026",
-        page: "command",
-        page_label: "Command Center",
-        question: "When should a room escalate to the competition lead instead of deciding on the spot?",
-        answer: "Escalate for eligibility questions, judging conflicts, rule disagreements, room integrity concerns, protests, or anything that could affect fairness across schools.",
-        keywords: ["escalate", "competition lead", "fairness", "protest", "integrity", "room"]
+        category: "MyMIST",
+        color: "#1f8a9b",
+        question: "How should MyMIST data be used?",
+        answer: "MyMIST remains the source of truth for registration. The portal should use MyMIST exports as planning snapshots for rosters, badges, room assignments, and check-in tools.",
+        keywords: ["mymist", "registration", "export", "participants", "rosters"]
       }
     ];
     const FEEDBACK_THEMES = [
       {
         id: "communication",
-        theme: "Clearer Communication Flow",
+        theme: "Communication Clarity",
         source: "Previous organizer and participant feedback",
-        sentiment: "People respond really well when updates feel simple, timely, and consistent across the weekend.",
+        sentiment: "People need fewer conflicting updates and clearer source-of-truth messaging.",
         owner: "Ops 2 + PR",
         phase: "build",
         status: "In progress",
@@ -1343,9 +1625,9 @@
       },
       {
         id: "room-flow",
-        theme: "Smoother Room Flow & Timing",
+        theme: "Room Flow & Competition Timing",
         source: "Event weekend debriefs",
-        sentiment: "Students and volunteers enjoy the day much more when rooms, starts, and transitions feel calm and predictable.",
+        sentiment: "Room changes, late starts, and unclear competition locations create stress for students and volunteers.",
         owner: "Operations + Competitions",
         phase: "stabilization",
         status: "In build",
@@ -1354,9 +1636,9 @@
       },
       {
         id: "training",
-        theme: "Stronger Organizer Readiness",
+        theme: "Organizer Training",
         source: "Past board reflections",
-        sentiment: "New organizers shine more when expectations and room playbooks are clear before event week begins.",
+        sentiment: "New organizers need clearer expectations before event week, not just during event week.",
         owner: "RD / ADs + Directors",
         phase: "foundations",
         status: "Needs owner check",
@@ -1365,9 +1647,9 @@
       },
       {
         id: "registration",
-        theme: "Cleaner Registration Data",
+        theme: "Registration Data Accuracy",
         source: "Check-in and roster issues",
-        sentiment: "Check-in moves fastest when names, competitions, and room eligibility are already clean before the weekend starts.",
+        sentiment: "Wrong names, missing competitions, and unclear status slow down check-in and room entry.",
         owner: "Registration + MyMIST leads",
         phase: "build",
         status: "Staged",
@@ -1376,13 +1658,13 @@
       },
       {
         id: "accountability",
-        theme: "Visible Team Accountability",
+        theme: "Role Accountability",
         source: "Leadership debriefs",
-        sentiment: "Momentum stays high when every team can see ownership, progress, and where help is needed early.",
+        sentiment: "It should be easier to tell who owns what, what is late, and where support is needed.",
         owner: "RD / ADs",
         phase: "foundations",
         status: "Live",
-        color: "#ff7a59",
+        color: "#b13f4a",
         action: "Use role claims, progress board, team pages, deadlines, and Meeting Hub action items as the accountability loop."
       }
     ];
@@ -1454,46 +1736,6 @@
         "2026": { count: 554, averageOverall: 3.9131 }
       },
       yearRange: "2023-2026",
-      yearAreaBreakdown: [
-        { key: "overall", label: "Overall", values: { "2023": 3.6, "2024": 3.967, "2025": 3.763, "2026": 3.913 }, change: 0.313 },
-        { key: "comm_before", label: "Communication Before", values: { "2023": 3.443, "2024": 3.564, "2025": 3.359, "2026": 3.595 }, change: 0.152 },
-        { key: "comm_during", label: "Communication During", values: { "2023": 3.386, "2024": 3.728, "2025": 3.237, "2026": 3.558 }, change: 0.172 },
-        { key: "judges", label: "Judges", values: { "2023": 3.371, "2024": 3.868, "2025": 3.581, "2026": 3.752 }, change: 0.381 },
-        { key: "food", label: "Food", values: { "2023": 3.386, "2024": 2.597, "2025": 3.669, "2026": 3.564 }, change: 0.178 },
-        { key: "activities", label: "Activities / Workshop", values: { "2023": 3.302, "2024": 3.586, "2025": 3.634, "2026": 3.311 }, change: 0.009 },
-        { key: "awards", label: "Award Ceremony", values: { "2023": 3.657, "2024": 4.271, "2025": 3.921, "2026": 3.687 }, change: 0.03 },
-        { key: "sports", label: "Sports", values: { "2023": 3.333, "2024": 3.581, "2025": 3.077, "2026": 3.079 }, change: -0.254 },
-        { key: "community", label: "Community", values: { "2023": 3.957, "2024": 4.222, "2025": 4.114, "2026": 4.238 }, change: 0.281 },
-        { key: "recommend", label: "Recommend", values: { "2023": 3.986, "2024": 4.342, "2025": 4.253, "2026": 4.297 }, change: 0.311 }
-      ],
-      phaseActions: {
-        foundations: [
-          { title: "Communication Playbook", owner: "PR + Command Center", metrics: "3.54 -> 3.80", overallLift: "+0.06", experienceLift: "+0.10" },
-          { title: "Competition Rulebook Calibration", owner: "Competitions + Judge Training", metrics: "3.72 / 3.62 -> 3.95 / 3.85", overallLift: "+0.07", experienceLift: "+0.12" }
-        ],
-        build: [
-          { title: "Food + Water Coverage", owner: "Hospitality + Logistics", metrics: "3.34 -> 3.70", overallLift: "+0.05", experienceLift: "+0.09" },
-          { title: "Workshop Energy Refresh", owner: "Programs + Spirit", metrics: "3.43 -> 3.65", overallLift: "+0.03", experienceLift: "+0.07" }
-        ],
-        stabilization: [
-          { title: "Room + Timing Readiness", owner: "Operations + Competitions", metrics: "3.56 -> 3.82", overallLift: "+0.05", experienceLift: "+0.08" },
-          { title: "Awards Run-of-Show QA", owner: "DT + Awards", metrics: "3.85 -> 4.00", overallLift: "+0.02", experienceLift: "+0.04" }
-        ],
-        execution: [
-          { title: "Sports Venue + Safety Plan", owner: "Sports Directors + Safety", metrics: "3.22 -> 3.55", overallLift: "+0.08", experienceLift: "+0.11" },
-          { title: "Live Escalation Coverage", owner: "Command Center", metrics: "3.91 overall -> 4.12", overallLift: "+0.04", experienceLift: "+0.06" }
-        ]
-      },
-      projected2027: [
-        { label: "Overall", current: 3.91, target: 4.12, lift: 0.21 },
-        { label: "Communication", current: 3.54, target: 3.80, lift: 0.26 },
-        { label: "Judges", current: 3.72, target: 3.95, lift: 0.23 },
-        { label: "Food", current: 3.34, target: 3.7, lift: 0.36 },
-        { label: "Activities", current: 3.43, target: 3.65, lift: 0.22 },
-        { label: "Sports", current: 3.22, target: 3.55, lift: 0.33 },
-        { label: "Awards", current: 3.85, target: 4.0, lift: 0.15 },
-        { label: "Recommend", current: 4.28, target: 4.4, lift: 0.12 }
-      ],
       categoryAverages: [
         { key: "session_communication", label: "Session Communication", average: 1, count: 1 },
         { key: "session_support", label: "Session Support", average: 1, count: 1 },
@@ -1601,7 +1843,6 @@
       },
       statusResults: null,
       selectedTeam: null,
-      portalSearch: "",
       knowledgeQuery: "",
       feedbackFilter: "all",
       feedbackDataset: loadFeedbackDataset(),
@@ -1610,109 +1851,7 @@
       saveTimers: {}
     };
 
-    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "calendar", "login", "apply", "application-status", "meetings", "runbook", "knowledge", "feedback", "onboarding", "release"]);
-
-    function currentViewLabel(view = APP_STATE.view) {
-      const labels = {
-        dashboard: "Home",
-        workbook: "My Workbook",
-        progress: "Progress Board",
-        command: "Planning & Command",
-        integrations: "MyMIST",
-        tournament: "Weekend Manager",
-        directory: "Directory",
-        teams: "Team Hubs",
-        timeline: "Timeline",
-        calendar: "Planning & Command",
-        meetings: "Meetings",
-        runbook: "Operations & Answers",
-        knowledge: "Operations & Answers",
-        feedback: "Feedback",
-        onboarding: "Onboarding",
-        release: "Release Checklist",
-        applications: "Applications",
-        "application-status": "Application Status",
-        login: "Sign In",
-        apply: "Apply"
-      };
-      return labels[view] || "Portal";
-    }
-
-    function buildPortalJumpItems() {
-      const pageItems = [
-        { id: "dashboard", title: "Dashboard", meta: "Home, announcements, shortcuts", keywords: "home dashboard portal start", action: "openView('dashboard')" },
-        { id: "workbook", title: "My Workbook", meta: "Role tasks and notes", keywords: "workbook checklist notes", action: "openWorkbook()" },
-        { id: "command", title: "Command Center", meta: "Leadership, deadlines, readiness", keywords: "command center leadership readiness deadline", action: "openCommandCenter()" },
-        { id: "calendar", title: "Calendar", meta: "Deadlines and reminder health", keywords: "calendar deadlines reminders dates", action: "openCalendar()" },
-        { id: "meetings", title: "Meetings & Decisions", meta: "Notes, blockers, approvals", keywords: "meeting decision blockers notes approvals", action: "openMeetings()" },
-        { id: "feedback", title: "Feedback Dashboard", meta: "Themes, actions, targets", keywords: "feedback actions targets survey", action: "openFeedback()" },
-        { id: "runbook", title: "Event Runbook", meta: "Weekend procedures", keywords: "runbook event day procedures command room checkin", action: "openRunbook()" },
-        { id: "knowledge", title: "Rulebook Search", meta: "Competition questions and answers", keywords: "rulebook faq judging question answer", action: "openKnowledge()" },
-        { id: "teams", title: "Team Hubs", meta: "Team ownership and roles", keywords: "teams roles directors committee ownership", action: "openTeamPages()" },
-        { id: "directory", title: "Directory", meta: "People, teams, roles", keywords: "directory organizers people roles", action: "openDirectory()" },
-        { id: "tournament", title: "Weekend Manager", meta: "Rooms, conflicts, assignments", keywords: "tournament rooms conflicts sports schedule assignments", action: "openTournamentManager()" },
-        { id: "integrations", title: "MyMIST Imports", meta: "Participants, schools, badges", keywords: "mymist import badges participants schools", action: "openIntegrations()" },
-        { id: "onboarding", title: "Onboarding Checklist", meta: "Train new organizers", keywords: "onboarding training new organizers demo", action: "openOnboarding()" },
-        { id: "release", title: "Release Checklist", meta: "Leadership launch checks", keywords: "release launch checklist leadership", action: "openReleaseChecklist()" },
-        { id: "timeline", title: "Timeline", meta: "Foundations to execution", keywords: "timeline phases foundations build stabilization execution", action: "openTimeline()" },
-        { id: "progress", title: "Progress Board", meta: "Completion by role", keywords: "progress completion status board", action: "openProgressBoard()" }
-      ];
-
-      const teamItems = [...new Set(ROLE_OPTIONS.map(role => role.team).filter(Boolean))].map(team => ({
-        id: `team-${team}`,
-        title: `${team} Team`,
-        meta: "Open team hub",
-        keywords: `${team} team hub`,
-        action: `openTeamPages('${escapeJs(team)}')`
-      }));
-
-      const rulebookItems = RULEBOOK_ENTRIES.map(entry => ({
-        id: `rule-${slugify(entry.question)}`,
-        title: entry.question,
-        meta: `${entry.category} -> ${entry.page_label}`,
-        keywords: `${entry.category} ${entry.question} ${entry.keywords.join(" ")}`,
-        action: `openRulebookPage('${entry.page}')`
-      }));
-
-      return [...pageItems, ...teamItems, ...rulebookItems];
-    }
-
-    function portalSearchResults(query = APP_STATE.portalSearch) {
-      const clean = String(query || "").trim().toLowerCase();
-      if (!clean) return [];
-      return buildPortalJumpItems()
-        .filter(item => `${item.title} ${item.meta} ${item.keywords}`.toLowerCase().includes(clean))
-        .slice(0, 7);
-    }
-
-    function renderPortalUtilityBar(view = APP_STATE.view) {
-      const results = portalSearchResults();
-      return `
-        <div class="panel utility-panel">
-          <div class="utility-bar">
-            <div class="utility-search">
-              <div class="utility-search-row">
-                <input value="${escapeHtml(APP_STATE.portalSearch || "")}" oninput="setPortalSearch(this.value)" placeholder="Quick jump: feedback, judges, calendar, sports, runbook..." />
-                ${APP_STATE.portalSearch ? `<button class="ghost" onclick="setPortalSearch('')">Clear</button>` : `<button class="ghost" onclick="openKnowledge()">Answers</button>`}
-              </div>
-              <div class="utility-results">
-                ${results.length
-                  ? results.map(item => `<button class="utility-pill" onclick="${item.action}">${escapeHtml(item.title)}</button>`).join("")
-                  : APP_STATE.portalSearch
-                    ? `<span class="phase-chip">No quick matches yet</span>`
-                    : `<span class="phase-chip">Current area: ${escapeHtml(currentViewLabel(view))}</span>`}
-              </div>
-            </div>
-            <div class="utility-links">
-              <button class="utility-pill" onclick="goDashboard()">Home</button>
-              <button class="utility-pill" onclick="openCalendar()">Calendar</button>
-              <button class="utility-pill" onclick="openMeetings()">Meetings</button>
-              <button class="utility-pill" onclick="openKnowledge()">Answers</button>
-            </div>
-          </div>
-        </div>
-      `;
-    }
+    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "calendar", "login", "apply", "application-status", "meetings", "runbook", "knowledge", "feedback"]);
 
     function buildPhaseLookup(data) {
       if (data.PHASE_META) {
@@ -2301,12 +2440,7 @@
     async function deleteDeadline(id) {
       const profile = await getProfile((await getUser()).id);
       if (!profile?.is_admin) return alert("Only admins can delete deadlines.");
-      const ok = await requestConfirmation({
-        title: "Delete this deadline?",
-        body: "This removes the deadline from the shared calendar and admin manager.",
-        confirmLabel: "Delete Deadline"
-      });
-      if (!ok) return;
+      if (!confirm("Delete this deadline?")) return;
 
       const { error } = await supabaseClient
         .from("deadline_events")
@@ -2789,7 +2923,8 @@
     }
 
     function openDirectory() {
-      openTeamPages();
+      APP_STATE.view = "directory";
+      renderApp();
     }
 
     function openTeamPages(team = null) {
@@ -2828,16 +2963,6 @@
       renderApp();
     }
 
-    function openOnboarding() {
-      APP_STATE.view = "onboarding";
-      renderApp();
-    }
-
-    function openReleaseChecklist() {
-      APP_STATE.view = "release";
-      renderApp();
-    }
-
     function openApply(roleId) {
       APP_STATE.view = "apply";
       APP_STATE.applicationRoleId = roleId;
@@ -2851,11 +2976,6 @@
 
     function openApplications() {
       APP_STATE.view = "applications";
-      renderApp();
-    }
-
-    function setPortalSearch(value) {
-      APP_STATE.portalSearch = value;
       renderApp();
     }
 
@@ -3012,15 +3132,28 @@
     function renderLogin() {
       return `
         <div class="card">
-          <h1>MIST Dallas</h1>
-          <p>Organizer portal access for 2027 planning.</p>
-          <div class="stack">
-            <input id="email" type="email" placeholder="Email" />
-            <input id="password" type="password" placeholder="Password" />
-            <button class="primary full" onclick="login()">Log In</button>
-            <button class="secondary full" onclick="signUp()">Sign Up</button>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--teal),var(--green));display:grid;place-items:center;font-size:17px;color:white;font-weight:900;flex-shrink:0;">M</div>
+            <div>
+              <div style="font-size:16px;font-weight:800;letter-spacing:-0.02em;color:var(--text);">MIST Dallas</div>
+              <div style="font-size:12px;color:var(--faint);font-weight:600;">Organizer Portal · 2027</div>
+            </div>
           </div>
-          <p class="subtext">If you are new, create your account first, then log in.</p>
+          <h2 style="margin-bottom:4px;">Welcome back</h2>
+          <p style="margin-bottom:4px;">Sign in to access your workbook, track progress, and coordinate with your team.</p>
+          <div class="stack">
+            <div>
+              <div class="label">Email</div>
+              <input id="email" type="email" placeholder="you@example.com" />
+            </div>
+            <div>
+              <div class="label">Password</div>
+              <input id="password" type="password" placeholder="Your password" />
+            </div>
+            <button class="primary full" onclick="login()">Log In</button>
+            <button class="ghost full" onclick="signUp()" style="min-width:0;">Create an account</button>
+          </div>
+          <p class="subtext" style="text-align:center;">New organizer? Create your account first, then log in.</p>
         </div>
       `;
     }
@@ -3305,53 +3438,87 @@
       const overallPercent = hasProfile ? calculateOverallPercent(workbook, APP_STATE.progress) : 0;
       const teamStats = calculateTeamStats(rows, progressRows);
 
+      const openRoleCount = rows.filter(row => !row.claimed).length;
+
       return `
         <div class="dashboard-shell">
-          <div class="topbar">
-            <div>
-              <h1>MIST Dallas Portal</h1>
-              <p>${signedIn ? `Welcome back, ${profile?.full_name || user.email}` : "Browse the full organizer board. Sign in to claim your role and save workbook progress."}</p>
+
+          ${!signedIn ? `
+          <div style="background:linear-gradient(135deg,var(--teal-dim),var(--green-dim));border:1px solid color-mix(in srgb,var(--teal) 18%,var(--border));border-radius:var(--r-xl);padding:28px 28px 24px;margin-bottom:14px;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px;">
+              <div>
+                <h1 style="color:var(--text);margin-bottom:6px;">MIST Dallas 2027 Planning Portal</h1>
+                <p style="max-width:520px;font-size:14px;">A shared workspace for building the event with clarity, accountability, and less scattered information. Browse open roles, read the runbook, or sign in to claim your seat.</p>
+              </div>
+              <button class="primary" onclick="openLogin()" style="flex-shrink:0;">Sign In / Join</button>
             </div>
-            ${signedIn ? `<button class="ghost" onclick="logout()">Log Out</button>` : `<button class="ghost" onclick="openLogin()">Log In / Sign Up</button>`}
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
+              <div style="background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.8);border-radius:var(--r-md);padding:14px;">
+                <div class="stat-title">Open Roles</div>
+                <div class="stat-value">${openRoleCount}</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.8);border-radius:var(--r-md);padding:14px;">
+                <div class="stat-title">Claimed</div>
+                <div class="stat-value">${teamStats.activeOrganizers} / ${teamStats.totalOrganizers}</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.8);border-radius:var(--r-md);padding:14px;">
+                <div class="stat-title">Avg Progress</div>
+                <div class="stat-value">${teamStats.averageProgress}%</div>
+                <div class="progress-track" style="margin-top:8px;"><div class="progress-fill" style="width:${teamStats.averageProgress}%"></div></div>
+              </div>
+              <div style="background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.8);border-radius:var(--r-md);padding:14px;">
+                <div class="stat-title">Teams</div>
+                <div class="stat-value">${teamStats.teamCount}</div>
+              </div>
+            </div>
+          </div>
+          ` : `
+          <div style="margin-bottom:20px;">
+            <h1 style="margin-bottom:4px;">Good to see you${profile?.full_name ? `, ${escapeHtml(profile.full_name.split(" ")[0])}` : ""}.</h1>
+            <p>${hasProfile ? `You're on the <strong style="color:var(--text);font-weight:700;">${escapeHtml(profile.team)}</strong> team as <strong style="color:var(--text);font-weight:700;">${escapeHtml(formatRole(profile.role_id))}</strong>. Use your workbook to track phase progress.` : "Your account is connected. Claim a role below to unlock your workbook and team tools."}</p>
+            ${hasProfile ? `
+            <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+              <button class="primary" onclick="openWorkbook()">Open Workbook</button>
+              <button class="ghost" onclick="openTeamPages('${escapeHtml(profile.team || "")}')">My Team Page</button>
+              <button class="ghost" onclick="openCommandCenter()">Command Center</button>
+            </div>` : ""}
           </div>
 
-          ${renderPortalUtilityBar("dashboard")}
-
-          ${!signedIn ? renderPortalGuide(signedIn, hasProfile) : ""}
-
-          <div class="panel">
-            <h2>Organizer Dashboard</h2>
-            <p>${signedIn ? "Your portal is connected. You can open your role workbook or view the shared organizer board." : "All roles are visible here, even before organizers claim them. Claimed seats fill in automatically after signup."}</p>
-
-            <div class="grid">
+          <div class="panel" style="margin-bottom:14px;">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;">
               <div class="stat">
-                <div class="stat-title">${signedIn ? "Email" : "Portal Access"}</div>
-                <div class="stat-value">${signedIn ? user.email : "Public View"}</div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Role</div>
-                <div class="stat-value">${hasProfile ? formatRole(profile.role_id) : "Not claimed"}</div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Team</div>
-                <div class="stat-value">${profile?.team || "Not set"}</div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">${signedIn ? "My Progress" : "Open Roles"}</div>
-                <div class="stat-value">${signedIn ? `${overallPercent}% complete` : rows.filter(row => !row.claimed).length}</div>
+                <div class="stat-title">My Progress</div>
+                <div class="stat-value">${overallPercent}%</div>
                 <div class="progress-track"><div class="progress-fill" style="width:${overallPercent}%"></div></div>
               </div>
               <div class="stat">
-                <div class="stat-title">Claimed Roles</div>
-                <div class="stat-value">${teamStats.activeOrganizers} / ${teamStats.totalOrganizers}</div>
+                <div class="stat-title">Role</div>
+                <div class="stat-value" style="font-size:15px;">${hasProfile ? escapeHtml(formatRole(profile.role_id)) : "Not claimed"}</div>
               </div>
               <div class="stat">
-                <div class="stat-title">Average Progress</div>
+                <div class="stat-title">Team</div>
+                <div class="stat-value" style="font-size:15px;">${escapeHtml(profile?.team || "—")}</div>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Board Progress</div>
                 <div class="stat-value">${teamStats.averageProgress}%</div>
                 <div class="progress-track"><div class="progress-fill" style="width:${teamStats.averageProgress}%"></div></div>
               </div>
+              <div class="stat">
+                <div class="stat-title">Claimed Seats</div>
+                <div class="stat-value">${teamStats.activeOrganizers} / ${teamStats.totalOrganizers}</div>
+              </div>
             </div>
+          </div>
+          `}
 
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Navigate the Portal</h2>
+                <p>Every tool the board needs — organized by what you're trying to do.</p>
+              </div>
+            </div>
             ${renderDashboardNav(signedIn, hasProfile, profile)}
           </div>
 
@@ -3366,46 +3533,55 @@
     function renderDashboardNav(signedIn, hasProfile, profile) {
       const sections = [
         {
-          label: "My Work",
-          hint: "Start here day to day",
+          label: "Do The Work",
+          hint: "Daily planning tools",
           color: "#247a52",
           cards: [
             signedIn && hasProfile
               ? { title: "My Workbook", body: "Role checklist, notes, phase plans, and autosave progress.", action: "openWorkbook()" }
               : { title: "Claim a Role", body: "Log in or create an account, then choose an open organizer role.", action: "openLogin()" },
             { title: "Team Pages", body: "Focused team hubs with roles, tasks, start phases, and claim status.", action: "openTeamPages()" },
-            { title: "Calendar", body: "Deadlines, reminder health, and what is coming up next.", action: "openCalendar()" },
             { title: "Progress Board", body: "Shared completion percentages and recent saved activity.", action: "openProgressBoard()" }
           ]
         },
         {
-          label: "Leadership",
-          hint: "Shared planning and accountability",
+          label: "Coordinate",
+          hint: "Leadership visibility",
           color: "#c9972b",
           cards: [
-            { title: "Planning & Command Center", body: "Open seats, deadline risk, team readiness, calendar health, and operational checks.", action: "openCommandCenter()" },
-            { title: "Meetings & Decisions", body: "Agendas, blockers, approvals, and follow-up in one place.", action: "openMeetings()" },
-            { title: "Feedback & Actions", body: "Turn feedback into owned actions and 2027 targets.", action: "openFeedback()" },
-            { title: "Onboarding & Release", body: "Train new organizers and run leadership launch checks.", action: "openOnboarding()" },
-            { title: "Timeline", body: "Foundations, Build, Stabilization, and Execution at a glance.", action: "openTimeline()" }
+            { title: "Command Center", body: "Open seats, deadline risk, team readiness, and operational checks.", action: "openCommandCenter()" },
+            { title: "Meeting Hub", body: "Agendas, blockers, action items, and meeting memory.", action: "openMeetings()" },
+            { title: "Decision Log", body: "Track approved decisions, owners, impact, and follow-up.", action: "openMeetings()" },
+            { title: "Feedback Addressal", body: "Turn past-year feedback into themes, owners, action plans, and status.", action: "openFeedback()" },
+            { title: "Timeline", body: "Foundations, Build, Stabilization, and Execution at a glance.", action: "openTimeline()" },
+            { title: "Calendar", body: "Deadline cards, calendar export, and reminder preferences.", action: "openCalendar()" }
           ]
         },
         {
-          label: "Event Ops",
-          hint: "Weekend systems and execution",
+          label: "Operate",
+          hint: "Event systems",
           color: "#7b61ff",
           cards: [
             { title: "MyMIST Integration Center", body: "Stage exports for participants, schools, badges, and rosters.", action: "openIntegrations()" },
             { title: "Weekend Tournament Manager", body: "Rooms, competition blocks, student placement, and NFC check-ins.", action: "openTournamentManager()" },
-            { title: "Event Weekend Runbook", body: "Command Center, check-in, rooms, communications, and escalation procedures.", action: "openRunbook()" }
+            { title: "Event Weekend Runbook", body: "Command Center, check-in, rooms, communications, and escalation procedures.", action: "openRunbook()" },
+            { title: "Directory", body: "Names, roles, teams, emails, and unclaimed role seats.", action: "openDirectory()" }
           ]
         },
         {
-          label: "Answers & Hiring",
-          hint: "Search rules and manage roles",
+          label: "Find Answers",
+          hint: "Organizer rulebook",
           color: "#1f8a9b",
           cards: [
-            { title: "Operations & Answers Hub", body: "Search competition rules, weekend procedures, and jump straight to the right workspace.", action: "openKnowledge()" },
+            { title: "Rulebook Search", body: "Search organizer expectations, policies, processes, and common questions.", action: "openKnowledge()" },
+            { title: "FAQ Library", body: "Fast answers for applications, roles, deadlines, MyMIST, and event weekend.", action: "openKnowledge()" }
+          ]
+        },
+        {
+          label: "Applications",
+          hint: "Recruit and assign",
+          color: "#b13f4a",
+          cards: [
             { title: "Application Status", body: "Check whether an application is pending, approved, or declined.", action: "openApplicationStatus()" },
             ...(profile?.is_admin ? [{ title: "Review Applications", body: "Approve, decline, and email role applicants.", action: "openApplications()" }] : [])
           ]
@@ -3536,6 +3712,12 @@
       `;
     }
 
+    function announcementAccent(priority) {
+      if (priority === "critical" || priority === "high") return "var(--red)";
+      if (priority === "medium") return "var(--teal)";
+      return "var(--faint)";
+    }
+
     function renderAnnouncements(profile) {
       const announcements = APP_STATE.announcements || DEFAULT_ANNOUNCEMENTS;
       return `
@@ -3547,20 +3729,24 @@
             </div>
             <span class="phase-chip">${announcements.length} active</span>
           </div>
-          <div class="grid">
-            ${announcements.map(item => `
-              <div class="stat">
-                <div class="phase-header">
-                  <div>
-                    <div class="stat-title">${escapeHtml(item.audience || "all")}</div>
-                    <h3>${escapeHtml(item.title)}</h3>
+          <div style="display:grid;gap:10px;margin-top:4px;">
+            ${announcements.map(item => {
+              const accent = announcementAccent(item.priority);
+              return `
+              <div style="display:grid;grid-template-columns:4px 1fr;border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;background:var(--surface);">
+                <div style="background:${accent};"></div>
+                <div style="padding:14px 16px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <h3 style="color:var(--text);">${escapeHtml(item.title)}</h3>
+                      <span class="priority-pill ${escapeHtml(item.priority || "medium")}">${escapeHtml(item.priority || "medium")}</span>
+                    </div>
+                    <span style="font-size:12px;color:var(--faint);">${escapeHtml(item.audience || "all organizers")} · ${escapeHtml(formatDate(item.created_at || new Date().toISOString()))}</span>
                   </div>
-                  <span class="priority-pill ${escapeHtml(item.priority || "medium")}">${escapeHtml(item.priority || "medium")}</span>
+                  <p style="font-size:14px;">${escapeHtml(item.body)}</p>
                 </div>
-                <p>${escapeHtml(item.body)}</p>
-                <div class="note">${escapeHtml(formatDate(item.created_at || new Date().toISOString()))}</div>
-              </div>
-            `).join("")}
+              </div>`;
+            }).join("")}
           </div>
           ${profile?.is_admin ? renderAnnouncementAdminForm() : ""}
         </div>
@@ -3603,18 +3789,21 @@
         <div class="panel">
           <div class="phase-header">
             <div>
-              <h2>My Next Actions</h2>
-              <p>${user ? "A quick list of what matters next for your portal setup and planning work." : "Start here if you are new to the portal."}</p>
+              <h2>${user ? "Your Next Actions" : "Getting Started"}</h2>
+              <p>${user ? "What matters most right now for your planning work." : "Three things to do if you are new to the portal."}</p>
             </div>
           </div>
-          <div class="grid">
-            ${actions.map(action => `
-              <div class="stat">
-                <div class="stat-title">${escapeHtml(action.label)}</div>
-                <h3>${escapeHtml(action.title)}</h3>
-                <p>${escapeHtml(action.body)}</p>
-                <div class="inline-actions">
-                  <button class="${action.primary ? "primary" : "secondary"}" onclick="${action.onclick}">${escapeHtml(action.cta)}</button>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:4px;">
+            ${actions.map((action, i) => `
+              <div style="border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;background:var(--surface);display:flex;flex-direction:column;gap:6px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+                  <div style="width:22px;height:22px;border-radius:50%;background:var(--teal-dim);color:var(--teal);font-size:11px;font-weight:800;display:grid;place-items:center;flex-shrink:0;">${i + 1}</div>
+                  <span class="label" style="margin:0;">${escapeHtml(action.label)}</span>
+                </div>
+                <h3 style="color:var(--text);">${escapeHtml(action.title)}</h3>
+                <p style="font-size:13px;flex:1;">${escapeHtml(action.body)}</p>
+                <div style="margin-top:10px;">
+                  <button class="${action.primary ? "primary" : "ghost"}" onclick="${action.onclick}" style="min-width:0;">${escapeHtml(action.cta)}</button>
                 </div>
               </div>
             `).join("")}
@@ -3751,8 +3940,6 @@
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
-
-          ${renderPortalUtilityBar("workbook")}
 
           <div class="panel">
             <div class="phase-header">
@@ -3955,8 +4142,6 @@
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
 
-          ${renderPortalUtilityBar("progress")}
-
           <div class="panel">
             <h2>Team Progress Snapshot</h2>
             <p>Everyone can see the shared progress view. Unclaimed roles stay visible with blank personal info.</p>
@@ -3980,7 +4165,7 @@
       `;
     }
 
-    function renderCommandCenter(rows, progressRows = [], deadlines = CALENDAR_DEADLINES, user = null, profile = null, reminderPreference = null) {
+    function renderCommandCenter(rows, progressRows = [], deadlines = CALENDAR_DEADLINES, user = null, profile = null) {
       const progressByUser = groupProgressByUser(progressRows);
       const teamRows = buildTeamReadinessRows(rows, progressByUser);
       const claimed = rows.filter(row => row.claimed).length;
@@ -3998,13 +4183,11 @@
         <div class="dashboard-shell">
           <div class="topbar">
             <div>
-              <h1>Planning & Command Center</h1>
-              <p>One place to scan staffing, deadlines, readiness, and the planning signals leadership actually needs.</p>
+              <h1>Command Center</h1>
+              <p>One place to scan staffing, deadlines, readiness, and next operational checks.</p>
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
-
-          ${renderPortalUtilityBar("command")}
 
           <div class="panel">
             <div class="phase-header">
@@ -4118,44 +4301,6 @@
               </div>
             </div>
           </div>
-
-          <div class="panel">
-            <div class="phase-header">
-              <div>
-                <h2>Deadline Health</h2>
-                <p>Calendar visibility now lives here so staffing, timing, and deadline risk stay in the same decision view.</p>
-              </div>
-              <span class="phase-chip">${deadlines.length} deadline${deadlines.length === 1 ? "" : "s"}</span>
-            </div>
-            ${renderDeadlineHealth(deadlines)}
-          </div>
-
-          ${deadlines.length ? Object.keys(PHASES).map(phaseId => `
-            <div class="panel phase-panel" style="--phase-color:${phaseColor(phaseId)};--phase-gradient:${phaseGradient(phaseId)}">
-              <div class="phase-header">
-                <div>
-                  <h2>${escapeHtml(formatPhase(phaseId))}</h2>
-                  <p>${escapeHtml(PHASES[phaseId].dates || "")}</p>
-                </div>
-                <span class="phase-chip">${deadlines.filter(item => item.phase === phaseId).length} deadlines</span>
-              </div>
-              <div class="calendar-grid">
-                ${deadlines.filter(item => item.phase === phaseId).map(item => renderDeadlineCard(item)).join("")}
-              </div>
-            </div>
-          `).join("") : renderEmptyState("No deadlines loaded", "Add your first phase deadline in the admin manager so the planning center has a source of truth.")}
-
-          ${user ? renderReminderPreferences(reminderPreference) : `
-            <div class="panel">
-              <h2>Email Reminders</h2>
-              <p>Log in and claim a role to choose reminder preferences for deadline emails.</p>
-              <div class="inline-actions">
-                <button class="primary" onclick="openLogin()">Log In / Sign Up</button>
-              </div>
-            </div>
-          `}
-
-          ${isAdmin ? renderDeadlineAdmin(deadlines) : ""}
         </div>
       `;
     }
@@ -4204,8 +4349,6 @@
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
-
-          ${renderPortalUtilityBar("tournament")}
 
           <div class="panel">
             <div class="phase-header">
@@ -4472,6 +4615,7 @@
                 <input id="tm-student-csv-file" type="file" accept=".csv,text/csv" />
                 <textarea id="tm-student-csv" placeholder="Paste CSV here if not uploading a file"></textarea>
                 <button class="primary" type="submit">Import CSV</button>
+                <button class="secondary" type="button" onclick="downloadStudentCsvTemplate()">Download Template</button>
               </div>
             </form>
 
@@ -4513,8 +4657,8 @@
         <div class="panel">
           <div class="phase-header">
             <div>
-              <h2>Tournament Conflict Dashboard</h2>
-              <p>Automated checks for the most common tournament-week issues, with exports for faster cleanup meetings.</p>
+              <h2>Operations Checks</h2>
+              <p>Automated checks for the most common tournament-week issues.</p>
             </div>
             <span class="phase-chip">${conflicts.length} conflict${conflicts.length === 1 ? "" : "s"}</span>
           </div>
@@ -4549,6 +4693,11 @@
             `).join("") || `<p>No conflicts detected yet.</p>`}
           </div>
 
+          <div class="inline-actions">
+            <button class="secondary" onclick="downloadTournamentScheduleCsv()">Export Schedule CSV</button>
+            <button class="secondary" onclick="downloadRoomCsvTemplate()">Room Template</button>
+            <button class="secondary" onclick="downloadBlockCsvTemplate()">Block Template</button>
+          </div>
         </div>
       `;
     }
@@ -4571,8 +4720,6 @@
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
-
-          ${renderPortalUtilityBar("integrations")}
 
           <div class="panel">
             <div class="phase-header">
@@ -4642,6 +4789,7 @@
                   <h2>Import MyMIST Participants</h2>
                   <p>Use this for MyMIST participant exports. Columns can be flexible: name/full_name, email, school, competitions, badge_code, nfc_uid.</p>
                 </div>
+                <button class="secondary" onclick="downloadMyMistParticipantTemplate()">Download Template</button>
               </div>
               <form class="admin-form" onsubmit="importMyMistParticipantsCsv(event)">
                 <input id="mymist-participant-file" type="file" accept=".csv,text/csv" />
@@ -4704,6 +4852,7 @@
                 <h2>Staged Participants</h2>
                 <p>Admin-only participant staging preview from the latest MyMIST data available in Supabase.</p>
               </div>
+              <button class="secondary" onclick="downloadMyMistParticipantTemplate()">Template</button>
             </div>
             <div class="list-table-wrap">
               <table class="list-table">
@@ -4906,12 +5055,8 @@
               <h1>Organizer Directory</h1>
               <p>Everyone can see the team structure, roles, and contact list.</p>
             </div>
-            <div class="inline-actions">
-              <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
-            </div>
+            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
-
-          ${renderPortalUtilityBar("directory")}
 
           ${Object.keys(grouped).sort().map(team => `
             <div class="panel" style="--team-color:${teamColor(team)}">
@@ -4947,14 +5092,10 @@
           <div class="topbar">
             <div>
               <h1>Team Pages</h1>
-              <p>Focused team workspaces for roles, ownership, contacts, start phase, and application openings.</p>
+              <p>Focused team workspaces for roles, ownership, start phase, and application openings.</p>
             </div>
-            <div class="inline-actions">
-              <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
-            </div>
+            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
-
-          ${renderPortalUtilityBar("teams")}
 
           <div class="panel">
             <div class="tabs">
@@ -4979,10 +5120,6 @@
               <div class="stat">
                 <div class="stat-title">Claimed</div>
                 <div class="stat-value">${claimed}</div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Contacts</div>
-                <div class="stat-value">${teamRows.filter(row => row.claimed && row.email).length}</div>
               </div>
               <div class="stat">
                 <div class="stat-title">Open</div>
@@ -5303,8 +5440,6 @@
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
 
-          ${renderPortalUtilityBar("timeline")}
-
           <div class="panel">
             <h2>Season Roadmap</h2>
             <p>Use this as the common reference point for directors, chairs, leads, and ADs.</p>
@@ -5314,99 +5449,6 @@
           </div>
         </div>
       `;
-    }
-
-    function renderOnboardingChecklist(user = null, profile = null) {
-      const canEdit = !!user;
-      const items = getLocalRecords("mist_release_checklist");
-      const current = items.length ? items : RELEASE_CHECKLIST.map((item, index) => ({ id: `release-${index}`, ...item, done: false }));
-      return `
-        <div class="dashboard-shell">
-          <div class="topbar">
-            <div>
-              <h1>Organizer Checklist Hub</h1>
-              <p>One place for new-organizer onboarding, training data, and leadership release checks.</p>
-            </div>
-            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
-          </div>
-
-          ${renderPortalUtilityBar("onboarding")}
-
-          <div class="panel">
-            <div class="phase-header">
-              <div>
-                <h2>New Organizer Onboarding</h2>
-                <p>Use this in week one so every new organizer reaches the same baseline fast.</p>
-              </div>
-              <span class="phase-chip">First 30 minutes</span>
-            </div>
-            <div class="runbook-grid">
-              ${ONBOARDING_CHECKLIST.map(section => `
-                <div class="runbook-card" style="--runbook-color:#1f8a9b">
-                  <div class="stat-title">${escapeHtml(section.area)}</div>
-                  <ul class="task-list">
-                    ${section.items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
-                  </ul>
-                </div>
-              `).join("")}
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="phase-header">
-              <div>
-                <h2>Where To Go Next</h2>
-                <p>These are the pages new organizers should open in order.</p>
-              </div>
-            </div>
-            <div class="inline-actions">
-              <button class="primary" onclick="openTeamPages('${escapeHtml(profile?.team || "Operations")}')">Open Team Page</button>
-              <button class="secondary" onclick="openCalendar()">Open Calendar</button>
-              <button class="secondary" onclick="openMeetings()">Open Meeting Hub</button>
-              <button class="secondary" onclick="openKnowledge()">Open Rulebook Search</button>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="phase-header">
-              <div>
-                <h2>Training Data</h2>
-                <p>Seed demo notes, decisions, action items, and feedback responses so new organizers can practice in a safe sandbox on this device.</p>
-              </div>
-              <span class="phase-chip">Local only</span>
-            </div>
-            <div class="inline-actions">
-              <button class="secondary" onclick="seedDemoData()">Seed Demo Data</button>
-              <button class="ghost" onclick="clearDemoData()">Clear Demo Data</button>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="phase-header">
-              <div>
-                <h2>Leadership Release Checklist</h2>
-                <p>The final confidence pass before leadership treats a system, page, or workflow as ready for team use.</p>
-              </div>
-              <span class="phase-chip">${current.filter(item => item.done).length}/${current.length} complete</span>
-            </div>
-            <div class="log-list">
-              ${current.map(item => `
-                <label class="option-row">
-                  <input type="checkbox" ${item.done ? "checked" : ""} onchange="toggleReleaseItem('${escapeHtml(item.id)}', this.checked)">
-                  <span>
-                    <strong>${escapeHtml(item.item)}</strong><br>
-                    <span class="muted">${escapeHtml(item.category)} • ${escapeHtml(item.owner)}</span>
-                  </span>
-                </label>
-              `).join("")}
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderReleaseChecklist(user = null, profile = null) {
-      return renderOnboardingChecklist(user, profile);
     }
 
     function renderMeetingHub(user = null, profile = null) {
@@ -5423,8 +5465,6 @@
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
-
-          ${renderPortalUtilityBar("meetings")}
 
           <div class="panel">
             <div class="phase-header">
@@ -5466,10 +5506,6 @@
                 <h2>Add Decision</h2>
                 <form class="admin-form" onsubmit="saveDecisionLog(event)">
                   <input id="decision-title" placeholder="Decision title" />
-                  <select id="decision-meeting">
-                    <option value="">Link to meeting optional</option>
-                    ${meetings.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.title)} • ${escapeHtml(item.date || "No date")}</option>`).join("")}
-                  </select>
                   <select id="decision-category">
                     <option value="General">General</option>
                     <option value="Budget">Budget</option>
@@ -5502,11 +5538,12 @@
               <div class="phase-header">
                 <div>
                   <h2>Recent Meeting Notes</h2>
-                  <p>Local notes saved on this device for easy follow-up and review.</p>
+                  <p>Local notes saved on this device. Export them before clearing browser data.</p>
                 </div>
+                <button class="ghost" onclick="downloadMeetingNotesCsv()">Export CSV</button>
               </div>
               <div class="log-list">
-                ${meetings.length ? meetings.map(item => renderMeetingCard(item, decisions.filter(decision => decision.meeting_id === item.id))).join("") : renderEmptyState("No meeting notes yet", "Start with one weekly check-in note so decisions, blockers, and follow-ups stop living in chat history.") }
+                ${meetings.length ? meetings.map(item => renderMeetingCard(item)).join("") : `<p>No meeting notes saved yet.</p>`}
               </div>
             </div>
 
@@ -5516,9 +5553,10 @@
                   <h2>Decision Log</h2>
                   <p>Use this for anything that affects budget, timeline, roles, rooms, or public messaging.</p>
                 </div>
+                <button class="ghost" onclick="downloadDecisionLogCsv()">Export CSV</button>
               </div>
               <div class="log-list">
-                ${decisions.length ? decisions.map(item => renderDecisionCard(item)).join("") : renderEmptyState("No decisions saved yet", "Log budget calls, comp calls, room calls, and leadership approvals here so the team can trace why something changed.") }
+                ${decisions.length ? decisions.map(item => renderDecisionCard(item)).join("") : `<p>No decisions saved yet.</p>`}
               </div>
             </div>
           </div>
@@ -5526,7 +5564,7 @@
       `;
     }
 
-    function renderMeetingCard(item, attachedDecisions = []) {
+    function renderMeetingCard(item) {
       return `
         <div class="log-card">
           <div class="stat-title">${escapeHtml(item.date || "No date")} • ${escapeHtml(item.team || "General")}</div>
@@ -5534,23 +5572,15 @@
           <p><strong>Agenda:</strong> ${escapeHtml(item.agenda || "—")}</p>
           <p><strong>Blockers:</strong> ${escapeHtml(item.blockers || "—")}</p>
           <p><strong>Actions:</strong> ${escapeHtml(item.actions || "—")}</p>
-          ${attachedDecisions.length ? `
-            <div class="answer-list">
-              <div class="label">Attached decisions</div>
-              ${attachedDecisions.map(decision => `<p>${escapeHtml(decision.title)} • ${escapeHtml(decision.owner || "Unassigned")}</p>`).join("")}
-            </div>
-          ` : ""}
         </div>
       `;
     }
 
     function renderDecisionCard(item) {
-      const linkedMeeting = getLocalRecords("mist_meeting_notes").find(meeting => meeting.id === item.meeting_id);
       return `
         <div class="log-card">
           <div class="stat-title">${escapeHtml(item.date || "No date")} • ${escapeHtml(item.category || "General")}</div>
           <h3>${escapeHtml(item.title || "Decision")}</h3>
-          ${linkedMeeting ? `<p><strong>Meeting:</strong> ${escapeHtml(linkedMeeting.title)}</p>` : ""}
           <p><strong>Owner:</strong> ${escapeHtml(item.owner || "—")}</p>
           <p><strong>Impact:</strong> ${escapeHtml(item.impact || "—")}</p>
           <p><strong>Follow-up:</strong> ${escapeHtml(item.followup || "—")}</p>
@@ -5559,19 +5589,15 @@
     }
 
     function renderRunbook() {
-      const query = APP_STATE.knowledgeQuery || "";
-      const results = searchRulebook(query);
       return `
         <div class="dashboard-shell">
           <div class="topbar">
             <div>
-              <h1>Operations & Answers Hub</h1>
-              <p>The quick operating guide for event weekend, plus searchable rulebook answers in one place.</p>
+              <h1>Event Weekend Runbook</h1>
+              <p>The quick operating guide for check-in, rooms, communications, and escalation.</p>
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
-
-          ${renderPortalUtilityBar("runbook")}
 
           <div class="panel">
             <div class="phase-header">
@@ -5617,9 +5643,6 @@
                 <ul class="task-list">
                   ${section.items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
                 </ul>
-                <div class="inline-actions">
-                  <button class="ghost" onclick="openTeamPages('${escapeHtml(section.team || "")}')">Open ${escapeHtml(section.team || "Team")}</button>
-                </div>
               </div>
             `).join("")}
           </div>
@@ -5630,43 +5653,8 @@
             <div class="inline-actions">
               <button class="primary" onclick="openCommandCenter()">Command Center</button>
               <button class="secondary" onclick="openTournamentManager()">Weekend Manager</button>
-              <button class="secondary" onclick="openCalendar()">Planning Center</button>
-              <button class="ghost" onclick="clearKnowledgeSearch()">Clear Answers Search</button>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="phase-header">
-              <div>
-                <h2>Ask The Rulebook</h2>
-                <p>Search competition rules, judging guidance, eligibility questions, and room-level scenarios without digging through chats.</p>
-              </div>
-              <span class="phase-chip">Latest rules ${PORTAL_RULEBOOK_VERSION}</span>
-            </div>
-            <div class="knowledge-search">
-              <input id="knowledge-search" value="${escapeHtml(query)}" placeholder="Search no-show, rubric, tie, bias, early submission, roster, ballot..." oninput="updateKnowledgeSearch(this.value)" />
-              <button class="secondary" onclick="clearKnowledgeSearch()">Clear</button>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="phase-header">
-              <div>
-                <h2>${query ? "Search Results" : "Competition FAQ"}</h2>
-                <p>${results.length} answer${results.length === 1 ? "" : "s"} available.</p>
-              </div>
-            </div>
-            <div class="log-list">
-              ${results.map(entry => `
-                <div class="knowledge-result" style="--knowledge-color:${entry.color}">
-                  <div class="stat-title">${escapeHtml(entry.category)} • ${escapeHtml(entry.version || PORTAL_RULEBOOK_VERSION)} • ${escapeHtml(entry.updated_at || "Latest")}</div>
-                  <h3>${escapeHtml(entry.question)}</h3>
-                  <p>${escapeHtml(entry.answer)}</p>
-                  <div class="inline-actions">
-                    ${entry.page ? `<button class="ghost" onclick="openRulebookPage('${escapeHtml(entry.page)}')">Open ${escapeHtml(entry.page_label || "related page")}</button>` : ""}
-                  </div>
-                </div>
-              `).join("") || `<p>No answer found yet. Add this question to the official rulebook source.</p>`}
+              <button class="secondary" onclick="openCalendar()">Calendar</button>
+              <button class="ghost" onclick="openKnowledge()">Rulebook Search</button>
             </div>
           </div>
         </div>
@@ -5674,7 +5662,56 @@
     }
 
     function renderKnowledgeBase() {
-      return renderRunbook();
+      const query = APP_STATE.knowledgeQuery || "";
+      const results = searchRulebook(query);
+      return `
+        <div class="dashboard-shell">
+          <div class="topbar">
+            <div>
+              <h1>Organizer Rulebook Search</h1>
+              <p>Search policies, expectations, processes, and common questions without digging through chats.</p>
+            </div>
+            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
+          </div>
+
+          <div class="panel">
+            <h2>Ask The Rulebook</h2>
+            <p>Type keywords like deadline, confidentiality, role claim, MyMIST, meeting, event weekend, or escalation.</p>
+            <div class="knowledge-search">
+              <input id="knowledge-search" value="${escapeHtml(query)}" placeholder="Search organizer rules and FAQs..." oninput="updateKnowledgeSearch(this.value)" />
+              <button class="secondary" onclick="clearKnowledgeSearch()">Clear</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>${query ? "Search Results" : "Organizer FAQ"}</h2>
+                <p>${results.length} answer${results.length === 1 ? "" : "s"} available.</p>
+              </div>
+              <span class="phase-chip">Official guidance starter</span>
+            </div>
+            <div class="log-list">
+              ${results.map(entry => `
+                <div class="knowledge-result" style="--knowledge-color:${entry.color}">
+                  <div class="stat-title">${escapeHtml(entry.category)}</div>
+                  <h3>${escapeHtml(entry.question)}</h3>
+                  <p>${escapeHtml(entry.answer)}</p>
+                </div>
+              `).join("") || `<p>No answer found yet. Add this question to the official rulebook source.</p>`}
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Official Rulebook Integration Plan</h2>
+            <p>Next, we can add the official rulebook as a structured source: paste sections, upload CSV/JSON, or create a Supabase rulebook table. The search page can then pull from that live source instead of only these starter entries.</p>
+            <div class="inline-actions">
+              <button class="primary" onclick="downloadRulebookCsv()">Download Rulebook Starter CSV</button>
+              <button class="secondary" onclick="openRunbook()">Open Event Runbook</button>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     function renderFeedbackAddressal(user = null, profile = null) {
@@ -5682,30 +5719,27 @@
       const allItems = [...customFeedback, ...FEEDBACK_THEMES];
       const filter = APP_STATE.feedbackFilter || "all";
       const analytics = DEFAULT_FEEDBACK_ANALYTICS;
-      const actionItems = trackedActions();
       const visibleItems = filter === "all"
         ? allItems
         : allItems.filter(item => String(item.phase || "").toLowerCase() === filter || String(item.status || "").toLowerCase() === filter);
+      const addressed = allItems.filter(item => /live|progress|build|staged/i.test(item.status || "")).length;
       const canEdit = !!user;
-      const canTrack = !!profile?.is_admin;
 
       return `
         <div class="dashboard-shell">
           <div class="topbar">
             <div>
-              <h1>Feedback Growth Dashboard</h1>
-              <p>See where Dallas has grown since 2023, where the next lifts are, and which phase teams own the next score jump.</p>
+              <h1>Feedback Addressal</h1>
+              <p>Convert feedback from last year and previous years into visible actions, owners, phases, and follow-through.</p>
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
 
-          ${renderPortalUtilityBar("feedback")}
-
           <div class="panel">
             <div class="phase-header">
               <div>
-                <h2>Score Snapshot</h2>
-                <p>Clean read: where scores are now, where they moved over time, and which actions should be actively tracked next.</p>
+                <h2>Feedback Intelligence</h2>
+                <p>Numbers from the Dallas feedback data since 2023, turned into averages, lowest-rated areas, trends, themes, and owners.</p>
               </div>
               <span class="phase-chip">${escapeHtml(analytics.sourceLabel)}</span>
             </div>
@@ -5723,12 +5757,8 @@
                 <div class="stat-value">${formatScore(analytics.avgCommunication)}</div>
               </div>
               <div class="stat">
-                <div class="stat-title">Avg Recommend</div>
-                <div class="stat-value">${formatScore(analytics.avgRecommend)}</div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Tracked Actions</div>
-                <div class="stat-value">${actionItems.length}</div>
+                <div class="stat-title">Low Overall Scores</div>
+                <div class="stat-value">${analytics.lowScoreCount || 0}</div>
               </div>
             </div>
             <div class="inline-actions">
@@ -5737,71 +5767,78 @@
               <button class="ghost" onclick="setFeedbackFilter('build')">Build</button>
               <button class="ghost" onclick="setFeedbackFilter('stabilization')">Stabilization</button>
               <button class="ghost" onclick="setFeedbackFilter('execution')">Execution</button>
+              <button class="ghost" onclick="downloadFeedbackCsv()">Export CSV</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Built-In Data Set</h2>
+                <p>This page is already loaded with the aggregate 2023-2026 Dallas feedback data. Raw participant names, MIST IDs, and comments are not published in the site code.</p>
+              </div>
+              <span class="phase-chip">${analytics.yearRange}</span>
+            </div>
+            <div class="inline-actions">
+              <button class="secondary" onclick="downloadFeedbackAnalyticsCsv()">Export Aggregate Summary</button>
             </div>
           </div>
 
           ${analytics.responseCount ? `
-            <div class="console-grid">
-              <div class="panel">
-                <div class="phase-header">
-                  <div>
-                    <h2>Performance View</h2>
-                    <p>One compact place for the lowest scores, year trend, role mix, and the strongest theme signals.</p>
-                  </div>
+            <div class="panel">
+              <div class="phase-header">
+                <div>
+                  <h2>Score Diagnostics</h2>
+                  <p>Sorted by lowest average so weak spots rise to the top first. Main table hides tiny role-specific fields with fewer than 5 responses.</p>
                 </div>
-                <div class="stat-title">Best Next Lifts</div>
-                ${renderFeedbackScoreTable(analytics.categoryAverages)}
-                <div class="runbook-grid">
-                  ${renderFeedbackYearTrend(analytics.yearStats)}
-                  ${renderFeedbackRoleBreakdown(analytics.roleCounts)}
+                <span class="phase-chip">${analytics.categoryAverages.length} scored fields</span>
+              </div>
+              ${renderFeedbackScoreTable(analytics.categoryAverages)}
+            </div>
+
+            <div class="panel">
+              <div class="phase-header">
+                <div>
+                  <h2>Breakdowns</h2>
+                  <p>Quick view by year and role so leadership can tell where feedback is coming from.</p>
                 </div>
-                ${renderFeedbackThemeAnalytics(analytics.themeCounts, analytics.responseCount)}
+                <span class="phase-chip">${Object.keys(analytics.roleCounts).length} role group${Object.keys(analytics.roleCounts).length === 1 ? "" : "s"}</span>
+              </div>
+              <div class="runbook-grid">
+                ${renderFeedbackYearTrend(analytics.yearStats)}
+                ${renderFeedbackRoleBreakdown(analytics.roleCounts)}
               </div>
             </div>
 
             <div class="panel">
               <div class="phase-header">
                 <div>
-                  <h2>Year-Over-Year Growth</h2>
-                  <p>Biggest experience areas from 2023 through 2026, with total lift from the first year to the latest year.</p>
+                  <h2>Theme Counts</h2>
+                  <p>Keyword counts from open-ended responses. Treat these as triage signals, then read source comments before final decisions.</p>
                 </div>
-                <span class="phase-chip">${analytics.yearRange}</span>
+                <span class="phase-chip">${analytics.themeCounts.reduce((sum, item) => sum + item.count, 0)} mentions</span>
               </div>
-              ${renderFeedbackYearAreaBreakdown(analytics.yearAreaBreakdown)}
+              ${renderFeedbackThemeAnalytics(analytics.themeCounts, analytics.responseCount)}
             </div>
 
-            <div class="console-grid">
-              <div class="panel">
-                <div class="phase-header">
-                  <div>
-                    <h2>Action Tracker</h2>
-                    <p>Admin-owned actions created from feedback themes and tied directly to next year’s target numbers.</p>
-                  </div>
+            <div class="panel">
+              <div class="phase-header">
+                <div>
+                  <h2>Numbers To Action</h2>
+                  <p>Top recurring issues mapped to likely owners and planning responses.</p>
                 </div>
-                ${renderTrackedActionsTable(actionItems)}
-                <div style="margin-top:18px;">
-                  <div class="stat-title">2027 Target Numbers</div>
-                  <p class="muted" style="margin:6px 0 12px;">The score lifts these action items are meant to produce next year.</p>
-                </div>
-                ${renderProjectedImpact(analytics.projected2027)}
+                <span class="phase-chip">Action matrix</span>
               </div>
-
-              <div class="panel">
-                <div class="phase-header">
-                  <div>
-                    <h2>Phase Action Plan</h2>
-                    <p>One clean table of who owns what and in which phase it should move.</p>
-                  </div>
-                  <span class="phase-chip">Foundations to execution</span>
-                </div>
-                ${renderFeedbackPhasePlan(analytics.phaseActions)}
-              </div>
+              ${renderFeedbackActionMatrix(analytics.themeCounts)}
             </div>
           ` : `
-            ${renderEmptyState("No feedback analytics yet", "Load or define feedback data before using this page as the improvement dashboard.")}
+            <div class="panel">
+              <h2>No Survey Export Loaded Yet</h2>
+              <p>Paste the 2023-2026 sheet export above and the page will calculate score averages, low-score counts, role/year trends, keyword themes, and owner-level action priorities.</p>
+            </div>
           `}
 
-              ${canEdit ? `
+          ${canEdit ? `
             <div class="panel">
               <h2>Add Feedback Theme</h2>
               <p>Add a point from a debrief, survey, chat, or previous-year organizer note, then assign how it will be addressed.</p>
@@ -5837,18 +5874,42 @@
           <div class="panel">
             <div class="phase-header">
               <div>
-                <h2>Theme Queue</h2>
-                <p>Source themes waiting to be tracked, assigned, or folded into the phase plan.</p>
+                <h2>Feedback Themes & Response Plans</h2>
+                <p>These are the human-readable commitments that should come from the numeric signals above.</p>
               </div>
               <span class="phase-chip">${visibleItems.length} shown</span>
             </div>
-            ${renderFeedbackThemeTable(visibleItems, canTrack)}
+            <div class="log-list">
+              ${visibleItems.map(item => renderFeedbackCard(item)).join("") || `<p>No feedback themes match this filter.</p>`}
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>How To Use This With Real Feedback</h2>
+            <div class="runbook-grid">
+              <div class="runbook-card" style="--runbook-color:#1f8a9b">
+                <div class="stat-title">1. Collect</div>
+                <p>Pull points from prior debriefs, surveys, organizer notes, parent/student comments, and AD reflections.</p>
+              </div>
+              <div class="runbook-card" style="--runbook-color:#c9972b">
+                <div class="stat-title">2. Group</div>
+                <p>Combine similar feedback into themes like communication, room flow, training, registration, or accountability.</p>
+              </div>
+              <div class="runbook-card" style="--runbook-color:#247a52">
+                <div class="stat-title">3. Assign</div>
+                <p>Give each theme an owner/team, phase, and concrete response plan. Avoid vague “we should improve” notes.</p>
+              </div>
+              <div class="runbook-card" style="--runbook-color:#b13f4a">
+                <div class="stat-title">4. Review</div>
+                <p>Use this during meetings so leadership can check whether past feedback is actually being addressed.</p>
+              </div>
+            </div>
           </div>
         </div>
       `;
     }
 
-    function renderFeedbackCard(item, canEdit = false) {
+    function renderFeedbackCard(item) {
       return `
         <div class="feedback-card" style="--feedback-color:${item.color || phaseColor(item.phase) || "#1f8a9b"}">
           <div class="phase-header">
@@ -5864,11 +5925,6 @@
             <span class="phase-chip">${escapeHtml(item.owner || "Unassigned")}</span>
             <span class="phase-chip">${escapeHtml(formatPhase(item.phase || "foundations"))}</span>
           </div>
-          ${canEdit ? `
-            <div class="inline-actions">
-              <button class="ghost" onclick="convertFeedbackThemeToAction('${escapeHtml(item.id)}', '${FEEDBACK_THEMES.some(theme => theme.id === item.id) ? "starter" : "custom"}')">Track As Action Item</button>
-            </div>
-          ` : ""}
         </div>
       `;
     }
@@ -5876,32 +5932,30 @@
     function renderFeedbackScoreTable(items) {
       const rows = items.filter(item => item.count >= 5).slice(0, 14);
       return `
-        <div class="list-table-wrap">
-          <table class="list-table">
-            <thead>
+        <table class="list-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Average</th>
+              <th>Responses</th>
+              <th>Signal</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(item => `
               <tr>
-                <th>Metric</th>
-                <th>Average</th>
-                <th>Responses</th>
-                <th>Signal</th>
+                <td>${escapeHtml(item.label)}</td>
+                <td>${formatScore(item.average)}</td>
+                <td>${item.count}</td>
+                <td>
+                  <div class="progress-track" aria-label="${escapeHtml(item.label)} average">
+                    <div class="progress-fill" style="width:${Math.min(100, Math.max(0, (item.average / 5) * 100))}%"></div>
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              ${rows.map(item => `
-                <tr>
-                  <td>${escapeHtml(item.label)}</td>
-                  <td>${formatScore(item.average)}</td>
-                  <td>${item.count}</td>
-                  <td>
-                    <div class="progress-track" aria-label="${escapeHtml(item.label)} average">
-                      <div class="progress-fill" style="width:${Math.min(100, Math.max(0, (item.average / 5) * 100))}%"></div>
-                    </div>
-                  </td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
-        </div>
+            `).join("")}
+          </tbody>
+        </table>
       `;
     }
 
@@ -5913,37 +5967,6 @@
           ${years.map(year => `
             <p><strong>${escapeHtml(year)}:</strong> ${yearStats[year].count} response${yearStats[year].count === 1 ? "" : "s"}, ${formatScore(yearStats[year].averageOverall)} avg overall</p>
           `).join("") || `<p>No timestamp data found.</p>`}
-        </div>
-      `;
-    }
-
-    function renderFeedbackYearAreaBreakdown(items) {
-      return `
-        <div class="list-table-wrap">
-          <table class="list-table">
-            <thead>
-              <tr>
-                <th>Area</th>
-                <th>2023</th>
-                <th>2024</th>
-                <th>2025</th>
-                <th>2026</th>
-                <th>2023 -> 2026</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${items.map(item => `
-                <tr>
-                  <td>${escapeHtml(item.label)}</td>
-                  <td>${formatMiniScore(item.values["2023"])}</td>
-                  <td>${formatMiniScore(item.values["2024"])}</td>
-                  <td>${formatMiniScore(item.values["2025"])}</td>
-                  <td>${formatMiniScore(item.values["2026"])}</td>
-                  <td>${formatDelta(item.change)}</td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
         </div>
       `;
     }
@@ -5963,96 +5986,19 @@
     function renderFeedbackThemeAnalytics(themeCounts, responseCount) {
       const visible = themeCounts.filter(item => item.count > 0).slice(0, 10);
       return `
-        <div style="margin-top:14px;">
-          <div class="stat-title">Theme Signals</div>
-          <div class="log-list" style="margin-top:10px;">
-            ${visible.map(item => `
-              <div class="feedback-card" style="--feedback-color:#247a52">
-                <div class="phase-header">
-                  <div>
-                    <div class="stat-title">${Math.round((item.count / Math.max(1, responseCount)) * 100)}% of responses</div>
-                    <h3>${escapeHtml(item.label)}</h3>
-                  </div>
-                  <span class="status-pill">${item.count} mention${item.count === 1 ? "" : "s"}</span>
+        <div class="log-list">
+          ${visible.map(item => `
+            <div class="feedback-card" style="--feedback-color:#247a52">
+              <div class="phase-header">
+                <div>
+                  <div class="stat-title">${Math.round((item.count / Math.max(1, responseCount)) * 100)}% of responses</div>
+                  <h3>${escapeHtml(item.label)}</h3>
                 </div>
-                <div class="progress-track"><div class="progress-fill" style="width:${Math.min(100, (item.count / Math.max(1, responseCount)) * 100)}%"></div></div>
+                <span class="status-pill">${item.count} mention${item.count === 1 ? "" : "s"}</span>
               </div>
-            `).join("") || `<p>No keyword themes were detected yet.</p>`}
-          </div>
-        </div>
-      `;
-    }
-
-    function renderTrackedActionsTable(items) {
-      if (!items.length) {
-        return renderEmptyState("No tracked actions yet", "Convert one of the feedback themes below into a tracked action item so it can move from insight to execution.");
-      }
-
-      return `
-        <div class="list-table-wrap">
-          <table class="list-table">
-            <thead>
-              <tr>
-                <th>Action</th>
-                <th>Owner</th>
-                <th>Phase</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${items.map(item => `
-                <tr>
-                  <td>${escapeHtml(item.title)}<br><span class="muted">${escapeHtml(item.target || "")}</span></td>
-                  <td>${escapeHtml(item.owner || "Unassigned")}</td>
-                  <td>${escapeHtml(formatPhase(item.phase || "foundations"))}</td>
-                  <td>
-                    <select onchange="updateTrackedActionStatus('${escapeHtml(item.id)}', this.value)">
-                      ${["planned", "in_progress", "done"].map(status => `<option value="${status}" ${item.status === status ? "selected" : ""}>${status.replace("_", " ")}</option>`).join("")}
-                    </select>
-                  </td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
-        </div>
-      `;
-    }
-
-    function renderFeedbackThemeTable(items, canTrack = false) {
-      if (!items.length) {
-        return renderEmptyState("No themes match this filter", "Try another phase or add a new theme from a debrief or survey note.");
-      }
-
-      return `
-        <div class="list-table-wrap">
-          <table class="list-table">
-            <thead>
-              <tr>
-                <th>Theme</th>
-                <th>Owner</th>
-                <th>Phase</th>
-                <th>Status</th>
-                <th>Next Move</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${items.map(item => `
-                <tr>
-                  <td>
-                    <strong>${escapeHtml(item.theme || "Feedback theme")}</strong><br>
-                    <span class="muted">${escapeHtml(item.source || "Feedback source")}</span>
-                  </td>
-                  <td>${escapeHtml(item.owner || "Unassigned")}</td>
-                  <td>${escapeHtml(formatPhase(item.phase || "foundations"))}</td>
-                  <td>${escapeHtml(item.status || "Needs owner check")}</td>
-                  <td>
-                    <div class="muted">${escapeHtml(item.action || "No action yet")}</div>
-                    ${canTrack ? `<div class="inline-actions" style="margin-top:8px;"><button class="ghost" onclick="convertFeedbackThemeToAction('${escapeHtml(item.id)}', '${FEEDBACK_THEMES.some(theme => theme.id === item.id) ? "starter" : "custom"}')">Track</button></div>` : ""}
-                  </td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
+              <div class="progress-track"><div class="progress-fill" style="width:${Math.min(100, (item.count / Math.max(1, responseCount)) * 100)}%"></div></div>
+            </div>
+          `).join("") || `<p>No keyword themes were detected yet.</p>`}
         </div>
       `;
     }
@@ -6081,58 +6027,72 @@
       `;
     }
 
-    function renderFeedbackPhasePlan(phaseActions) {
+    function renderCalendar(deadlines = CALENDAR_DEADLINES, user = null, profile = null, reminderPreference = null) {
+      APP_STATE.currentDeadlines = deadlines;
+      const grouped = deadlines.reduce((map, item) => {
+        if (!map[item.phase]) map[item.phase] = [];
+        map[item.phase].push(item);
+        return map;
+      }, {});
+      const isAdmin = !!profile?.is_admin;
+
       return `
-        <div class="runbook-grid">
-          ${Object.keys(phaseActions).map(phaseId => `
-            <div class="runbook-card" style="--runbook-color:${phaseColor(phaseId)}">
-              <div class="stat-title">${escapeHtml(formatPhase(phaseId))}</div>
-              ${phaseActions[phaseId].map(item => `
-                <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
-                  <h3>${escapeHtml(item.title)}</h3>
-                  <p><strong>Owner:</strong> ${escapeHtml(item.owner)}</p>
-                  <p><strong>Target Metrics:</strong> ${escapeHtml(item.metrics)}</p>
-                  <p><strong>Projected Overall Lift:</strong> ${escapeHtml(item.overallLift)}</p>
-                  <p><strong>Projected Experience Lift:</strong> ${escapeHtml(item.experienceLift)}</p>
+        <div class="dashboard-shell">
+          <div class="topbar">
+            <div>
+              <h1>Calendar & Deadlines</h1>
+              <p>Planning deadlines by phase. Reminder emails can connect to these deadlines after the email service is added.</p>
+            </div>
+            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
+          </div>
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Calendar Export</h2>
+                <p>Add deadlines to your calendar without connecting an account. The .ics file works with Apple Calendar, Google Calendar, Outlook, and most calendar apps.</p>
+              </div>
+              <span class="phase-chip">${deadlines.length} deadline${deadlines.length === 1 ? "" : "s"}</span>
+            </div>
+            <div class="inline-actions">
+              <button class="primary" onclick="downloadAllDeadlinesIcs()">Download All Deadlines (.ics)</button>
+              <button class="secondary" onclick="openGoogleCalendarForAllDeadlines()">Open Google Calendar Links</button>
+            </div>
+          </div>
+
+          ${Object.keys(PHASES).map(phaseId => `
+            <div class="panel phase-panel" style="--phase-color:${phaseColor(phaseId)};--phase-gradient:${phaseGradient(phaseId)}">
+              <div class="phase-header">
+                <div>
+                  <h2>${escapeHtml(formatPhase(phaseId))}</h2>
+                  <p>${escapeHtml(PHASES[phaseId].dates || "")}</p>
                 </div>
-              `).join("")}
+                <span class="phase-chip">${(grouped[phaseId] || []).length} deadlines</span>
+              </div>
+              <div class="calendar-grid">
+                ${(grouped[phaseId] || []).map(item => renderDeadlineCard(item)).join("")}
+              </div>
             </div>
           `).join("")}
+
+          ${user ? renderReminderPreferences(reminderPreference) : `
+            <div class="panel">
+              <h2>Email Reminders</h2>
+              <p>Log in and claim a role to choose reminder preferences for deadline emails.</p>
+              <div class="inline-actions">
+                <button class="primary" onclick="openLogin()">Log In / Sign Up</button>
+              </div>
+            </div>
+          `}
+
+          ${isAdmin ? renderDeadlineAdmin(deadlines) : ""}
+
+          <div class="panel">
+            <h2>Reminder Integration Plan</h2>
+            <p>Deadlines and user preferences are ready for Supabase. To send emails, deploy the included Edge Function and add an email provider API key in Supabase secrets.</p>
+          </div>
         </div>
       `;
-    }
-
-    function renderProjectedImpact(items) {
-      return `
-        <div class="list-table-wrap">
-          <table class="list-table">
-            <thead>
-              <tr>
-                <th>Metric</th>
-                <th>2026</th>
-                <th>2027 Target</th>
-                <th>Lift</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${items.map(item => `
-                <tr>
-                  <td>${escapeHtml(item.label)}</td>
-                  <td>${formatMiniScore(item.current)}</td>
-                  <td>${formatMiniScore(item.target)}</td>
-                  <td>${formatDelta(item.lift)}</td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
-        </div>
-      `;
-    }
-
-    function renderCalendar(deadlines = CALENDAR_DEADLINES, user = null, profile = null, reminderPreference = null) {
-      const rows = buildRoleDirectoryRows([]);
-      const progressRows = [];
-      return renderCommandCenter(rows, progressRows, deadlines, user, profile, reminderPreference);
     }
 
     function renderDeadlineCard(item) {
@@ -6154,23 +6114,10 @@
             <span class="phase-chip">${escapeHtml(formatPhase(item.phase))}</span>
             <span class="phase-chip">${item.send_reminders === false ? "No reminder" : "Reminder eligible"}</span>
           </div>
-        </div>
-      `;
-    }
-
-    function renderDeadlineHealth(deadlines) {
-      const reminderEligible = deadlines.filter(item => item.send_reminders !== false).length;
-      const overdue = deadlines.filter(item => deadlineTiming(item).isOverdue).length;
-      const nextSeven = deadlines.filter(item => {
-        const timing = deadlineTiming(item);
-        return timing.daysAway !== null && timing.daysAway >= 0 && timing.daysAway <= 7;
-      }).length;
-      return `
-        <div class="metric-row">
-          <div class="stat"><div class="stat-title">Reminder Eligible</div><div class="stat-value">${reminderEligible}</div></div>
-          <div class="stat"><div class="stat-title">Due In 7 Days</div><div class="stat-value">${nextSeven}</div></div>
-          <div class="stat"><div class="stat-title">Overdue</div><div class="stat-value">${overdue}</div></div>
-          <div class="stat"><div class="stat-title">With Owner</div><div class="stat-value">${deadlines.filter(item => item.owner_label).length}</div></div>
+          <div class="inline-actions">
+            <button class="ghost" onclick="downloadDeadlineIcs('${escapeHtml(item.id)}')">Download .ics</button>
+            <button class="secondary" onclick="openGoogleCalendarForDeadline('${escapeHtml(item.id)}')">Google Calendar</button>
+          </div>
         </div>
       `;
     }
@@ -6200,14 +6147,6 @@
       deadlines.forEach((deadline, index) => {
         window.setTimeout(() => window.open(googleCalendarUrl(deadline), "_blank", "noopener,noreferrer"), index * 350);
       });
-    }
-
-    function downloadDeadlineHealthCsv() {
-      const deadlines = APP_STATE.currentDeadlines || [];
-      downloadCsv("mist-deadline-health.csv", [
-        ["date", "title", "phase", "owner", "priority", "timing", "reminder_eligible"],
-        ...deadlines.map(item => [item.date, item.title, formatPhase(item.phase), item.owner_label || "All Teams", deadlinePriority(item), deadlineTiming(item).label, item.send_reminders === false ? "No" : "Yes"])
-      ]);
     }
 
     function downloadIcsFile(deadlines, filename) {
@@ -6827,16 +6766,6 @@
       return Number.isFinite(value) ? `${value.toFixed(2)} / 5` : "No data";
     }
 
-    function formatMiniScore(value) {
-      return Number.isFinite(value) ? value.toFixed(2) : "—";
-    }
-
-    function formatDelta(value) {
-      if (!Number.isFinite(value)) return "—";
-      const prefix = value > 0 ? "+" : "";
-      return `${prefix}${value.toFixed(2)}`;
-    }
-
     function parseCsv(text) {
       const rows = [];
       let row = [];
@@ -6934,28 +6863,6 @@
       downloadCsv("mist-tournament-schedule.csv", rows);
     }
 
-    function downloadTournamentConflictsCsv() {
-      const { rooms = [], availability = [], blocks = [], students = [], assignments = [] } = APP_STATE.tournament || {};
-      const conflicts = detectTournamentConflicts(rooms, availability, blocks, assignments);
-      const unassignedBlocks = blocks.filter(block => !block.room_id).map(block => ({
-        severity: "medium",
-        type: "room",
-        title: `${block.competition_name} has no room`,
-        detail: formatBlockTime(block)
-      }));
-      const unassignedStudents = students.filter(student => !assignments.some(assignment => assignment.student_id === student.id)).map(student => ({
-        severity: "medium",
-        type: "assignment",
-        title: `${student.full_name} has no room assignment`,
-        detail: student.school || ""
-      }));
-      const rows = [
-        ["severity", "type", "title", "detail"],
-        ...[...conflicts, ...unassignedBlocks, ...unassignedStudents].map(item => [item.severity, item.type, item.title, item.detail])
-      ];
-      downloadCsv("mist-tournament-conflicts.csv", rows);
-    }
-
     function downloadMyMistParticipantTemplate() {
       downloadCsv("mymist-participant-import-template.csv", [
         ["external_participant_id", "full_name", "email", "school", "grade_level", "gender_label", "competitions", "badge_code", "nfc_uid"],
@@ -6973,178 +6880,6 @@
 
     function setLocalRecords(key, records) {
       localStorage.setItem(key, JSON.stringify(records));
-    }
-
-    function renderEmptyState(title, body, actions = "") {
-      return `
-        <div class="empty-state">
-          <h3>${escapeHtml(title)}</h3>
-          <p>${escapeHtml(body)}</p>
-          ${actions ? `<div class="inline-actions">${actions}</div>` : ""}
-        </div>
-      `;
-    }
-
-    function trackedActions() {
-      return getLocalRecords("mist_tracked_actions");
-    }
-
-    function saveTrackedActions(records) {
-      setLocalRecords("mist_tracked_actions", records.slice(0, 200));
-    }
-
-    function convertFeedbackThemeToAction(themeId, source = "starter") {
-      const base = source === "custom"
-        ? getLocalRecords("mist_feedback_addressal").find(item => item.id === themeId)
-        : FEEDBACK_THEMES.find(item => item.id === themeId);
-      if (!base) return alert("Could not find that feedback theme.");
-
-      const records = trackedActions();
-      if (records.some(item => item.source_id === themeId)) return alert("That feedback theme is already a tracked action item.");
-
-      records.unshift({
-        id: `action-${Date.now()}`,
-        source_id: themeId,
-        title: base.theme,
-        owner: base.owner,
-        phase: base.phase,
-        status: "planned",
-        target: base.action,
-        created_at: new Date().toISOString()
-      });
-      saveTrackedActions(records);
-      alert("Tracked action item created.");
-      renderApp();
-    }
-
-    function updateTrackedActionStatus(id, status) {
-      const records = trackedActions().map(item => item.id === id ? { ...item, status } : item);
-      saveTrackedActions(records);
-      renderApp();
-    }
-
-    function downloadTrackedActionsCsv() {
-      const records = trackedActions();
-      downloadCsv("mist-tracked-actions.csv", [
-        ["title", "owner", "phase", "status", "target"],
-        ...records.map(item => [item.title, item.owner, item.phase, item.status, item.target])
-      ]);
-    }
-
-    function seedDemoData() {
-      const meetings = getLocalRecords("mist_meeting_notes");
-      const decisions = getLocalRecords("mist_decision_log");
-      const actions = trackedActions();
-      if (!meetings.length) {
-        setLocalRecords("mist_meeting_notes", [{
-          id: "meeting-demo-1",
-          title: "Demo Weekly Check-In",
-          date: "2026-09-10",
-          team: "Operations",
-          agenda: "Deadlines, rooms, training",
-          blockers: "Need one more room captain",
-          actions: "Ops to confirm room list by Friday",
-          created_at: new Date().toISOString()
-        }]);
-      }
-      if (!decisions.length) {
-        setLocalRecords("mist_decision_log", [{
-          id: "decision-demo-1",
-          title: "Lock room signage format",
-          category: "Weekend Ops",
-          owner: "Operations",
-          date: "2026-09-10",
-          impact: "Faster room finding on event day",
-          followup: "Print test set next meeting",
-          meeting_id: "meeting-demo-1",
-          created_at: new Date().toISOString()
-        }]);
-      }
-      if (!actions.length) {
-        saveTrackedActions([{
-          id: "action-demo-1",
-          source_id: "communication",
-          title: "Clearer Communication Flow",
-          owner: "Ops 2 + PR",
-          phase: "build",
-          status: "planned",
-          target: "Publish one approved update per change and keep the source-of-truth schedule current.",
-          created_at: new Date().toISOString()
-        }]);
-      }
-      if (!getLocalRecords("mist_release_checklist").length) {
-        setLocalRecords("mist_release_checklist", RELEASE_CHECKLIST.map((item, index) => ({ id: `release-${index}`, ...item, done: false })));
-      }
-      alert("Demo data seeded on this device.");
-      renderApp();
-    }
-
-    async function clearDemoData() {
-      const ok = await requestConfirmation({
-        title: "Clear local training data?",
-        body: "This removes demo notes, demo decisions, demo action items, and the local release checklist from this browser.",
-        confirmLabel: "Clear Demo Data"
-      });
-      if (!ok) return;
-      ["mist_meeting_notes", "mist_decision_log", "mist_tracked_actions", "mist_release_checklist"].forEach(key => localStorage.removeItem(key));
-      renderApp();
-    }
-
-    function toggleReleaseItem(id, done) {
-      const items = getLocalRecords("mist_release_checklist");
-      const next = items.length ? items.map(item => item.id === id ? { ...item, done } : item) : RELEASE_CHECKLIST.map((item, index) => ({ id: `release-${index}`, ...item, done: id === `release-${index}` ? done : false }));
-      setLocalRecords("mist_release_checklist", next);
-    }
-
-    function openView(view) {
-      APP_STATE.view = view;
-      renderApp();
-    }
-
-    function openRulebookPage(page) {
-      if (!page) return;
-      APP_STATE.view = page;
-      renderApp();
-    }
-
-    function showModal({ title, body, confirmLabel = "Confirm", cancelLabel = "Cancel", onConfirm }) {
-      const existing = document.getElementById("portal-modal");
-      if (existing) existing.remove();
-      const modal = document.createElement("div");
-      modal.id = "portal-modal";
-      modal.className = "modal-backdrop";
-      modal.innerHTML = `
-        <div class="modal-card">
-          <h2>${escapeHtml(title)}</h2>
-          <p>${escapeHtml(body)}</p>
-          <div class="inline-actions">
-            <button class="danger" id="portal-modal-confirm">${escapeHtml(confirmLabel)}</button>
-            <button class="ghost" id="portal-modal-cancel">${escapeHtml(cancelLabel)}</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-      const close = result => {
-        modal.remove();
-        if (result && typeof onConfirm === "function") onConfirm();
-      };
-      modal.querySelector("#portal-modal-confirm").onclick = () => close(true);
-      modal.querySelector("#portal-modal-cancel").onclick = () => close(false);
-    }
-
-    function requestConfirmation({ title, body, confirmLabel }) {
-      return new Promise(resolve => {
-        showModal({
-          title,
-          body,
-          confirmLabel,
-          onConfirm: () => resolve(true)
-        });
-        document.getElementById("portal-modal-cancel").onclick = () => {
-          document.getElementById("portal-modal")?.remove();
-          resolve(false);
-        };
-      });
     }
 
     function loadFeedbackDataset() {
@@ -7199,7 +6934,6 @@
       const item = {
         id: `decision-${Date.now()}`,
         title: document.getElementById("decision-title").value.trim(),
-        meeting_id: document.getElementById("decision-meeting").value || "",
         category: document.getElementById("decision-category").value,
         owner: document.getElementById("decision-owner").value.trim(),
         date: document.getElementById("decision-date").value,
@@ -7231,16 +6965,6 @@
         ["date", "category", "title", "owner", "impact", "followup"],
         ...records.map(item => [item.date, item.category, item.title, item.owner, item.impact, item.followup])
       ]);
-    }
-
-    function downloadDirectoryCsv() {
-      getAllProfiles().then(profiles => {
-        const rows = buildRoleDirectoryRows(profiles);
-        downloadCsv("mist-organizer-directory.csv", [
-          ["team", "role", "full_name", "email", "claimed", "start_phase"],
-          ...rows.map(item => [item.team, formatRole(item.role_id), item.full_name, item.email, item.claimed ? "Yes" : "No", formatPhase(item.start_phase)])
-        ]);
-      });
     }
 
     function saveFeedbackTheme(event) {
@@ -7290,29 +7014,6 @@
           item.status,
           item.action
         ])
-      ]);
-    }
-
-    function downloadFeedbackYearBreakdownCsv() {
-      const analytics = DEFAULT_FEEDBACK_ANALYTICS;
-      downloadCsv("mist-feedback-year-breakdown.csv", [
-        ["area", "2023", "2024", "2025", "2026", "change_2023_2026"],
-        ...analytics.yearAreaBreakdown.map(item => [
-          item.label,
-          item.values["2023"] ?? "",
-          item.values["2024"] ?? "",
-          item.values["2025"] ?? "",
-          item.values["2026"] ?? "",
-          item.change ?? ""
-        ])
-      ]);
-    }
-
-    function downloadProjectedImpactCsv() {
-      const analytics = DEFAULT_FEEDBACK_ANALYTICS;
-      downloadCsv("mist-feedback-2027-targets.csv", [
-        ["metric", "current_2026", "target_2027", "lift"],
-        ...analytics.projected2027.map(item => [item.label, item.current, item.target, item.lift])
       ]);
     }
 
@@ -7368,12 +7069,9 @@
       const results = searchRulebook(value);
       resultsPanel.innerHTML = results.map(entry => `
         <div class="knowledge-result" style="--knowledge-color:${entry.color}">
-          <div class="stat-title">${escapeHtml(entry.category)} • ${escapeHtml(entry.version || PORTAL_RULEBOOK_VERSION)} • ${escapeHtml(entry.updated_at || "Latest")}</div>
+          <div class="stat-title">${escapeHtml(entry.category)}</div>
           <h3>${escapeHtml(entry.question)}</h3>
           <p>${escapeHtml(entry.answer)}</p>
-          <div class="inline-actions">
-            ${entry.page ? `<button class="ghost" onclick="openRulebookPage('${escapeHtml(entry.page)}')">Open ${escapeHtml(entry.page_label || "related page")}</button>` : ""}
-          </div>
         </div>
       `).join("") || `<p>No answer found yet. Add this question to the official rulebook source.</p>`;
     }
@@ -7384,16 +7082,13 @@
     }
 
     function downloadRulebookCsv() {
-      downloadCsv("mist-competition-rulebook-starter.csv", [
-        ["category", "question", "answer", "keywords", "version", "updated_at", "page"],
+      downloadCsv("mist-organizer-rulebook-starter.csv", [
+        ["category", "question", "answer", "keywords"],
         ...RULEBOOK_ENTRIES.map(entry => [
           entry.category,
           entry.question,
           entry.answer,
-          (entry.keywords || []).join("|"),
-          entry.version || PORTAL_RULEBOOK_VERSION,
-          entry.updated_at || "",
-          entry.page || ""
+          (entry.keywords || []).join("|")
         ])
       ]);
     }
@@ -7415,21 +7110,106 @@
         .replace(/'/g, "&#039;");
     }
 
-    function escapeJs(value) {
-      return String(value ?? "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
-    }
-
     function fieldKey(...parts) {
       return parts.join("-").replace(/[^a-zA-Z0-9_-]/g, "-");
+    }
+
+    function toggleMobileNav() {
+      const drawer = document.getElementById("nav-mobile-drawer");
+      if (drawer) drawer.classList.toggle("open");
+    }
+
+    function renderGlobalNav(user, profile) {
+      const v = APP_STATE.view;
+      const hasRole = !!profile?.role_id;
+
+      const links = [
+        { label: "Dashboard",  action: "goDashboard()",         view: "dashboard" },
+        { label: "Workbook",   action: "openWorkbook()",         view: "workbook",  hidden: !hasRole },
+        { label: "Teams",      action: "openTeamPages()",        view: "teams" },
+        { label: "Command",    action: "openCommandCenter()",    view: "command" },
+        { label: "Calendar",   action: "openCalendar()",         view: "calendar" },
+        { label: "Timeline",   action: "openTimeline()",         view: "timeline" },
+        { label: "Directory",  action: "openDirectory()",        view: "directory" },
+        { label: "Runbook",    action: "openRunbook()",          view: "runbook" },
+        { label: "Feedback",   action: "openFeedback()",         view: "feedback" },
+      ];
+
+      const visibleLinks = links.filter(l => !l.hidden);
+
+      const userArea = user
+        ? `<button class="nav-user-pill" onclick="logout()" title="Log out">
+             <div class="nav-avatar">${escapeHtml((profile?.full_name || user.email || "U")[0].toUpperCase())}</div>
+             ${escapeHtml(profile?.full_name ? profile.full_name.split(" ")[0] : "Account")}
+           </button>`
+        : `<button class="ghost" onclick="openLogin()" style="min-width:0;padding:7px 14px;font-size:13px;">Log In</button>`;
+
+      return `
+        <div class="nav-bar">
+          <button class="nav-wordmark" onclick="goDashboard()">
+            <div class="nav-wordmark-icon">M</div>
+            MIST Dallas
+            <span class="nav-wordmark-year">2027</span>
+          </button>
+          <div class="nav-links">
+            ${visibleLinks.map(l => `
+              <button class="nav-link ${v === l.view ? "active" : ""}" onclick="${l.action}">${escapeHtml(l.label)}</button>
+            `).join("")}
+          </div>
+          <div class="nav-end">
+            ${userArea}
+            <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Open menu" title="Menu">☰</button>
+          </div>
+        </div>
+        <div class="nav-mobile-drawer" id="nav-mobile-drawer">
+          ${visibleLinks.map(l => `
+            <button class="nav-mobile-link ${v === l.view ? "active" : ""}"
+                    onclick="${l.action}; document.getElementById('nav-mobile-drawer').classList.remove('open')">
+              ${escapeHtml(l.label)}
+            </button>
+          `).join("")}
+          ${user
+            ? `<button class="nav-mobile-link" style="color:var(--red);margin-top:6px;border-top:1px solid var(--border);border-radius:0;padding-top:14px;" onclick="logout()">Log Out</button>`
+            : `<button class="nav-mobile-link" style="color:var(--teal);margin-top:6px;border-top:1px solid var(--border);border-radius:0;padding-top:14px;" onclick="openLogin()">Log In / Sign Up</button>`
+          }
+        </div>
+      `;
+    }
+
+    function setNav(user, profile) {
+      const navEl = document.getElementById("global-nav");
+      if (navEl) navEl.innerHTML = renderGlobalNav(user, profile);
+    }
+
+    function renderSkeleton() {
+      return `
+        <div class="skeleton-page">
+          <div class="sk sk-bar" style="max-width:320px;"></div>
+          <div class="sk sk-panel"></div>
+          <div class="sk-grid">
+            <div class="sk sk-card"></div>
+            <div class="sk sk-card"></div>
+            <div class="sk sk-card"></div>
+            <div class="sk sk-card"></div>
+          </div>
+          <div class="sk sk-row"></div>
+          <div class="sk sk-row"></div>
+        </div>
+      `;
     }
 
     async function renderApp() {
       const app = document.getElementById("app");
 
-      try {
+      // Show shimmer immediately — before any network calls
+      app.innerHTML = renderSkeleton();
+
       const user = await getUser();
       const profiles = await getAllProfiles();
       const rows = buildRoleDirectoryRows(profiles);
+
+      // Render nav immediately with auth state (profile may be null for public views)
+      setNav(user, null);
 
       if (!user && APP_STATE.view === "login") {
         app.innerHTML = renderLogin();
@@ -7455,7 +7235,7 @@
         if (APP_STATE.view === "command") {
           const progressRows = await getAllWorkbookProgress();
           const deadlines = await getDeadlines();
-          app.innerHTML = renderCommandCenter(rows, progressRows, deadlines, null, null, null);
+          app.innerHTML = renderCommandCenter(rows, progressRows, deadlines, null, null);
           return;
         }
 
@@ -7473,9 +7253,8 @@
         }
 
         if (APP_STATE.view === "directory") {
-          APP_STATE.currentDeadlines = await getDeadlines();
           const progressRows = await getAllWorkbookProgress();
-          app.innerHTML = renderTeamPages(rows, progressRows);
+          app.innerHTML = renderDirectory(rows, progressRows);
           return;
         }
 
@@ -7511,20 +7290,9 @@
           return;
         }
 
-        if (APP_STATE.view === "onboarding") {
-          app.innerHTML = renderOnboardingChecklist(null, null);
-          return;
-        }
-
-        if (APP_STATE.view === "release") {
-          app.innerHTML = renderReleaseChecklist(null, null);
-          return;
-        }
-
         if (APP_STATE.view === "calendar") {
-          const progressRows = await getAllWorkbookProgress();
           const deadlines = await getDeadlines();
-          app.innerHTML = renderCommandCenter(rows, progressRows, deadlines, null, null, null);
+          app.innerHTML = renderCalendar(deadlines, null, null, null);
           return;
         }
 
@@ -7541,6 +7309,9 @@
       }
 
       const profile = await getProfile(user.id);
+      // Re-render nav now that we have profile (workbook link, user name, etc.)
+      setNav(user, profile);
+
       if (APP_STATE.view === "apply") {
         app.innerHTML = renderRoleApplication(user, rows);
         return;
@@ -7567,8 +7338,7 @@
       if (APP_STATE.view === "command") {
         const progressRows = await getAllWorkbookProgress();
         const deadlines = await getDeadlines();
-        const reminderPreference = await getReminderPreference(user.id);
-        app.innerHTML = renderCommandCenter(rows, progressRows, deadlines, user, profile, reminderPreference);
+        app.innerHTML = renderCommandCenter(rows, progressRows, deadlines, user, profile);
         return;
       }
 
@@ -7588,9 +7358,8 @@
       }
 
       if (APP_STATE.view === "directory") {
-        APP_STATE.currentDeadlines = await getDeadlines();
         const progressRows = await getAllWorkbookProgress();
-        app.innerHTML = renderTeamPages(rows, progressRows);
+        app.innerHTML = renderDirectory(rows, progressRows);
         return;
       }
 
@@ -7626,21 +7395,10 @@
         return;
       }
 
-      if (APP_STATE.view === "onboarding") {
-        app.innerHTML = renderOnboardingChecklist(user, profile);
-        return;
-      }
-
-      if (APP_STATE.view === "release") {
-        app.innerHTML = renderReleaseChecklist(user, profile);
-        return;
-      }
-
       if (APP_STATE.view === "calendar") {
-        const progressRows = await getAllWorkbookProgress();
         const deadlines = await getDeadlines();
         const reminderPreference = await getReminderPreference(user.id);
-        app.innerHTML = renderCommandCenter(rows, progressRows, deadlines, user, profile, reminderPreference);
+        app.innerHTML = renderCalendar(deadlines, user, profile, reminderPreference);
         return;
       }
 
@@ -7665,19 +7423,6 @@
       const deadlines = await getDeadlines();
       APP_STATE.announcements = await getAnnouncements();
       app.innerHTML = renderDashboard(user, profile, rows, progressRows, deadlines);
-      } catch (error) {
-        console.error("Render error:", error);
-        app.innerHTML = `
-          <div class="card">
-            <h2>Something Needs Attention</h2>
-            <p>${escapeHtml(error?.message || "The portal hit an unexpected error while loading this page.")}</p>
-            <div class="inline-actions">
-              <button class="primary" onclick="goDashboard()">Back to Dashboard</button>
-              <button class="ghost" onclick="renderApp()">Try Again</button>
-            </div>
-          </div>
-        `;
-      }
     }
 
     renderApp();
