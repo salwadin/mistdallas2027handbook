@@ -316,6 +316,12 @@
       font-size: 13px;
     }
 
+    .list-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+
     .progress-track {
       width: 100%;
       height: 10px;
@@ -906,6 +912,34 @@
       margin-top: 14px;
     }
 
+    .empty-state {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      background: rgba(255,255,255,.024);
+      margin-top: 12px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 8, 12, 0.72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 9999;
+    }
+
+    .modal-card {
+      width: min(100%, 460px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.42);
+    }
+
     @media (max-width: 640px) {
       #app { padding: 16px; }
       .card, .panel { padding: 15px; }
@@ -916,6 +950,10 @@
       .actions button, .ghost, .tab-btn { width: 100%; }
       .timeline-item { grid-template-columns: 1fr; }
       .console-grid { grid-template-columns: 1fr; }
+      .admin-form { grid-template-columns: 1fr; }
+      .knowledge-search { grid-template-columns: 1fr; }
+      .readiness-row { grid-template-columns: 1fr; }
+      .ops-flow, .room-grid, .calendar-grid, .runbook-grid, .directory-grid, .grid, .metric-row { grid-template-columns: 1fr; }
       .console-item { grid-template-columns: auto 1fr; }
       .console-item .inline-actions { grid-column: 1 / -1; }
     }
@@ -1072,6 +1110,7 @@
         title: "Command Center",
         color: "#1f8a9b",
         owner: "RD, ADs, Ops",
+        team: "Operations",
         items: [
           "Keep the master schedule, room changes, and escalation log open.",
           "Route every issue to one owner and one next action.",
@@ -1082,6 +1121,7 @@
         title: "Main Check-In",
         color: "#247a52",
         owner: "Registration + Ops",
+        team: "Operations",
         items: [
           "Verify registration status before badge pickup.",
           "Use badge code, QR, or NFC UID as the event-week identity key.",
@@ -1092,6 +1132,7 @@
         title: "Competition Rooms",
         color: "#7b61ff",
         owner: "Competitions + Room Captains",
+        team: "Competitions",
         items: [
           "Check students into the correct room/time block before a round starts.",
           "Report no-shows, wrong-room scans, and judge delays to Command Center.",
@@ -1102,6 +1143,7 @@
         title: "Communications",
         color: "#c9972b",
         owner: "Ops 2 + PR",
+        team: "PR",
         items: [
           "Only send public updates after confirming with Command Center.",
           "Use one message for each change: what changed, who is affected, where to go, and when.",
@@ -1112,6 +1154,7 @@
         title: "Escalations",
         color: "#b13f4a",
         owner: "RD / ADs",
+        team: "Leadership",
         items: [
           "Safety, privacy, parent concerns, and conduct issues go straight to leadership.",
           "Document who reported the issue, what happened, what action was taken, and whether follow-up is needed.",
@@ -1119,10 +1162,27 @@
         ]
       }
     ];
+    const PORTAL_RULEBOOK_VERSION = "v2026.4";
+    const ONBOARDING_CHECKLIST = [
+      { area: "Account", items: ["Claim your role", "Add your full name and team", "Open your workbook once"] },
+      { area: "Systems", items: ["Check Calendar deadlines", "Review Team Page", "Open Meeting Hub", "Read Competition Rulebook Search"] },
+      { area: "Workflow", items: ["Know your start phase", "Find your first three responsibilities", "Confirm who you escalate to"] }
+    ];
+    const RELEASE_CHECKLIST = [
+      { category: "Comms", item: "Announcements reviewed and current", owner: "PR" },
+      { category: "Deadlines", item: "Critical dates and reminders verified", owner: "Operations" },
+      { category: "Competitions", item: "Rulebook guidance, judges, and room assumptions reviewed", owner: "Competitions" },
+      { category: "Weekend Ops", item: "Tournament conflicts checked and reduced", owner: "Operations" },
+      { category: "Training", item: "Onboarding/demo data ready for new organizers", owner: "Leadership" }
+    ];
     const RULEBOOK_ENTRIES = [
       {
         category: "Eligibility",
         color: "#1f8a9b",
+        version: PORTAL_RULEBOOK_VERSION,
+        updated_at: "Apr 2026",
+        page: "tournament",
+        page_label: "Weekend Manager",
         question: "If a student is missing from the room roster but says they are registered, what should the competition team do first?",
         answer: "Pause the room-level decision, verify the student against the official registration export or lead roster, and only move forward after Registration and Competitions confirm the student status together.",
         keywords: ["eligibility", "registered", "roster", "missing", "student", "registration"]
@@ -1130,6 +1190,10 @@
       {
         category: "No-Shows",
         color: "#247a52",
+        version: PORTAL_RULEBOOK_VERSION,
+        updated_at: "Apr 2026",
+        page: "runbook",
+        page_label: "Event Runbook",
         question: "When can a competition begin if one competitor or team has not arrived yet?",
         answer: "Start according to the official report-time and grace-period rule for that competition. Record the no-show, alert the comp lead, and apply the same process to every school consistently.",
         keywords: ["no show", "late", "grace period", "report time", "arrival"]
@@ -1137,6 +1201,10 @@
       {
         category: "Judging",
         color: "#c9972b",
+        version: PORTAL_RULEBOOK_VERSION,
+        updated_at: "Apr 2026",
+        page: "knowledge",
+        page_label: "Rulebook Search",
         question: "What should judges do if the room gives instructions that feel different from the rulebook?",
         answer: "Use the rulebook and rubric as the source of truth. If anything conflicts, pause and escalate to the competition lead before scoring so every competitor is judged by the same standard.",
         keywords: ["judge", "judging", "rulebook", "rubric", "conflict", "instructions"]
@@ -1144,6 +1212,10 @@
       {
         category: "Early Submission",
         color: "#7b61ff",
+        version: PORTAL_RULEBOOK_VERSION,
+        updated_at: "Apr 2026",
+        page: "tournament",
+        page_label: "Weekend Manager",
         question: "How should early-submission interviews or reviews be handled on event day?",
         answer: "Judges should review submissions before interviews when possible, keep interview lengths consistent with the published format, and avoid forcing competitors to explain missing prep that should have been read in advance.",
         keywords: ["early submission", "interview", "review", "art", "project", "submission"]
@@ -1151,6 +1223,10 @@
       {
         category: "Conflicts",
         color: "#ff7a59",
+        version: PORTAL_RULEBOOK_VERSION,
+        updated_at: "Apr 2026",
+        page: "command",
+        page_label: "Command Center",
         question: "What happens if a judge has a school connection or recognizes a competitor?",
         answer: "The competition lead should reassign or adjust the judging setup as soon as possible. Any real or perceived conflict should be handled early so trust in results stays high.",
         keywords: ["bias", "school connection", "alumni", "conflict", "recognize", "competitor"]
@@ -1158,6 +1234,10 @@
       {
         category: "Scoring",
         color: "#1fbf75",
+        version: PORTAL_RULEBOOK_VERSION,
+        updated_at: "Apr 2026",
+        page: "knowledge",
+        page_label: "Rulebook Search",
         question: "How should ties, rubric questions, or unclear score sheets be resolved?",
         answer: "Follow the competition-specific tie-break and scoring rules. If the rubric leaves room for interpretation, align judges before finalists begin and document the call for the comp lead.",
         keywords: ["tie", "tiebreak", "score sheet", "rubric", "clarity", "finalists"]
@@ -1165,6 +1245,10 @@
       {
         category: "Ballots",
         color: "#f6b93b",
+        version: PORTAL_RULEBOOK_VERSION,
+        updated_at: "Apr 2026",
+        page: "feedback",
+        page_label: "Feedback",
         question: "What makes a ballot helpful for competitors after the event?",
         answer: "A strong ballot clearly maps comments to rubric categories, explains both strengths and next steps, and avoids vague one-line reactions that cannot guide improvement.",
         keywords: ["ballot", "feedback", "comments", "rubric", "helpful"]
@@ -1172,6 +1256,10 @@
       {
         category: "Escalation",
         color: "#38bdf8",
+        version: PORTAL_RULEBOOK_VERSION,
+        updated_at: "Apr 2026",
+        page: "command",
+        page_label: "Command Center",
         question: "When should a room escalate to the competition lead instead of deciding on the spot?",
         answer: "Escalate for eligibility questions, judging conflicts, rule disagreements, room integrity concerns, protests, or anything that could affect fairness across schools.",
         keywords: ["escalate", "competition lead", "fairness", "protest", "integrity", "room"]
@@ -1457,7 +1545,7 @@
       saveTimers: {}
     };
 
-    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "calendar", "login", "apply", "application-status", "meetings", "runbook", "knowledge", "feedback"]);
+    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "calendar", "login", "apply", "application-status", "meetings", "runbook", "knowledge", "feedback", "onboarding", "release"]);
 
     function buildPhaseLookup(data) {
       if (data.PHASE_META) {
@@ -2046,7 +2134,12 @@
     async function deleteDeadline(id) {
       const profile = await getProfile((await getUser()).id);
       if (!profile?.is_admin) return alert("Only admins can delete deadlines.");
-      if (!confirm("Delete this deadline?")) return;
+      const ok = await requestConfirmation({
+        title: "Delete this deadline?",
+        body: "This removes the deadline from the shared calendar and admin manager.",
+        confirmLabel: "Delete Deadline"
+      });
+      if (!ok) return;
 
       const { error } = await supabaseClient
         .from("deadline_events")
@@ -2566,6 +2659,16 @@
 
     function openFeedback() {
       APP_STATE.view = "feedback";
+      renderApp();
+    }
+
+    function openOnboarding() {
+      APP_STATE.view = "onboarding";
+      renderApp();
+    }
+
+    function openReleaseChecklist() {
+      APP_STATE.view = "release";
       renderApp();
     }
 
@@ -3110,6 +3213,7 @@
             { title: "Meeting Hub", body: "Agendas, blockers, action items, and meeting memory.", action: "openMeetings()" },
             { title: "Decision Log", body: "Track approved decisions, owners, impact, and follow-up.", action: "openMeetings()" },
             { title: "Feedback Addressal", body: "Turn past-year feedback into themes, owners, action plans, and status.", action: "openFeedback()" },
+            { title: "Onboarding Checklist", body: "Simple first-steps, training data, and system orientation for new organizers.", action: "openOnboarding()" },
             { title: "Timeline", body: "Foundations, Build, Stabilization, and Execution at a glance.", action: "openTimeline()" },
             { title: "Calendar", body: "Deadline cards, calendar export, and reminder preferences.", action: "openCalendar()" }
           ]
@@ -3122,16 +3226,17 @@
             { title: "MyMIST Integration Center", body: "Stage exports for participants, schools, badges, and rosters.", action: "openIntegrations()" },
             { title: "Weekend Tournament Manager", body: "Rooms, competition blocks, student placement, and NFC check-ins.", action: "openTournamentManager()" },
             { title: "Event Weekend Runbook", body: "Command Center, check-in, rooms, communications, and escalation procedures.", action: "openRunbook()" },
+            { title: "Release Checklist", body: "Leadership launch checks for deadlines, ops, training, and comms.", action: "openReleaseChecklist()" },
             { title: "Directory", body: "Names, roles, teams, emails, and unclaimed role seats.", action: "openDirectory()" }
           ]
         },
         {
           label: "Find Answers",
-          hint: "Organizer rulebook",
+          hint: "Competition rulebook",
           color: "#1f8a9b",
           cards: [
-            { title: "Rulebook Search", body: "Search organizer expectations, policies, processes, and common questions.", action: "openKnowledge()" },
-            { title: "FAQ Library", body: "Fast answers for applications, roles, deadlines, MyMIST, and event weekend.", action: "openKnowledge()" }
+            { title: "Rulebook Search", body: "Search competition rules, judging guidance, and room-level questions.", action: "openKnowledge()" },
+            { title: "FAQ Library", body: "Fast answers for no-shows, ballots, escalations, and room integrity.", action: "openKnowledge()" }
           ]
         },
         {
@@ -4201,8 +4306,8 @@
         <div class="panel">
           <div class="phase-header">
             <div>
-              <h2>Operations Checks</h2>
-              <p>Automated checks for the most common tournament-week issues.</p>
+              <h2>Tournament Conflict Dashboard</h2>
+              <p>Automated checks for the most common tournament-week issues, with exports for faster cleanup meetings.</p>
             </div>
             <span class="phase-chip">${conflicts.length} conflict${conflicts.length === 1 ? "" : "s"}</span>
           </div>
@@ -4238,6 +4343,7 @@
           </div>
 
           <div class="inline-actions">
+            <button class="ghost" onclick="downloadTournamentConflictsCsv()">Export Conflicts CSV</button>
             <button class="secondary" onclick="downloadTournamentScheduleCsv()">Export Schedule CSV</button>
             <button class="secondary" onclick="downloadRoomCsvTemplate()">Room Template</button>
             <button class="secondary" onclick="downloadBlockCsvTemplate()">Block Template</button>
@@ -4599,7 +4705,10 @@
               <h1>Organizer Directory</h1>
               <p>Everyone can see the team structure, roles, and contact list.</p>
             </div>
-            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
+            <div class="inline-actions">
+              <button class="ghost" onclick="downloadDirectoryCsv()">Export Directory</button>
+              <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
+            </div>
           </div>
 
           ${Object.keys(grouped).sort().map(team => `
@@ -4995,6 +5104,107 @@
       `;
     }
 
+    function renderOnboardingChecklist(user = null, profile = null) {
+      const canEdit = !!user;
+      return `
+        <div class="dashboard-shell">
+          <div class="topbar">
+            <div>
+              <h1>New Organizer Onboarding</h1>
+              <p>One clean place for first steps, training flow, and practice data before the season gets busy.</p>
+            </div>
+            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
+          </div>
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Starter Checklist</h2>
+                <p>Use this in week one so every new organizer reaches the same baseline fast.</p>
+              </div>
+              <span class="phase-chip">First 30 minutes</span>
+            </div>
+            <div class="runbook-grid">
+              ${ONBOARDING_CHECKLIST.map(section => `
+                <div class="runbook-card" style="--runbook-color:#1f8a9b">
+                  <div class="stat-title">${escapeHtml(section.area)}</div>
+                  <ul class="task-list">
+                    ${section.items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+                  </ul>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Where To Go Next</h2>
+                <p>These are the pages new organizers should open in order.</p>
+              </div>
+            </div>
+            <div class="inline-actions">
+              <button class="primary" onclick="openTeamPages('${escapeHtml(profile?.team || "Operations")}')">Open Team Page</button>
+              <button class="secondary" onclick="openCalendar()">Open Calendar</button>
+              <button class="secondary" onclick="openMeetings()">Open Meeting Hub</button>
+              <button class="secondary" onclick="openKnowledge()">Open Rulebook Search</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Training Data</h2>
+                <p>Seed demo notes, decisions, action items, and feedback responses so new organizers can practice in a safe sandbox on this device.</p>
+              </div>
+              <span class="phase-chip">Local only</span>
+            </div>
+            <div class="inline-actions">
+              <button class="secondary" onclick="seedDemoData()">Seed Demo Data</button>
+              <button class="ghost" onclick="clearDemoData()">Clear Demo Data</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderReleaseChecklist(user = null, profile = null) {
+      const items = getLocalRecords("mist_release_checklist");
+      const current = items.length ? items : RELEASE_CHECKLIST.map((item, index) => ({ id: `release-${index}`, ...item, done: false }));
+      return `
+        <div class="dashboard-shell">
+          <div class="topbar">
+            <div>
+              <h1>Leadership Release Checklist</h1>
+              <p>The final confidence pass before leadership treats a system, page, or workflow as ready for team use.</p>
+            </div>
+            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
+          </div>
+
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Release Readiness</h2>
+                <p>Use this for weekly leadership review and before event-week rollout.</p>
+              </div>
+              <span class="phase-chip">${current.filter(item => item.done).length}/${current.length} complete</span>
+            </div>
+            <div class="log-list">
+              ${current.map(item => `
+                <label class="option-row">
+                  <input type="checkbox" ${item.done ? "checked" : ""} onchange="toggleReleaseItem('${escapeHtml(item.id)}', this.checked)">
+                  <span>
+                    <strong>${escapeHtml(item.item)}</strong><br>
+                    <span class="muted">${escapeHtml(item.category)} • ${escapeHtml(item.owner)}</span>
+                  </span>
+                </label>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     function renderMeetingHub(user = null, profile = null) {
       const meetings = getLocalRecords("mist_meeting_notes");
       const decisions = getLocalRecords("mist_decision_log");
@@ -5050,6 +5260,10 @@
                 <h2>Add Decision</h2>
                 <form class="admin-form" onsubmit="saveDecisionLog(event)">
                   <input id="decision-title" placeholder="Decision title" />
+                  <select id="decision-meeting">
+                    <option value="">Link to meeting optional</option>
+                    ${meetings.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.title)} • ${escapeHtml(item.date || "No date")}</option>`).join("")}
+                  </select>
                   <select id="decision-category">
                     <option value="General">General</option>
                     <option value="Budget">Budget</option>
@@ -5087,7 +5301,7 @@
                 <button class="ghost" onclick="downloadMeetingNotesCsv()">Export CSV</button>
               </div>
               <div class="log-list">
-                ${meetings.length ? meetings.map(item => renderMeetingCard(item)).join("") : `<p>No meeting notes saved yet.</p>`}
+                ${meetings.length ? meetings.map(item => renderMeetingCard(item, decisions.filter(decision => decision.meeting_id === item.id))).join("") : renderEmptyState("No meeting notes yet", "Start with one weekly check-in note so decisions, blockers, and follow-ups stop living in chat history.") }
               </div>
             </div>
 
@@ -5100,7 +5314,7 @@
                 <button class="ghost" onclick="downloadDecisionLogCsv()">Export CSV</button>
               </div>
               <div class="log-list">
-                ${decisions.length ? decisions.map(item => renderDecisionCard(item)).join("") : `<p>No decisions saved yet.</p>`}
+                ${decisions.length ? decisions.map(item => renderDecisionCard(item)).join("") : renderEmptyState("No decisions saved yet", "Log budget calls, comp calls, room calls, and leadership approvals here so the team can trace why something changed.") }
               </div>
             </div>
           </div>
@@ -5108,7 +5322,7 @@
       `;
     }
 
-    function renderMeetingCard(item) {
+    function renderMeetingCard(item, attachedDecisions = []) {
       return `
         <div class="log-card">
           <div class="stat-title">${escapeHtml(item.date || "No date")} • ${escapeHtml(item.team || "General")}</div>
@@ -5116,15 +5330,23 @@
           <p><strong>Agenda:</strong> ${escapeHtml(item.agenda || "—")}</p>
           <p><strong>Blockers:</strong> ${escapeHtml(item.blockers || "—")}</p>
           <p><strong>Actions:</strong> ${escapeHtml(item.actions || "—")}</p>
+          ${attachedDecisions.length ? `
+            <div class="answer-list">
+              <div class="label">Attached decisions</div>
+              ${attachedDecisions.map(decision => `<p>${escapeHtml(decision.title)} • ${escapeHtml(decision.owner || "Unassigned")}</p>`).join("")}
+            </div>
+          ` : ""}
         </div>
       `;
     }
 
     function renderDecisionCard(item) {
+      const linkedMeeting = getLocalRecords("mist_meeting_notes").find(meeting => meeting.id === item.meeting_id);
       return `
         <div class="log-card">
           <div class="stat-title">${escapeHtml(item.date || "No date")} • ${escapeHtml(item.category || "General")}</div>
           <h3>${escapeHtml(item.title || "Decision")}</h3>
+          ${linkedMeeting ? `<p><strong>Meeting:</strong> ${escapeHtml(linkedMeeting.title)}</p>` : ""}
           <p><strong>Owner:</strong> ${escapeHtml(item.owner || "—")}</p>
           <p><strong>Impact:</strong> ${escapeHtml(item.impact || "—")}</p>
           <p><strong>Follow-up:</strong> ${escapeHtml(item.followup || "—")}</p>
@@ -5187,6 +5409,9 @@
                 <ul class="task-list">
                   ${section.items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
                 </ul>
+                <div class="inline-actions">
+                  <button class="ghost" onclick="openTeamPages('${escapeHtml(section.team || "")}')">Open ${escapeHtml(section.team || "Team")}</button>
+                </div>
               </div>
             `).join("")}
           </div>
@@ -5233,14 +5458,17 @@
                 <h2>${query ? "Search Results" : "Competition FAQ"}</h2>
                 <p>${results.length} answer${results.length === 1 ? "" : "s"} available.</p>
               </div>
-              <span class="phase-chip">Competition guidance starter</span>
+              <span class="phase-chip">Latest rules ${PORTAL_RULEBOOK_VERSION}</span>
             </div>
             <div class="log-list">
               ${results.map(entry => `
                 <div class="knowledge-result" style="--knowledge-color:${entry.color}">
-                  <div class="stat-title">${escapeHtml(entry.category)}</div>
+                  <div class="stat-title">${escapeHtml(entry.category)} • ${escapeHtml(entry.version || PORTAL_RULEBOOK_VERSION)} • ${escapeHtml(entry.updated_at || "Latest")}</div>
                   <h3>${escapeHtml(entry.question)}</h3>
                   <p>${escapeHtml(entry.answer)}</p>
+                  <div class="inline-actions">
+                    ${entry.page ? `<button class="ghost" onclick="openRulebookPage('${escapeHtml(entry.page)}')">Open ${escapeHtml(entry.page_label || "related page")}</button>` : ""}
+                  </div>
                 </div>
               `).join("") || `<p>No answer found yet. Add this question to the official rulebook source.</p>`}
             </div>
@@ -5263,11 +5491,12 @@
       const allItems = [...customFeedback, ...FEEDBACK_THEMES];
       const filter = APP_STATE.feedbackFilter || "all";
       const analytics = DEFAULT_FEEDBACK_ANALYTICS;
+      const actionItems = trackedActions();
       const visibleItems = filter === "all"
         ? allItems
         : allItems.filter(item => String(item.phase || "").toLowerCase() === filter || String(item.status || "").toLowerCase() === filter);
-      const addressed = allItems.filter(item => /live|progress|build|staged/i.test(item.status || "")).length;
       const canEdit = !!user;
+      const canTrack = !!profile?.is_admin;
 
       return `
         <div class="dashboard-shell">
@@ -5283,7 +5512,7 @@
             <div class="phase-header">
               <div>
                 <h2>Score Snapshot</h2>
-                <p>Numbers from the Dallas feedback data since 2023, organized into trend lines, growth areas, and phase-based wins for next year.</p>
+                <p>Clean read: where scores are now, where they moved over time, and which actions should be actively tracked next.</p>
               </div>
               <span class="phase-chip">${escapeHtml(analytics.sourceLabel)}</span>
             </div>
@@ -5304,6 +5533,10 @@
                 <div class="stat-title">Avg Recommend</div>
                 <div class="stat-value">${formatScore(analytics.avgRecommend)}</div>
               </div>
+              <div class="stat">
+                <div class="stat-title">Tracked Actions</div>
+                <div class="stat-value">${actionItems.length}</div>
+              </div>
             </div>
             <div class="inline-actions">
               <button class="secondary" onclick="setFeedbackFilter('all')">All</button>
@@ -5311,97 +5544,80 @@
               <button class="ghost" onclick="setFeedbackFilter('build')">Build</button>
               <button class="ghost" onclick="setFeedbackFilter('stabilization')">Stabilization</button>
               <button class="ghost" onclick="setFeedbackFilter('execution')">Execution</button>
-              <button class="ghost" onclick="downloadFeedbackCsv()">Export CSV</button>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="phase-header">
-              <div>
-                <h2>Built-In Data Set</h2>
-                <p>This page is already loaded with the aggregate 2023-2026 Dallas feedback data. Raw participant names, MIST IDs, and comments are not published in the site code.</p>
-              </div>
-              <span class="phase-chip">${analytics.yearRange}</span>
+              <button class="ghost" onclick="downloadFeedbackCsv()">Themes CSV</button>
             </div>
           </div>
 
           ${analytics.responseCount ? `
-            <div class="panel">
-              <div class="phase-header">
-                <div>
-                  <h2>Best Next Lifts</h2>
-                  <p>Sorted by lowest average so the clearest score-lift opportunities rise to the top first. Main table hides tiny role-specific fields with fewer than 5 responses.</p>
+            <div class="console-grid">
+              <div class="panel">
+                <div class="phase-header">
+                  <div>
+                    <h2>Performance View</h2>
+                    <p>One compact place for the lowest scores, year trend, role mix, and the strongest theme signals.</p>
+                  </div>
+                  <div class="inline-actions">
+                    <button class="ghost" onclick="downloadFeedbackCsv()">Export Themes</button>
+                    <button class="ghost" onclick="downloadFeedbackYearBreakdownCsv()">Export Year View</button>
+                  </div>
                 </div>
-                <span class="phase-chip">${analytics.categoryAverages.length} scored fields</span>
+                <div class="stat-title">Best Next Lifts</div>
+                ${renderFeedbackScoreTable(analytics.categoryAverages)}
+                <div class="runbook-grid">
+                  ${renderFeedbackYearTrend(analytics.yearStats)}
+                  ${renderFeedbackRoleBreakdown(analytics.roleCounts)}
+                </div>
+                ${renderFeedbackThemeAnalytics(analytics.themeCounts, analytics.responseCount)}
               </div>
-              ${renderFeedbackScoreTable(analytics.categoryAverages)}
             </div>
 
             <div class="panel">
               <div class="phase-header">
                 <div>
                   <h2>Year-Over-Year Growth</h2>
-                  <p>How the biggest experience areas moved from 2023 through 2026, plus the total lift from the first year to the latest year.</p>
+                  <p>Biggest experience areas from 2023 through 2026, with total lift from the first year to the latest year.</p>
                 </div>
                 <span class="phase-chip">${analytics.yearRange}</span>
               </div>
               ${renderFeedbackYearAreaBreakdown(analytics.yearAreaBreakdown)}
             </div>
 
-            <div class="panel">
-              <div class="phase-header">
-                <div>
-                  <h2>Participation Mix</h2>
-                  <p>Quick view by year and role so leadership can see who is shaping the feedback picture.</p>
+            <div class="console-grid">
+              <div class="panel">
+                <div class="phase-header">
+                  <div>
+                    <h2>Action Tracker</h2>
+                    <p>Admin-owned actions created from feedback themes and tied directly to next year’s target numbers.</p>
+                  </div>
+                  <div class="inline-actions">
+                    <button class="ghost" onclick="downloadTrackedActionsCsv()">Export Actions</button>
+                    <button class="ghost" onclick="downloadProjectedImpactCsv()">Export Targets</button>
+                  </div>
                 </div>
-                <span class="phase-chip">${Object.keys(analytics.roleCounts).length} role group${Object.keys(analytics.roleCounts).length === 1 ? "" : "s"}</span>
+                ${renderTrackedActionsTable(actionItems)}
+                <div style="margin-top:18px;">
+                  <div class="stat-title">2027 Target Numbers</div>
+                  <p class="muted" style="margin:6px 0 12px;">The score lifts these action items are meant to produce next year.</p>
+                </div>
+                ${renderProjectedImpact(analytics.projected2027)}
               </div>
-              <div class="runbook-grid">
-                ${renderFeedbackYearTrend(analytics.yearStats)}
-                ${renderFeedbackRoleBreakdown(analytics.roleCounts)}
-              </div>
-            </div>
 
-            <div class="panel">
-              <div class="phase-header">
-                <div>
-                  <h2>What People Mention Most</h2>
-                  <p>Keyword counts from open-ended responses, shown as a bright priority list for the next round of upgrades.</p>
+              <div class="panel">
+                <div class="phase-header">
+                  <div>
+                    <h2>Phase Action Plan</h2>
+                    <p>One clean table of who owns what and in which phase it should move.</p>
+                  </div>
+                  <span class="phase-chip">Foundations to execution</span>
                 </div>
-                <span class="phase-chip">${analytics.themeCounts.reduce((sum, item) => sum + item.count, 0)} mentions</span>
+                ${renderFeedbackPhasePlan(analytics.phaseActions)}
               </div>
-              ${renderFeedbackThemeAnalytics(analytics.themeCounts, analytics.responseCount)}
-            </div>
-
-            <div class="panel">
-              <div class="phase-header">
-                <div>
-                  <h2>Phase Action Plan</h2>
-                  <p>Action items grouped by phase, assigned to owners, and tied to exact score targets for next year.</p>
-                </div>
-                <span class="phase-chip">Foundations to execution</span>
-              </div>
-              ${renderFeedbackPhasePlan(analytics.phaseActions)}
-            </div>
-
-            <div class="panel">
-              <div class="phase-header">
-                <div>
-                  <h2>2027 Target Scoreboard</h2>
-                  <p>Just the numbers: 2026 baseline, 2027 target, and the projected lift these action items are built to create.</p>
-                </div>
-                <span class="phase-chip">Projected next-year lift</span>
-              </div>
-              ${renderProjectedImpact(analytics.projected2027)}
             </div>
           ` : `
-            <div class="panel">
-              <h2>No Survey Export Loaded Yet</h2>
-              <p>Paste the 2023-2026 sheet export above and the page will calculate score averages, low-score counts, role/year trends, keyword themes, and owner-level action priorities.</p>
-            </div>
+            ${renderEmptyState("No feedback analytics yet", "Load or define feedback data before using this page as the improvement dashboard.")}
           `}
 
-          ${canEdit ? `
+              ${canEdit ? `
             <div class="panel">
               <h2>Add Feedback Theme</h2>
               <p>Add a point from a debrief, survey, chat, or previous-year organizer note, then assign how it will be addressed.</p>
@@ -5437,42 +5653,20 @@
           <div class="panel">
             <div class="phase-header">
               <div>
-                <h2>Bright Spots & Commitments</h2>
-                <p>These are the named commitments that turn the score trends above into visible, team-owned improvements.</p>
+                <h2>Theme Queue</h2>
+                <p>Source themes waiting to be tracked, assigned, or folded into the phase plan.</p>
               </div>
               <span class="phase-chip">${visibleItems.length} shown</span>
             </div>
             <div class="log-list">
-              ${visibleItems.map(item => renderFeedbackCard(item)).join("") || `<p>No feedback themes match this filter.</p>`}
-            </div>
-          </div>
-
-          <div class="panel">
-            <h2>How To Keep The Momentum Going</h2>
-            <div class="runbook-grid">
-              <div class="runbook-card" style="--runbook-color:#1f8a9b">
-                <div class="stat-title">1. Capture</div>
-                <p>Pull points from prior debriefs, surveys, organizer notes, parent/student comments, and AD reflections.</p>
-              </div>
-              <div class="runbook-card" style="--runbook-color:#c9972b">
-                <div class="stat-title">2. Cluster</div>
-                <p>Group similar notes into themes like communication, room flow, training, registration, or accountability.</p>
-              </div>
-              <div class="runbook-card" style="--runbook-color:#247a52">
-                <div class="stat-title">3. Assign</div>
-                <p>Give each theme an owner, a phase, and a target score lift so every team knows what success looks like.</p>
-              </div>
-              <div class="runbook-card" style="--runbook-color:#ff7a59">
-                <div class="stat-title">4. Celebrate</div>
-                <p>Use this during meetings so leadership can spot wins, protect what is already working, and keep the next lifts moving.</p>
-              </div>
+              ${visibleItems.length ? visibleItems.map(item => renderFeedbackCard(item, canTrack)).join("") : renderEmptyState("No themes match this filter", "Try another phase or add a new theme from a debrief or survey note.")}
             </div>
           </div>
         </div>
       `;
     }
 
-    function renderFeedbackCard(item) {
+    function renderFeedbackCard(item, canEdit = false) {
       return `
         <div class="feedback-card" style="--feedback-color:${item.color || phaseColor(item.phase) || "#1f8a9b"}">
           <div class="phase-header">
@@ -5488,6 +5682,11 @@
             <span class="phase-chip">${escapeHtml(item.owner || "Unassigned")}</span>
             <span class="phase-chip">${escapeHtml(formatPhase(item.phase || "foundations"))}</span>
           </div>
+          ${canEdit ? `
+            <div class="inline-actions">
+              <button class="ghost" onclick="convertFeedbackThemeToAction('${escapeHtml(item.id)}', '${FEEDBACK_THEMES.some(theme => theme.id === item.id) ? "starter" : "custom"}')">Track As Action Item</button>
+            </div>
+          ` : ""}
         </div>
       `;
     }
@@ -5578,20 +5777,56 @@
     function renderFeedbackThemeAnalytics(themeCounts, responseCount) {
       const visible = themeCounts.filter(item => item.count > 0).slice(0, 10);
       return `
-        <div class="log-list">
-          ${visible.map(item => `
-            <div class="feedback-card" style="--feedback-color:#247a52">
-              <div class="phase-header">
-                <div>
-                  <div class="stat-title">${Math.round((item.count / Math.max(1, responseCount)) * 100)}% of responses</div>
-                  <h3>${escapeHtml(item.label)}</h3>
+        <div style="margin-top:14px;">
+          <div class="stat-title">Theme Signals</div>
+          <div class="log-list" style="margin-top:10px;">
+            ${visible.map(item => `
+              <div class="feedback-card" style="--feedback-color:#247a52">
+                <div class="phase-header">
+                  <div>
+                    <div class="stat-title">${Math.round((item.count / Math.max(1, responseCount)) * 100)}% of responses</div>
+                    <h3>${escapeHtml(item.label)}</h3>
+                  </div>
+                  <span class="status-pill">${item.count} mention${item.count === 1 ? "" : "s"}</span>
                 </div>
-                <span class="status-pill">${item.count} mention${item.count === 1 ? "" : "s"}</span>
+                <div class="progress-track"><div class="progress-fill" style="width:${Math.min(100, (item.count / Math.max(1, responseCount)) * 100)}%"></div></div>
               </div>
-              <div class="progress-track"><div class="progress-fill" style="width:${Math.min(100, (item.count / Math.max(1, responseCount)) * 100)}%"></div></div>
-            </div>
-          `).join("") || `<p>No keyword themes were detected yet.</p>`}
+            `).join("") || `<p>No keyword themes were detected yet.</p>`}
+          </div>
         </div>
+      `;
+    }
+
+    function renderTrackedActionsTable(items) {
+      if (!items.length) {
+        return renderEmptyState("No tracked actions yet", "Convert one of the feedback themes below into a tracked action item so it can move from insight to execution.");
+      }
+
+      return `
+        <table class="list-table">
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Owner</th>
+              <th>Phase</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${items.map(item => `
+              <tr>
+                <td>${escapeHtml(item.title)}<br><span class="muted">${escapeHtml(item.target || "")}</span></td>
+                <td>${escapeHtml(item.owner || "Unassigned")}</td>
+                <td>${escapeHtml(formatPhase(item.phase || "foundations"))}</td>
+                <td>
+                  <select onchange="updateTrackedActionStatus('${escapeHtml(item.id)}', this.value)">
+                    ${["planned", "in_progress", "done"].map(status => `<option value="${status}" ${item.status === status ? "selected" : ""}>${status.replace("_", " ")}</option>`).join("")}
+                  </select>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
       `;
     }
 
@@ -5687,18 +5922,20 @@
           <div class="panel">
             <div class="phase-header">
               <div>
-                <h2>Calendar Export</h2>
-                <p>Add deadlines to your calendar without connecting an account. The .ics file works with Apple Calendar, Google Calendar, Outlook, and most calendar apps.</p>
+                <h2>Deadline Health</h2>
+                <p>See whether the deadline system is healthy before diving into the phase-by-phase list.</p>
               </div>
               <span class="phase-chip">${deadlines.length} deadline${deadlines.length === 1 ? "" : "s"}</span>
             </div>
+            ${renderDeadlineHealth(deadlines)}
             <div class="inline-actions">
               <button class="primary" onclick="downloadAllDeadlinesIcs()">Download All Deadlines (.ics)</button>
               <button class="secondary" onclick="openGoogleCalendarForAllDeadlines()">Open Google Calendar Links</button>
+              <button class="ghost" onclick="downloadDeadlineHealthCsv()">Export Deadline Health</button>
             </div>
           </div>
 
-          ${Object.keys(PHASES).map(phaseId => `
+          ${deadlines.length ? Object.keys(PHASES).map(phaseId => `
             <div class="panel phase-panel" style="--phase-color:${phaseColor(phaseId)};--phase-gradient:${phaseGradient(phaseId)}">
               <div class="phase-header">
                 <div>
@@ -5711,7 +5948,7 @@
                 ${(grouped[phaseId] || []).map(item => renderDeadlineCard(item)).join("")}
               </div>
             </div>
-          `).join("")}
+          `).join("") : renderEmptyState("No deadlines loaded", "Add your first phase deadline in the admin manager so the calendar, reminders, and health view all have a source of truth.")}
 
           ${user ? renderReminderPreferences(reminderPreference) : `
             <div class="panel">
@@ -5760,6 +5997,23 @@
       `;
     }
 
+    function renderDeadlineHealth(deadlines) {
+      const reminderEligible = deadlines.filter(item => item.send_reminders !== false).length;
+      const overdue = deadlines.filter(item => deadlineTiming(item).isOverdue).length;
+      const nextSeven = deadlines.filter(item => {
+        const timing = deadlineTiming(item);
+        return timing.daysAway !== null && timing.daysAway >= 0 && timing.daysAway <= 7;
+      }).length;
+      return `
+        <div class="metric-row">
+          <div class="stat"><div class="stat-title">Reminder Eligible</div><div class="stat-value">${reminderEligible}</div></div>
+          <div class="stat"><div class="stat-title">Due In 7 Days</div><div class="stat-value">${nextSeven}</div></div>
+          <div class="stat"><div class="stat-title">Overdue</div><div class="stat-value">${overdue}</div></div>
+          <div class="stat"><div class="stat-title">With Owner</div><div class="stat-value">${deadlines.filter(item => item.owner_label).length}</div></div>
+        </div>
+      `;
+    }
+
     function downloadAllDeadlinesIcs() {
       const deadlines = APP_STATE.currentDeadlines || [];
       if (!deadlines.length) return alert("No deadlines are available to export.");
@@ -5785,6 +6039,14 @@
       deadlines.forEach((deadline, index) => {
         window.setTimeout(() => window.open(googleCalendarUrl(deadline), "_blank", "noopener,noreferrer"), index * 350);
       });
+    }
+
+    function downloadDeadlineHealthCsv() {
+      const deadlines = APP_STATE.currentDeadlines || [];
+      downloadCsv("mist-deadline-health.csv", [
+        ["date", "title", "phase", "owner", "priority", "timing", "reminder_eligible"],
+        ...deadlines.map(item => [item.date, item.title, formatPhase(item.phase), item.owner_label || "All Teams", deadlinePriority(item), deadlineTiming(item).label, item.send_reminders === false ? "No" : "Yes"])
+      ]);
     }
 
     function downloadIcsFile(deadlines, filename) {
@@ -6511,6 +6773,28 @@
       downloadCsv("mist-tournament-schedule.csv", rows);
     }
 
+    function downloadTournamentConflictsCsv() {
+      const { rooms = [], availability = [], blocks = [], students = [], assignments = [] } = APP_STATE.tournament || {};
+      const conflicts = detectTournamentConflicts(rooms, availability, blocks, assignments);
+      const unassignedBlocks = blocks.filter(block => !block.room_id).map(block => ({
+        severity: "medium",
+        type: "room",
+        title: `${block.competition_name} has no room`,
+        detail: formatBlockTime(block)
+      }));
+      const unassignedStudents = students.filter(student => !assignments.some(assignment => assignment.student_id === student.id)).map(student => ({
+        severity: "medium",
+        type: "assignment",
+        title: `${student.full_name} has no room assignment`,
+        detail: student.school || ""
+      }));
+      const rows = [
+        ["severity", "type", "title", "detail"],
+        ...[...conflicts, ...unassignedBlocks, ...unassignedStudents].map(item => [item.severity, item.type, item.title, item.detail])
+      ];
+      downloadCsv("mist-tournament-conflicts.csv", rows);
+    }
+
     function downloadMyMistParticipantTemplate() {
       downloadCsv("mymist-participant-import-template.csv", [
         ["external_participant_id", "full_name", "email", "school", "grade_level", "gender_label", "competitions", "badge_code", "nfc_uid"],
@@ -6528,6 +6812,178 @@
 
     function setLocalRecords(key, records) {
       localStorage.setItem(key, JSON.stringify(records));
+    }
+
+    function renderEmptyState(title, body, actions = "") {
+      return `
+        <div class="empty-state">
+          <h3>${escapeHtml(title)}</h3>
+          <p>${escapeHtml(body)}</p>
+          ${actions ? `<div class="inline-actions">${actions}</div>` : ""}
+        </div>
+      `;
+    }
+
+    function trackedActions() {
+      return getLocalRecords("mist_tracked_actions");
+    }
+
+    function saveTrackedActions(records) {
+      setLocalRecords("mist_tracked_actions", records.slice(0, 200));
+    }
+
+    function convertFeedbackThemeToAction(themeId, source = "starter") {
+      const base = source === "custom"
+        ? getLocalRecords("mist_feedback_addressal").find(item => item.id === themeId)
+        : FEEDBACK_THEMES.find(item => item.id === themeId);
+      if (!base) return alert("Could not find that feedback theme.");
+
+      const records = trackedActions();
+      if (records.some(item => item.source_id === themeId)) return alert("That feedback theme is already a tracked action item.");
+
+      records.unshift({
+        id: `action-${Date.now()}`,
+        source_id: themeId,
+        title: base.theme,
+        owner: base.owner,
+        phase: base.phase,
+        status: "planned",
+        target: base.action,
+        created_at: new Date().toISOString()
+      });
+      saveTrackedActions(records);
+      alert("Tracked action item created.");
+      renderApp();
+    }
+
+    function updateTrackedActionStatus(id, status) {
+      const records = trackedActions().map(item => item.id === id ? { ...item, status } : item);
+      saveTrackedActions(records);
+      renderApp();
+    }
+
+    function downloadTrackedActionsCsv() {
+      const records = trackedActions();
+      downloadCsv("mist-tracked-actions.csv", [
+        ["title", "owner", "phase", "status", "target"],
+        ...records.map(item => [item.title, item.owner, item.phase, item.status, item.target])
+      ]);
+    }
+
+    function seedDemoData() {
+      const meetings = getLocalRecords("mist_meeting_notes");
+      const decisions = getLocalRecords("mist_decision_log");
+      const actions = trackedActions();
+      if (!meetings.length) {
+        setLocalRecords("mist_meeting_notes", [{
+          id: "meeting-demo-1",
+          title: "Demo Weekly Check-In",
+          date: "2026-09-10",
+          team: "Operations",
+          agenda: "Deadlines, rooms, training",
+          blockers: "Need one more room captain",
+          actions: "Ops to confirm room list by Friday",
+          created_at: new Date().toISOString()
+        }]);
+      }
+      if (!decisions.length) {
+        setLocalRecords("mist_decision_log", [{
+          id: "decision-demo-1",
+          title: "Lock room signage format",
+          category: "Weekend Ops",
+          owner: "Operations",
+          date: "2026-09-10",
+          impact: "Faster room finding on event day",
+          followup: "Print test set next meeting",
+          meeting_id: "meeting-demo-1",
+          created_at: new Date().toISOString()
+        }]);
+      }
+      if (!actions.length) {
+        saveTrackedActions([{
+          id: "action-demo-1",
+          source_id: "communication",
+          title: "Clearer Communication Flow",
+          owner: "Ops 2 + PR",
+          phase: "build",
+          status: "planned",
+          target: "Publish one approved update per change and keep the source-of-truth schedule current.",
+          created_at: new Date().toISOString()
+        }]);
+      }
+      if (!getLocalRecords("mist_release_checklist").length) {
+        setLocalRecords("mist_release_checklist", RELEASE_CHECKLIST.map((item, index) => ({ id: `release-${index}`, ...item, done: false })));
+      }
+      alert("Demo data seeded on this device.");
+      renderApp();
+    }
+
+    async function clearDemoData() {
+      const ok = await requestConfirmation({
+        title: "Clear local training data?",
+        body: "This removes demo notes, demo decisions, demo action items, and the local release checklist from this browser.",
+        confirmLabel: "Clear Demo Data"
+      });
+      if (!ok) return;
+      ["mist_meeting_notes", "mist_decision_log", "mist_tracked_actions", "mist_release_checklist"].forEach(key => localStorage.removeItem(key));
+      renderApp();
+    }
+
+    function toggleReleaseItem(id, done) {
+      const items = getLocalRecords("mist_release_checklist");
+      const next = items.length ? items.map(item => item.id === id ? { ...item, done } : item) : RELEASE_CHECKLIST.map((item, index) => ({ id: `release-${index}`, ...item, done: id === `release-${index}` ? done : false }));
+      setLocalRecords("mist_release_checklist", next);
+    }
+
+    function openView(view) {
+      APP_STATE.view = view;
+      renderApp();
+    }
+
+    function openRulebookPage(page) {
+      if (!page) return;
+      APP_STATE.view = page;
+      renderApp();
+    }
+
+    function showModal({ title, body, confirmLabel = "Confirm", cancelLabel = "Cancel", onConfirm }) {
+      const existing = document.getElementById("portal-modal");
+      if (existing) existing.remove();
+      const modal = document.createElement("div");
+      modal.id = "portal-modal";
+      modal.className = "modal-backdrop";
+      modal.innerHTML = `
+        <div class="modal-card">
+          <h2>${escapeHtml(title)}</h2>
+          <p>${escapeHtml(body)}</p>
+          <div class="inline-actions">
+            <button class="danger" id="portal-modal-confirm">${escapeHtml(confirmLabel)}</button>
+            <button class="ghost" id="portal-modal-cancel">${escapeHtml(cancelLabel)}</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      const close = result => {
+        modal.remove();
+        if (result && typeof onConfirm === "function") onConfirm();
+      };
+      modal.querySelector("#portal-modal-confirm").onclick = () => close(true);
+      modal.querySelector("#portal-modal-cancel").onclick = () => close(false);
+    }
+
+    function requestConfirmation({ title, body, confirmLabel }) {
+      return new Promise(resolve => {
+        showModal({
+          title,
+          body,
+          confirmLabel,
+          onConfirm: () => resolve(true)
+        });
+        document.getElementById("portal-modal-cancel").onclick = () => {
+          document.getElementById("portal-modal")?.remove();
+          resolve(false);
+        };
+      });
     }
 
     function loadFeedbackDataset() {
@@ -6582,6 +7038,7 @@
       const item = {
         id: `decision-${Date.now()}`,
         title: document.getElementById("decision-title").value.trim(),
+        meeting_id: document.getElementById("decision-meeting").value || "",
         category: document.getElementById("decision-category").value,
         owner: document.getElementById("decision-owner").value.trim(),
         date: document.getElementById("decision-date").value,
@@ -6613,6 +7070,16 @@
         ["date", "category", "title", "owner", "impact", "followup"],
         ...records.map(item => [item.date, item.category, item.title, item.owner, item.impact, item.followup])
       ]);
+    }
+
+    function downloadDirectoryCsv() {
+      getAllProfiles().then(profiles => {
+        const rows = buildRoleDirectoryRows(profiles);
+        downloadCsv("mist-organizer-directory.csv", [
+          ["team", "role", "full_name", "email", "claimed", "start_phase"],
+          ...rows.map(item => [item.team, formatRole(item.role_id), item.full_name, item.email, item.claimed ? "Yes" : "No", formatPhase(item.start_phase)])
+        ]);
+      });
     }
 
     function saveFeedbackTheme(event) {
@@ -6662,6 +7129,29 @@
           item.status,
           item.action
         ])
+      ]);
+    }
+
+    function downloadFeedbackYearBreakdownCsv() {
+      const analytics = DEFAULT_FEEDBACK_ANALYTICS;
+      downloadCsv("mist-feedback-year-breakdown.csv", [
+        ["area", "2023", "2024", "2025", "2026", "change_2023_2026"],
+        ...analytics.yearAreaBreakdown.map(item => [
+          item.label,
+          item.values["2023"] ?? "",
+          item.values["2024"] ?? "",
+          item.values["2025"] ?? "",
+          item.values["2026"] ?? "",
+          item.change ?? ""
+        ])
+      ]);
+    }
+
+    function downloadProjectedImpactCsv() {
+      const analytics = DEFAULT_FEEDBACK_ANALYTICS;
+      downloadCsv("mist-feedback-2027-targets.csv", [
+        ["metric", "current_2026", "target_2027", "lift"],
+        ...analytics.projected2027.map(item => [item.label, item.current, item.target, item.lift])
       ]);
     }
 
@@ -6717,9 +7207,12 @@
       const results = searchRulebook(value);
       resultsPanel.innerHTML = results.map(entry => `
         <div class="knowledge-result" style="--knowledge-color:${entry.color}">
-          <div class="stat-title">${escapeHtml(entry.category)}</div>
+          <div class="stat-title">${escapeHtml(entry.category)} • ${escapeHtml(entry.version || PORTAL_RULEBOOK_VERSION)} • ${escapeHtml(entry.updated_at || "Latest")}</div>
           <h3>${escapeHtml(entry.question)}</h3>
           <p>${escapeHtml(entry.answer)}</p>
+          <div class="inline-actions">
+            ${entry.page ? `<button class="ghost" onclick="openRulebookPage('${escapeHtml(entry.page)}')">Open ${escapeHtml(entry.page_label || "related page")}</button>` : ""}
+          </div>
         </div>
       `).join("") || `<p>No answer found yet. Add this question to the official rulebook source.</p>`;
     }
@@ -6730,13 +7223,16 @@
     }
 
     function downloadRulebookCsv() {
-      downloadCsv("mist-organizer-rulebook-starter.csv", [
-        ["category", "question", "answer", "keywords"],
+      downloadCsv("mist-competition-rulebook-starter.csv", [
+        ["category", "question", "answer", "keywords", "version", "updated_at", "page"],
         ...RULEBOOK_ENTRIES.map(entry => [
           entry.category,
           entry.question,
           entry.answer,
-          (entry.keywords || []).join("|")
+          (entry.keywords || []).join("|"),
+          entry.version || PORTAL_RULEBOOK_VERSION,
+          entry.updated_at || "",
+          entry.page || ""
         ])
       ]);
     }
@@ -6764,6 +7260,14 @@
 
     async function renderApp() {
       const app = document.getElementById("app");
+      app.innerHTML = `
+        <div class="card">
+          <h2>Loading Portal</h2>
+          <p>Pulling the latest portal state, deadlines, directory data, and page content.</p>
+        </div>
+      `;
+
+      try {
       const user = await getUser();
       const profiles = await getAllProfiles();
       const rows = buildRoleDirectoryRows(profiles);
@@ -6844,6 +7348,16 @@
 
         if (APP_STATE.view === "feedback") {
           app.innerHTML = renderFeedbackAddressal(null, null);
+          return;
+        }
+
+        if (APP_STATE.view === "onboarding") {
+          app.innerHTML = renderOnboardingChecklist(null, null);
+          return;
+        }
+
+        if (APP_STATE.view === "release") {
+          app.innerHTML = renderReleaseChecklist(null, null);
           return;
         }
 
@@ -6949,6 +7463,16 @@
         return;
       }
 
+      if (APP_STATE.view === "onboarding") {
+        app.innerHTML = renderOnboardingChecklist(user, profile);
+        return;
+      }
+
+      if (APP_STATE.view === "release") {
+        app.innerHTML = renderReleaseChecklist(user, profile);
+        return;
+      }
+
       if (APP_STATE.view === "calendar") {
         const deadlines = await getDeadlines();
         const reminderPreference = await getReminderPreference(user.id);
@@ -6977,6 +7501,19 @@
       const deadlines = await getDeadlines();
       APP_STATE.announcements = await getAnnouncements();
       app.innerHTML = renderDashboard(user, profile, rows, progressRows, deadlines);
+      } catch (error) {
+        console.error("Render error:", error);
+        app.innerHTML = `
+          <div class="card">
+            <h2>Something Needs Attention</h2>
+            <p>${escapeHtml(error?.message || "The portal hit an unexpected error while loading this page.")}</p>
+            <div class="inline-actions">
+              <button class="primary" onclick="goDashboard()">Back to Dashboard</button>
+              <button class="ghost" onclick="renderApp()">Try Again</button>
+            </div>
+          </div>
+        `;
+      }
     }
 
     renderApp();
