@@ -7457,12 +7457,6 @@
 
     async function renderApp() {
       const app = document.getElementById("app");
-      app.innerHTML = `
-        <div class="card">
-          <h2>Loading Portal</h2>
-          <p>Pulling the latest portal state, deadlines, directory data, and page content.</p>
-        </div>
-      `;
 
       try {
       const user = await getUser();
