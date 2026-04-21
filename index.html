@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MIST Dallas 2027 · Organizer Portal</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2318798a'/><text x='16' y='23' font-family='system-ui,sans-serif' font-size='19' font-weight='900' fill='white' text-anchor='middle'>M</text></svg>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.typekit.net/qhr0hoe.css">
   <style>
     /* ==============================================
        MIST DALLAS 2027 — DESIGN SYSTEM
@@ -69,13 +67,20 @@
     html, body { margin: 0; min-height: 100%; }
 
     body {
-      font-family: "Plus Jakarta Sans", Inter, system-ui, -apple-system,
-                   BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: "zilla-slab", Georgia, "Times New Roman", serif;
       font-size: 14px;
       line-height: 1.55;
       color: var(--text);
       background: var(--bg);
       -webkit-font-smoothing: antialiased;
+    }
+
+    /* UI controls stay on system sans — Zilla Slab is for text, not buttons/inputs */
+    button, input, select, textarea, .label, .stat-title, .stat-value,
+    .console-kicker, .priority-pill, .status-pill, .phase-chip,
+    .roadmap-status, .nav-link, .nav-user-pill, .nav-wordmark,
+    .tab-btn, .nav-mobile-link {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
     /* ==============================================
@@ -3538,10 +3543,10 @@
           color: "#247a52",
           cards: [
             signedIn && hasProfile
-              ? { title: "My Workbook", body: "Role checklist, notes, phase plans, and autosave progress.", action: "openWorkbook()" }
-              : { title: "Claim a Role", body: "Log in or create an account, then choose an open organizer role.", action: "openLogin()" },
-            { title: "Team Pages", body: "Focused team hubs with roles, tasks, start phases, and claim status.", action: "openTeamPages()" },
-            { title: "Progress Board", body: "Shared completion percentages and recent saved activity.", action: "openProgressBoard()" }
+              ? { icon: "✎", title: "My Workbook", body: "Role checklist, notes, phase plans, and autosave progress.", action: "openWorkbook()" }
+              : { icon: "＋", title: "Claim a Role", body: "Log in or create an account, then choose an open organizer role.", action: "openLogin()" },
+            { icon: "◈", title: "Team Pages", body: "Focused team hubs with roles, tasks, start phases, and claim status.", action: "openTeamPages()" },
+            { icon: "◎", title: "Progress Board", body: "Shared completion percentages and recent saved activity.", action: "openProgressBoard()" }
           ]
         },
         {
@@ -3549,12 +3554,12 @@
           hint: "Leadership visibility",
           color: "#c9972b",
           cards: [
-            { title: "Command Center", body: "Open seats, deadline risk, team readiness, and operational checks.", action: "openCommandCenter()" },
-            { title: "Meeting Hub", body: "Agendas, blockers, action items, and meeting memory.", action: "openMeetings()" },
-            { title: "Decision Log", body: "Track approved decisions, owners, impact, and follow-up.", action: "openMeetings()" },
-            { title: "Feedback Addressal", body: "Turn past-year feedback into themes, owners, action plans, and status.", action: "openFeedback()" },
-            { title: "Timeline", body: "Foundations, Build, Stabilization, and Execution at a glance.", action: "openTimeline()" },
-            { title: "Calendar", body: "Deadline cards, calendar export, and reminder preferences.", action: "openCalendar()" }
+            { icon: "⊛", title: "Command Center", body: "Open seats, deadline risk, team readiness, and operational checks.", action: "openCommandCenter()" },
+            { icon: "◷", title: "Meeting Hub", body: "Agendas, blockers, action items, and meeting memory.", action: "openMeetings()" },
+            { icon: "✓", title: "Decision Log", body: "Track approved decisions, owners, impact, and follow-up.", action: "openMeetings()" },
+            { icon: "◆", title: "Feedback Addressal", body: "Turn past-year feedback into themes, owners, action plans, and status.", action: "openFeedback()" },
+            { icon: "⤳", title: "Timeline", body: "Foundations, Build, Stabilization, and Execution at a glance.", action: "openTimeline()" },
+            { icon: "◻", title: "Calendar", body: "Deadline cards, calendar export, and reminder preferences.", action: "openCalendar()" }
           ]
         },
         {
@@ -3562,10 +3567,10 @@
           hint: "Event systems",
           color: "#7b61ff",
           cards: [
-            { title: "MyMIST Integration Center", body: "Stage exports for participants, schools, badges, and rosters.", action: "openIntegrations()" },
-            { title: "Weekend Tournament Manager", body: "Rooms, competition blocks, student placement, and NFC check-ins.", action: "openTournamentManager()" },
-            { title: "Event Weekend Runbook", body: "Command Center, check-in, rooms, communications, and escalation procedures.", action: "openRunbook()" },
-            { title: "Directory", body: "Names, roles, teams, emails, and unclaimed role seats.", action: "openDirectory()" }
+            { icon: "⇄", title: "MyMIST Integration Center", body: "Stage exports for participants, schools, badges, and rosters.", action: "openIntegrations()" },
+            { icon: "⊞", title: "Weekend Tournament Manager", body: "Rooms, competition blocks, student placement, and NFC check-ins.", action: "openTournamentManager()" },
+            { icon: "≡", title: "Event Weekend Runbook", body: "Command Center, check-in, rooms, communications, and escalation procedures.", action: "openRunbook()" },
+            { icon: "◉", title: "Directory", body: "Names, roles, teams, emails, and unclaimed role seats.", action: "openDirectory()" }
           ]
         },
         {
@@ -3573,8 +3578,8 @@
           hint: "Organizer rulebook",
           color: "#1f8a9b",
           cards: [
-            { title: "Rulebook Search", body: "Search organizer expectations, policies, processes, and common questions.", action: "openKnowledge()" },
-            { title: "FAQ Library", body: "Fast answers for applications, roles, deadlines, MyMIST, and event weekend.", action: "openKnowledge()" }
+            { icon: "⌕", title: "Rulebook Search", body: "Search organizer expectations, policies, processes, and common questions.", action: "openKnowledge()" },
+            { icon: "?", title: "FAQ Library", body: "Fast answers for applications, roles, deadlines, MyMIST, and event weekend.", action: "openKnowledge()" }
           ]
         },
         {
@@ -3582,8 +3587,8 @@
           hint: "Recruit and assign",
           color: "#b13f4a",
           cards: [
-            { title: "Application Status", body: "Check whether an application is pending, approved, or declined.", action: "openApplicationStatus()" },
-            ...(profile?.is_admin ? [{ title: "Review Applications", body: "Approve, decline, and email role applicants.", action: "openApplications()" }] : [])
+            { icon: "◌", title: "Application Status", body: "Check whether an application is pending, approved, or declined.", action: "openApplicationStatus()" },
+            ...(profile?.is_admin ? [{ icon: "✔", title: "Review Applications", body: "Approve, decline, and email role applicants.", action: "openApplications()" }] : [])
           ]
         }
       ];
@@ -3597,6 +3602,7 @@
           <div class="nav-grid">
             ${section.cards.map(card => `
               <button class="nav-card" onclick="${card.action}">
+                <span style="display:block;font-size:16px;margin-bottom:7px;opacity:0.55;color:var(--section-color,var(--teal));font-family:system-ui,sans-serif;">${card.icon}</span>
                 <strong>${escapeHtml(card.title)}</strong>
                 <span>${escapeHtml(card.body)}</span>
               </button>
@@ -7124,25 +7130,26 @@
       const hasRole = !!profile?.role_id;
 
       const links = [
-        { label: "Dashboard",  action: "goDashboard()",         view: "dashboard" },
-        { label: "Workbook",   action: "openWorkbook()",         view: "workbook",  hidden: !hasRole },
-        { label: "Teams",      action: "openTeamPages()",        view: "teams" },
-        { label: "Command",    action: "openCommandCenter()",    view: "command" },
-        { label: "Calendar",   action: "openCalendar()",         view: "calendar" },
-        { label: "Timeline",   action: "openTimeline()",         view: "timeline" },
-        { label: "Directory",  action: "openDirectory()",        view: "directory" },
-        { label: "Runbook",    action: "openRunbook()",          view: "runbook" },
-        { label: "Feedback",   action: "openFeedback()",         view: "feedback" },
+        { icon: "⌂",  label: "Dashboard",  action: "goDashboard()",         view: "dashboard" },
+        { icon: "✎",  label: "Workbook",   action: "openWorkbook()",         view: "workbook",  hidden: !hasRole },
+        { icon: "◈",  label: "Teams",      action: "openTeamPages()",        view: "teams" },
+        { icon: "⊛",  label: "Command",    action: "openCommandCenter()",    view: "command" },
+        { icon: "◻",  label: "Calendar",   action: "openCalendar()",         view: "calendar" },
+        { icon: "⤳",  label: "Timeline",   action: "openTimeline()",         view: "timeline" },
+        { icon: "◉",  label: "Directory",  action: "openDirectory()",        view: "directory" },
+        { icon: "≡",  label: "Runbook",    action: "openRunbook()",          view: "runbook" },
+        { icon: "◆",  label: "Feedback",   action: "openFeedback()",         view: "feedback" },
       ];
 
       const visibleLinks = links.filter(l => !l.hidden);
 
       const userArea = user
-        ? `<button class="nav-user-pill" onclick="logout()" title="Log out">
+        ? `<div class="nav-user-pill" style="cursor:default;">
              <div class="nav-avatar">${escapeHtml((profile?.full_name || user.email || "U")[0].toUpperCase())}</div>
              ${escapeHtml(profile?.full_name ? profile.full_name.split(" ")[0] : "Account")}
-           </button>`
-        : `<button class="ghost" onclick="openLogin()" style="min-width:0;padding:7px 14px;font-size:13px;">Log In</button>`;
+           </div>
+           <button onclick="logout()" style="min-width:0;padding:7px 12px;font-size:12px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:var(--r-md);font-family:system-ui,sans-serif;font-weight:600;" title="Log out">Log Out</button>`
+        : `<button class="ghost" onclick="openLogin()" style="min-width:0;padding:7px 14px;font-size:13px;font-family:system-ui,sans-serif;">Log In</button>`;
 
       return `
         <div class="nav-bar">
@@ -7153,7 +7160,9 @@
           </button>
           <div class="nav-links">
             ${visibleLinks.map(l => `
-              <button class="nav-link ${v === l.view ? "active" : ""}" onclick="${l.action}">${escapeHtml(l.label)}</button>
+              <button class="nav-link ${v === l.view ? "active" : ""}" onclick="${l.action}">
+                <span style="font-size:12px;opacity:0.7;">${l.icon}</span>${escapeHtml(l.label)}
+              </button>
             `).join("")}
           </div>
           <div class="nav-end">
@@ -7165,7 +7174,7 @@
           ${visibleLinks.map(l => `
             <button class="nav-mobile-link ${v === l.view ? "active" : ""}"
                     onclick="${l.action}; document.getElementById('nav-mobile-drawer').classList.remove('open')">
-              ${escapeHtml(l.label)}
+              <span style="font-size:13px;margin-right:8px;opacity:0.65;">${l.icon}</span>${escapeHtml(l.label)}
             </button>
           `).join("")}
           ${user
