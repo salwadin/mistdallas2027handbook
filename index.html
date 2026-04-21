@@ -165,28 +165,37 @@
       flex-wrap: wrap;
     }
 
+    .utility-panel {
+      padding: 10px 12px;
+      margin-bottom: 10px;
+    }
+
     .utility-bar {
       display: grid;
-      grid-template-columns: minmax(280px, 1.25fr) .75fr;
-      gap: 12px;
-      align-items: start;
+      grid-template-columns: minmax(220px, 1fr) auto;
+      gap: 10px;
+      align-items: center;
     }
 
     .utility-search {
       display: grid;
-      gap: 10px;
+      gap: 8px;
     }
 
     .utility-search-row {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
+    }
+
+    .utility-search-row input {
+      padding: 9px 11px;
     }
 
     .utility-results {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
@@ -194,19 +203,19 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 8px 10px;
+      padding: 6px 9px;
       border-radius: 999px;
       border: 1px solid var(--border);
       background: rgba(255,255,255,.06);
       color: var(--text);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       cursor: pointer;
     }
 
     .utility-links {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
       justify-content: flex-end;
     }
@@ -1679,16 +1688,12 @@
     function renderPortalUtilityBar(view = APP_STATE.view) {
       const results = portalSearchResults();
       return `
-        <div class="panel">
+        <div class="panel utility-panel">
           <div class="utility-bar">
             <div class="utility-search">
-              <div>
-                <div class="stat-title">Quick Jump</div>
-                <p>Search pages, teams, and rulebook questions from anywhere in the portal.</p>
-              </div>
               <div class="utility-search-row">
-                <input value="${escapeHtml(APP_STATE.portalSearch || "")}" oninput="setPortalSearch(this.value)" placeholder="Try feedback, judges, calendar, sports, runbook, or a team name" />
-                ${APP_STATE.portalSearch ? `<button class="ghost" onclick="setPortalSearch('')">Clear</button>` : `<button class="ghost" onclick="openKnowledge()">Rulebook</button>`}
+                <input value="${escapeHtml(APP_STATE.portalSearch || "")}" oninput="setPortalSearch(this.value)" placeholder="Quick jump: feedback, judges, calendar, sports, runbook..." />
+                ${APP_STATE.portalSearch ? `<button class="ghost" onclick="setPortalSearch('')">Clear</button>` : `<button class="ghost" onclick="openKnowledge()">Answers</button>`}
               </div>
               <div class="utility-results">
                 ${results.length
@@ -1698,15 +1703,11 @@
                     : `<span class="phase-chip">Current area: ${escapeHtml(currentViewLabel(view))}</span>`}
               </div>
             </div>
-            <div>
-              <div class="stat-title">Common Stops</div>
-              <div class="utility-links">
-                <button class="utility-pill" onclick="goDashboard()">Dashboard</button>
-                <button class="utility-pill" onclick="openCalendar()">Calendar</button>
-                <button class="utility-pill" onclick="openMeetings()">Meetings</button>
-                <button class="utility-pill" onclick="openRunbook()">Runbook</button>
-                <button class="utility-pill" onclick="openKnowledge()">Answers</button>
-              </div>
+            <div class="utility-links">
+              <button class="utility-pill" onclick="goDashboard()">Home</button>
+              <button class="utility-pill" onclick="openCalendar()">Calendar</button>
+              <button class="utility-pill" onclick="openMeetings()">Meetings</button>
+              <button class="utility-pill" onclick="openKnowledge()">Answers</button>
             </div>
           </div>
         </div>
