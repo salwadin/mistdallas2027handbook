@@ -1352,6 +1352,314 @@
       .tabs { width: 100%; }
       .tab-btn { min-width: auto; flex: 1; text-align: center; }
     }
+
+    /* ==============================================
+       RL-HORIZON + DISPLAY TYPE
+       ============================================== */
+
+    h1, h2 {
+      font-family: "rl-horizon", "Plus Jakarta Sans", system-ui, sans-serif;
+      font-style: normal;
+    }
+
+    .nav-wordmark {
+      font-family: "rl-horizon", "Plus Jakarta Sans", system-ui, sans-serif;
+      font-style: normal;
+    }
+
+    .nav-section-head strong {
+      font-family: "rl-horizon", "Plus Jakarta Sans", system-ui, sans-serif;
+      font-style: normal;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: none;
+      font-weight: 700;
+    }
+
+    /* ==============================================
+       HERO
+       ============================================== */
+
+    .hero-band {
+      background: linear-gradient(135deg,
+        color-mix(in srgb, var(--teal) 8%, var(--surface)),
+        color-mix(in srgb, var(--green) 6%, var(--surface))
+      );
+      border: 1px solid color-mix(in srgb, var(--teal) 16%, var(--border));
+      border-radius: var(--r-xl);
+      padding: 32px 32px 28px;
+      margin-bottom: 14px;
+    }
+
+    .hero-kicker {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--teal);
+      margin-bottom: 8px;
+    }
+
+    .hero-band h1 {
+      font-size: 32px;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+      color: var(--text);
+      line-height: 1.05;
+    }
+
+    .hero-band p {
+      font-size: 15px;
+      max-width: 480px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat-strip {
+      display: flex;
+      gap: 0;
+      margin-top: 24px;
+      border-top: 1px solid color-mix(in srgb, var(--teal) 14%, var(--border));
+      padding-top: 20px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .hero-stat-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      font-family: "rl-horizon", "Plus Jakarta Sans", system-ui, sans-serif;
+    }
+
+    .hero-stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .hero-stat-divider {
+      width: 1px;
+      background: var(--border);
+      align-self: stretch;
+      margin: 0 4px;
+    }
+
+    /* signed-in greeting */
+    .greeting-bar {
+      margin-bottom: 20px;
+    }
+
+    .greeting-bar h1 {
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+
+    .greeting-meta {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .greeting-meta strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .greeting-meta .dot {
+      color: var(--faint);
+    }
+
+    .stat-strip {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .stat-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      box-shadow: var(--shadow-xs);
+    }
+
+    .stat-chip-value {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      font-family: "rl-horizon", "Plus Jakarta Sans", system-ui, sans-serif;
+    }
+
+    .stat-chip-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* ==============================================
+       FEATURED NAV CARD
+       ============================================== */
+
+    .featured-nav-card {
+      width: 100%;
+      padding: 20px 22px;
+      border: 1px solid color-mix(in srgb, var(--section-color, var(--teal)) 22%, var(--border));
+      border-left: 4px solid var(--section-color, var(--teal));
+      border-radius: var(--r-lg);
+      background: color-mix(in srgb, var(--section-color, var(--teal)) 6%, var(--surface));
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      transition: box-shadow 0.12s, transform 0.12s, background 0.12s;
+      margin-top: 10px;
+      font-family: inherit;
+    }
+
+    .featured-nav-card:hover {
+      box-shadow: var(--shadow);
+      transform: translateY(-2px);
+      background: color-mix(in srgb, var(--section-color, var(--teal)) 10%, var(--surface));
+      opacity: 1;
+    }
+
+    .featured-title {
+      font-family: "rl-horizon", "Plus Jakarta Sans", system-ui, sans-serif;
+      font-style: normal;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+    }
+
+    .featured-body {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .featured-arrow {
+      font-size: 18px;
+      color: var(--section-color, var(--teal));
+      flex-shrink: 0;
+      opacity: 0.7;
+      transition: transform 0.12s, opacity 0.12s;
+    }
+
+    .featured-nav-card:hover .featured-arrow {
+      transform: translateX(3px);
+      opacity: 1;
+    }
+
+    /* ==============================================
+       NAV ITEM (minimal list row)
+       ============================================== */
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border: 1px solid var(--border-lt);
+      border-radius: var(--r-md);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.1s, box-shadow 0.1s;
+      font-family: inherit;
+    }
+
+    .nav-item:hover {
+      background: var(--surface2);
+      box-shadow: var(--shadow-xs);
+      transform: none;
+      opacity: 1;
+    }
+
+    .nav-item-arrow {
+      color: var(--faint);
+      font-size: 13px;
+      transition: color 0.1s;
+    }
+
+    .nav-item:hover .nav-item-arrow { color: var(--muted); }
+
+    /* ==============================================
+       NAV SECTION — tinted background
+       ============================================== */
+
+    .nav-section {
+      margin-top: 24px;
+      padding: 18px 20px;
+      border-radius: var(--r-lg);
+      background: color-mix(in srgb, var(--section-color, var(--teal)) 3%, var(--surface2));
+      border: 1px solid color-mix(in srgb, var(--section-color, var(--teal)) 10%, var(--border-lt));
+    }
+
+    .nav-section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 0;
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .nav-section-head strong {
+      color: color-mix(in srgb, var(--section-color, var(--teal)) 82%, #000000);
+    }
+
+    .nav-section-head span { color: var(--faint); font-size: 12px; }
+
+    /* override old nav-grid inside tinted section */
+    .nav-section .nav-grid { margin-top: 8px; }
+
+    /* ==============================================
+       PORTAL NAV HEADER
+       ============================================== */
+
+    .portal-nav-header {
+      margin-bottom: 6px;
+    }
+
+    .portal-nav-header h2 {
+      font-size: 15px;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: 0;
+      margin-bottom: 0;
+    }
   </style>
 </head>
 <body>
@@ -3444,81 +3752,85 @@
         <div class="dashboard-shell">
 
           ${!signedIn ? `
-          <div style="background:linear-gradient(135deg,var(--teal-dim),var(--green-dim));border:1px solid color-mix(in srgb,var(--teal) 18%,var(--border));border-radius:var(--r-xl);padding:28px 28px 24px;margin-bottom:14px;">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px;">
-              <div>
-                <h1 style="color:var(--text);margin-bottom:6px;">MIST Dallas 2027 Planning Portal</h1>
-                <p style="max-width:520px;font-size:14px;">A shared workspace for building the event with clarity, accountability, and less scattered information. Browse open roles, read the runbook, or sign in to claim your seat.</p>
-              </div>
-              <button class="primary" onclick="openLogin()" style="flex-shrink:0;">Sign In / Join</button>
+          <div class="hero-band">
+            <div class="hero-kicker">MIST Dallas 2027</div>
+            <h1>Build the event together.</h1>
+            <p>One place for every team, role, and deadline. Browse open roles or sign in to claim your spot on the board.</p>
+            <div class="hero-actions">
+              <button class="primary" onclick="openTeamPages()">Browse Roles</button>
+              <button class="ghost" onclick="openLogin()">Sign In</button>
             </div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
-              <div style="background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.8);border-radius:var(--r-md);padding:14px;">
-                <div class="stat-title">Open Roles</div>
-                <div class="stat-value">${openRoleCount}</div>
+            <div class="hero-stat-strip">
+              <div class="hero-stat">
+                <div class="hero-stat-value">${openRoleCount}</div>
+                <div class="hero-stat-label">open roles</div>
               </div>
-              <div style="background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.8);border-radius:var(--r-md);padding:14px;">
-                <div class="stat-title">Claimed</div>
-                <div class="stat-value">${teamStats.activeOrganizers} / ${teamStats.totalOrganizers}</div>
+              <div class="hero-stat-divider"></div>
+              <div class="hero-stat">
+                <div class="hero-stat-value">${teamStats.activeOrganizers}<span style="font-size:16px;font-weight:500;opacity:0.5"> / ${teamStats.totalOrganizers}</span></div>
+                <div class="hero-stat-label">seats filled</div>
               </div>
-              <div style="background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.8);border-radius:var(--r-md);padding:14px;">
-                <div class="stat-title">Avg Progress</div>
-                <div class="stat-value">${teamStats.averageProgress}%</div>
-                <div class="progress-track" style="margin-top:8px;"><div class="progress-fill" style="width:${teamStats.averageProgress}%"></div></div>
+              <div class="hero-stat-divider"></div>
+              <div class="hero-stat">
+                <div class="hero-stat-value">${teamStats.teamCount}</div>
+                <div class="hero-stat-label">teams</div>
               </div>
-              <div style="background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.8);border-radius:var(--r-md);padding:14px;">
-                <div class="stat-title">Teams</div>
-                <div class="stat-value">${teamStats.teamCount}</div>
+              <div class="hero-stat-divider"></div>
+              <div class="hero-stat">
+                <div class="hero-stat-value">${teamStats.averageProgress}%</div>
+                <div class="hero-stat-label">avg board progress</div>
               </div>
             </div>
           </div>
           ` : `
-          <div style="margin-bottom:20px;">
-            <h1 style="margin-bottom:4px;">Good to see you${profile?.full_name ? `, ${escapeHtml(profile.full_name.split(" ")[0])}` : ""}.</h1>
-            <p>${hasProfile ? `You're on the <strong style="color:var(--text);font-weight:700;">${escapeHtml(profile.team)}</strong> team as <strong style="color:var(--text);font-weight:700;">${escapeHtml(formatRole(profile.role_id))}</strong>. Use your workbook to track phase progress.` : "Your account is connected. Claim a role below to unlock your workbook and team tools."}</p>
+          <div class="greeting-bar">
+            <h1>Hey${profile?.full_name ? `, ${escapeHtml(profile.full_name.split(" ")[0])}` : ""}.</h1>
             ${hasProfile ? `
-            <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+            <div class="greeting-meta">
+              <strong>${escapeHtml(formatRole(profile.role_id))}</strong>
+              <span class="dot">·</span>
+              <span>${escapeHtml(profile.team)} Team</span>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
               <button class="primary" onclick="openWorkbook()">Open Workbook</button>
-              <button class="ghost" onclick="openTeamPages('${escapeHtml(profile.team || "")}')">My Team Page</button>
-              <button class="ghost" onclick="openCommandCenter()">Command Center</button>
-            </div>` : ""}
+              <button class="ghost" onclick="openTeamPages('${escapeHtml(profile.team || "")}')">My Team</button>
+              <button class="ghost" onclick="openCommandCenter()">What Needs Attention</button>
+            </div>
+            ` : `
+            <p style="margin-bottom:12px;">Your account is connected. Join a team to unlock your workbook and planning tools.</p>
+            <button class="primary" onclick="openTeamPages()">Join the Team</button>
+            `}
           </div>
 
-          <div class="panel" style="margin-bottom:14px;">
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;">
-              <div class="stat">
-                <div class="stat-title">My Progress</div>
-                <div class="stat-value">${overallPercent}%</div>
-                <div class="progress-track"><div class="progress-fill" style="width:${overallPercent}%"></div></div>
+          <div class="stat-strip">
+            <div class="stat-chip">
+              <div>
+                <div class="stat-chip-value">${overallPercent}%</div>
+                <div class="stat-chip-label">my progress</div>
               </div>
-              <div class="stat">
-                <div class="stat-title">Role</div>
-                <div class="stat-value" style="font-size:15px;">${hasProfile ? escapeHtml(formatRole(profile.role_id)) : "Not claimed"}</div>
+            </div>
+            <div class="stat-chip">
+              <div>
+                <div class="stat-chip-value">${teamStats.averageProgress}%</div>
+                <div class="stat-chip-label">board avg</div>
               </div>
-              <div class="stat">
-                <div class="stat-title">Team</div>
-                <div class="stat-value" style="font-size:15px;">${escapeHtml(profile?.team || "—")}</div>
+            </div>
+            <div class="stat-chip">
+              <div>
+                <div class="stat-chip-value">${teamStats.activeOrganizers}<span style="font-size:13px;font-weight:500;opacity:0.5"> / ${teamStats.totalOrganizers}</span></div>
+                <div class="stat-chip-label">seats filled</div>
               </div>
-              <div class="stat">
-                <div class="stat-title">Board Progress</div>
-                <div class="stat-value">${teamStats.averageProgress}%</div>
-                <div class="progress-track"><div class="progress-fill" style="width:${teamStats.averageProgress}%"></div></div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Claimed Seats</div>
-                <div class="stat-value">${teamStats.activeOrganizers} / ${teamStats.totalOrganizers}</div>
+            </div>
+            <div class="stat-chip">
+              <div>
+                <div class="stat-chip-value">${openRoleCount}</div>
+                <div class="stat-chip-label">open roles</div>
               </div>
             </div>
           </div>
           `}
 
           <div class="panel">
-            <div class="phase-header">
-              <div>
-                <h2>Navigate the Portal</h2>
-                <p>Every tool the board needs — organized by what you're trying to do.</p>
-              </div>
-            </div>
             ${renderDashboardNav(signedIn, hasProfile, profile)}
           </div>
 
@@ -3533,58 +3845,62 @@
     function renderDashboardNav(signedIn, hasProfile, profile) {
       const sections = [
         {
-          label: "Do The Work",
-          hint: "Daily planning tools",
-          color: "#247a52",
+          label: "Start here",
+          color: "#1c6b43",
+          featured: signedIn && hasProfile
+            ? { title: "My Workbook", body: "Your phase checklist, notes, and saved progress.", action: "openWorkbook()" }
+            : { title: "Join the Team", body: "Browse open roles and apply for your spot on the board.", action: "openTeamPages()" },
           cards: [
-            signedIn && hasProfile
-              ? { title: "My Workbook", body: "Role checklist, notes, phase plans, and autosave progress.", action: "openWorkbook()" }
-              : { title: "Claim a Role", body: "Log in or create an account, then choose an open organizer role.", action: "openLogin()" },
-            { title: "Team Pages", body: "Focused team hubs with roles, tasks, start phases, and claim status.", action: "openTeamPages()" },
-            { title: "Progress Board", body: "Shared completion percentages and recent saved activity.", action: "openProgressBoard()" }
+            { title: "Teams", body: "Role hubs for every committee.", action: "openTeamPages()" },
+          ],
+          items: [
+            { title: "Progress", action: "openProgressBoard()" },
           ]
         },
         {
-          label: "Coordinate",
-          hint: "Leadership visibility",
-          color: "#c9972b",
+          label: "Keep things moving",
+          color: "#b88216",
+          featured: { title: "What Needs Attention", body: "Open seats, deadline risk, and team readiness in one view.", action: "openCommandCenter()" },
           cards: [
-            { title: "Command Center", body: "Open seats, deadline risk, team readiness, and operational checks.", action: "openCommandCenter()" },
-            { title: "Meeting Hub", body: "Agendas, blockers, action items, and meeting memory.", action: "openMeetings()" },
-            { title: "Decision Log", body: "Track approved decisions, owners, impact, and follow-up.", action: "openMeetings()" },
-            { title: "Feedback Addressal", body: "Turn past-year feedback into themes, owners, action plans, and status.", action: "openFeedback()" },
-            { title: "Timeline", body: "Foundations, Build, Stabilization, and Execution at a glance.", action: "openTimeline()" },
-            { title: "Calendar", body: "Deadline cards, calendar export, and reminder preferences.", action: "openCalendar()" }
+            { title: "Calendar", body: "Deadlines by phase, export to calendar, set reminders.", action: "openCalendar()" },
+            { title: "Feedback", body: "Past-year themes with owners and action plans.", action: "openFeedback()" },
+          ],
+          items: [
+            { title: "Meetings", action: "openMeetings()" },
+            { title: "Decisions", action: "openMeetings()" },
+            { title: "Timeline", action: "openTimeline()" },
           ]
         },
         {
-          label: "Operate",
-          hint: "Event systems",
-          color: "#7b61ff",
+          label: "Event systems",
+          color: "#6950e4",
+          featured: { title: "Weekend Manager", body: "Rooms, competition blocks, student rosters, and live check-in.", action: "openTournamentManager()" },
           cards: [
-            { title: "MyMIST Integration Center", body: "Stage exports for participants, schools, badges, and rosters.", action: "openIntegrations()" },
-            { title: "Weekend Tournament Manager", body: "Rooms, competition blocks, student placement, and NFC check-ins.", action: "openTournamentManager()" },
-            { title: "Event Weekend Runbook", body: "Command Center, check-in, rooms, communications, and escalation procedures.", action: "openRunbook()" },
-            { title: "Directory", body: "Names, roles, teams, emails, and unclaimed role seats.", action: "openDirectory()" }
+            { title: "MyMIST", body: "Import participants, schools, and badge data.", action: "openIntegrations()" },
+          ],
+          items: [
+            { title: "Runbook", action: "openRunbook()" },
+            { title: "Directory", action: "openDirectory()" },
           ]
         },
         {
-          label: "Find Answers",
-          hint: "Organizer rulebook",
-          color: "#1f8a9b",
+          label: "Reference",
+          color: "#18798a",
           cards: [
-            { title: "Rulebook Search", body: "Search organizer expectations, policies, processes, and common questions.", action: "openKnowledge()" },
-            { title: "FAQ Library", body: "Fast answers for applications, roles, deadlines, MyMIST, and event weekend.", action: "openKnowledge()" }
+            { title: "Rulebook", body: "Search organizer policies, expectations, and common questions.", action: "openKnowledge()" },
+          ],
+          items: [
+            { title: "FAQ", action: "openKnowledge()" },
           ]
         },
         {
-          label: "Applications",
-          hint: "Recruit and assign",
-          color: "#b13f4a",
+          label: "Recruiting",
+          color: "#a5364a",
           cards: [
-            { title: "Application Status", body: "Check whether an application is pending, approved, or declined.", action: "openApplicationStatus()" },
-            ...(profile?.is_admin ? [{ title: "Review Applications", body: "Approve, decline, and email role applicants.", action: "openApplications()" }] : [])
-          ]
+            { title: "Application Status", body: "Check if your application is pending, approved, or declined.", action: "openApplicationStatus()" },
+            ...(profile?.is_admin ? [{ title: "Review Applications", body: "Approve, decline, and email applicants.", action: "openApplications()" }] : [])
+          ],
+          items: []
         }
       ];
 
@@ -3592,16 +3908,34 @@
         <div class="nav-section" style="--section-color:${section.color}">
           <div class="nav-section-head">
             <strong>${escapeHtml(section.label)}</strong>
-            <span>${escapeHtml(section.hint)}</span>
           </div>
-          <div class="nav-grid">
-            ${section.cards.map(card => `
-              <button class="nav-card" onclick="${card.action}">
-                <strong>${escapeHtml(card.title)}</strong>
-                <span>${escapeHtml(card.body)}</span>
-              </button>
-            `).join("")}
-          </div>
+
+          ${section.featured ? `
+            <button class="featured-nav-card" onclick="${section.featured.action}">
+              <div>
+                <div class="featured-title">${escapeHtml(section.featured.title)}</div>
+                <div class="featured-body">${escapeHtml(section.featured.body)}</div>
+              </div>
+              <span class="featured-arrow">→</span>
+            </button>
+          ` : ""}
+
+          ${(section.cards?.length || section.items?.length) ? `
+            <div class="nav-grid" style="margin-top:8px;">
+              ${(section.cards || []).map(card => `
+                <button class="nav-card" onclick="${card.action}">
+                  <strong>${escapeHtml(card.title)}</strong>
+                  <span>${escapeHtml(card.body)}</span>
+                </button>
+              `).join("")}
+              ${(section.items || []).map(item => `
+                <button class="nav-item" onclick="${item.action}">
+                  ${escapeHtml(item.title)}
+                  <span class="nav-item-arrow">→</span>
+                </button>
+              `).join("")}
+            </div>
+          ` : ""}
         </div>
       `).join("");
     }
@@ -3611,8 +3945,8 @@
         <div class="panel">
           <div class="phase-header">
             <div>
-              <h2>Systems Roadmap</h2>
-              <p>What is live now, what is being staged, and what plugs into the weekend tournament workflow next.</p>
+              <h2>Portal Roadmap</h2>
+              <p>What's live, what's staging, and what's next.</p>
             </div>
             <span class="phase-chip">Portal build plan</span>
           </div>
@@ -3638,12 +3972,8 @@
       const claimedRoles = rows.filter(row => row.claimed).length;
       const nextDeadline = upcomingDeadlines(deadlines, 1)[0];
       const teamStats = calculateTeamStats(rows, progressRows);
-      const headline = signedIn
-        ? "Planning Console"
-        : "Start Here";
-      const body = signedIn
-        ? "Quick access to the systems that keep the season moving."
-        : "Choose the path that matches where you are right now.";
+      const headline = signedIn ? "Quick Access" : "Where to start";
+      const body = signedIn ? "" : "Pick up where you need to.";
 
       return `
         <div class="panel">
@@ -3662,8 +3992,8 @@
                   <div class="console-icon">A</div>
                   <div>
                     <div class="console-kicker">Applications</div>
-                    <div class="console-title">${openRoles ? `${openRoles} roles still open` : "All listed roles are claimed"}</div>
-                    <p>${signedIn ? "Review application status, open roles, and assignments." : "Apply for an open role or check an existing application."}</p>
+                    <div class="console-title">${openRoles ? `${openRoles} roles open` : "All roles filled"}</div>
+                    <p>${signedIn ? "Applications, open roles, and assignments." : "Apply for a role or check your status."}</p>
                   </div>
                   <div class="inline-actions">
                     <button class="secondary" onclick="${signedIn && profile?.is_admin ? "openApplications()" : "openApplicationStatus()"}">${signedIn && profile?.is_admin ? "Review" : "Check"}</button>
@@ -3673,9 +4003,9 @@
                 <div class="console-item">
                   <div class="console-icon" style="background:linear-gradient(135deg,var(--gold),var(--pink));">D</div>
                   <div>
-                    <div class="console-kicker">Deadlines</div>
-                    <div class="console-title">${nextDeadline ? escapeHtml(nextDeadline.title) : "No upcoming deadlines loaded"}</div>
-                    <p>${nextDeadline ? `${deadlineTiming(nextDeadline).label}. Calendar exports and reminders use this deadline data.` : "Add deadlines in the calendar manager."}</p>
+                    <div class="console-kicker">Next deadline</div>
+                    <div class="console-title">${nextDeadline ? escapeHtml(nextDeadline.title) : "No deadlines loaded"}</div>
+                    <p>${nextDeadline ? deadlineTiming(nextDeadline).label : "Add deadlines via the calendar."}</p>
                   </div>
                   <div class="inline-actions">
                     <button class="secondary" onclick="openCalendar()">Calendar</button>
@@ -3685,9 +4015,9 @@
                 <div class="console-item">
                   <div class="console-icon" style="background:linear-gradient(135deg,var(--green),var(--blue));">T</div>
                   <div>
-                    <div class="console-kicker">Team Hubs</div>
-                    <div class="console-title">Roles, tasks, phases, and ownership</div>
-                    <p>Use team pages as the job board and planning home for each committee.</p>
+                    <div class="console-kicker">Teams</div>
+                    <div class="console-title">Roles, tasks, and ownership</div>
+                    <p>One hub per committee — roles, phases, and progress.</p>
                   </div>
                   <div class="inline-actions">
                     <button class="secondary" onclick="openTeamPages()">Teams</button>
@@ -3697,10 +4027,10 @@
             </div>
 
             <div class="stat">
-              <div class="stat-title">System Readiness</div>
-              <div class="stat-value">${teamStats.averageProgress}% average progress</div>
+              <div class="stat-title">Board readiness</div>
+              <div class="stat-value">${teamStats.averageProgress}%</div>
               <div class="progress-track"><div class="progress-fill" style="width:${teamStats.averageProgress}%"></div></div>
-              <p class="note">Next build-out: reminder emails, cleaner application intake, and stronger team-specific dashboards.</p>
+              <p class="note" style="margin-top:8px;">Average across all organizer workbooks.</p>
               <div class="inline-actions">
                 <button class="primary" onclick="${signedIn && profile?.role_id ? "openWorkbook()" : "openTimeline()"}">${signedIn && profile?.role_id ? "My Workbook" : "Timeline"}</button>
                 <button class="secondary" onclick="openCommandCenter()">Command Center</button>
@@ -3725,7 +4055,6 @@
           <div class="phase-header">
             <div>
               <h2>Announcements</h2>
-              <p>Current updates from MIST Dallas leadership.</p>
             </div>
             <span class="phase-chip">${announcements.length} active</span>
           </div>
@@ -3789,8 +4118,7 @@
         <div class="panel">
           <div class="phase-header">
             <div>
-              <h2>${user ? "Your Next Actions" : "Getting Started"}</h2>
-              <p>${user ? "What matters most right now for your planning work." : "Three things to do if you are new to the portal."}</p>
+              <h2>${user ? "Up next" : "Getting started"}</h2>
             </div>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:4px;">
@@ -7146,10 +7474,10 @@
 
       return `
         <div class="nav-bar">
-          <button class="nav-wordmark" onclick="goDashboard()">
-            <div class="nav-wordmark-icon">M</div>
+          <button class="nav-wordmark" onclick="goDashboard()" style="font-family:'rl-horizon','Plus Jakarta Sans',system-ui,sans-serif;font-style:normal;letter-spacing:0.01em;">
+            <div class="nav-wordmark-icon" style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;">M</div>
             MIST Dallas
-            <span class="nav-wordmark-year">2027</span>
+            <span class="nav-wordmark-year" style="font-family:'Plus Jakarta Sans',system-ui,sans-serif;">2027</span>
           </button>
           <div class="nav-links">
             ${visibleLinks.map(l => `
@@ -7170,7 +7498,7 @@
           `).join("")}
           ${user
             ? `<button class="nav-mobile-link" style="color:var(--red);margin-top:6px;border-top:1px solid var(--border);border-radius:0;padding-top:14px;" onclick="logout()">Log Out</button>`
-            : `<button class="nav-mobile-link" style="color:var(--teal);margin-top:6px;border-top:1px solid var(--border);border-radius:0;padding-top:14px;" onclick="openLogin()">Log In / Sign Up</button>`
+            : `<button class="nav-mobile-link" style="color:var(--teal);margin-top:6px;border-top:1px solid var(--border);border-radius:0;padding-top:14px;" onclick="openLogin()">Sign In / Join</button>`
           }
         </div>
       `;
