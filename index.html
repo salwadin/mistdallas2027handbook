@@ -7,12 +7,12 @@
   <link rel="icon" href="data:,">
   <style>
     :root {
-      --bg: #101114;
-      --card: rgba(24, 25, 31, 0.88);
-      --border: rgba(214, 218, 226, 0.18);
+      --bg: #151a22;
+      --card: rgba(31, 35, 45, 0.9);
+      --border: rgba(223, 228, 238, 0.18);
       --text: #f7f8fb;
-      --muted: #aeb6c2;
-      --input: rgba(36, 38, 46, 0.92);
+      --muted: #bec7d4;
+      --input: rgba(42, 47, 58, 0.94);
       --purple: #7b61ff;
       --pink: #c44f7a;
       --blue: #1f8a9b;
@@ -31,9 +31,10 @@
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
       background:
-        linear-gradient(180deg, rgba(244, 239, 231, 0.045), transparent 180px),
-        radial-gradient(circle at top left, rgba(31, 138, 155, 0.18), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(201, 151, 43, 0.13), transparent 32%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 180px),
+        radial-gradient(circle at top left, rgba(31, 138, 155, 0.24), transparent 34%),
+        radial-gradient(circle at top right, rgba(123, 97, 255, 0.16), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(201, 151, 43, 0.16), transparent 34%),
         var(--bg);
     }
 
@@ -50,7 +51,7 @@
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 16px;
-      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.32);
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.24);
       backdrop-filter: blur(14px);
     }
 
@@ -162,6 +163,59 @@
       align-items: flex-start;
       margin-bottom: 14px;
       flex-wrap: wrap;
+    }
+
+    .utility-bar {
+      display: grid;
+      grid-template-columns: minmax(280px, 1.25fr) .75fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .utility-search {
+      display: grid;
+      gap: 10px;
+    }
+
+    .utility-search-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .utility-results {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .utility-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .utility-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .section-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
     }
 
     .grid {
@@ -306,7 +360,6 @@
     .list-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
     }
 
     .list-table th, .list-table td {
@@ -946,6 +999,8 @@
       h1 { font-size: 22px; }
       h2 { font-size: 17px; }
       .topbar { flex-direction: column; }
+      .utility-bar, .utility-search-row { grid-template-columns: 1fr; }
+      .utility-links { justify-content: flex-start; }
       .actions { flex-direction: column; }
       .actions button, .ghost, .tab-btn { width: 100%; }
       .timeline-item { grid-template-columns: 1fr; }
@@ -1537,6 +1592,7 @@
       },
       statusResults: null,
       selectedTeam: null,
+      portalSearch: "",
       knowledgeQuery: "",
       feedbackFilter: "all",
       feedbackDataset: loadFeedbackDataset(),
@@ -1546,6 +1602,116 @@
     };
 
     const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "calendar", "login", "apply", "application-status", "meetings", "runbook", "knowledge", "feedback", "onboarding", "release"]);
+
+    function currentViewLabel(view = APP_STATE.view) {
+      const labels = {
+        dashboard: "Home",
+        workbook: "My Workbook",
+        progress: "Progress Board",
+        command: "Command Center",
+        integrations: "MyMIST",
+        tournament: "Weekend Manager",
+        directory: "Directory",
+        teams: "Team Hubs",
+        timeline: "Timeline",
+        calendar: "Calendar",
+        meetings: "Meetings",
+        runbook: "Runbook",
+        knowledge: "Rulebook Search",
+        feedback: "Feedback",
+        onboarding: "Onboarding",
+        release: "Release Checklist",
+        applications: "Applications",
+        "application-status": "Application Status",
+        login: "Sign In",
+        apply: "Apply"
+      };
+      return labels[view] || "Portal";
+    }
+
+    function buildPortalJumpItems() {
+      const pageItems = [
+        { id: "dashboard", title: "Dashboard", meta: "Home, announcements, shortcuts", keywords: "home dashboard portal start", action: "openView('dashboard')" },
+        { id: "workbook", title: "My Workbook", meta: "Role tasks and notes", keywords: "workbook checklist notes", action: "openWorkbook()" },
+        { id: "command", title: "Command Center", meta: "Leadership, deadlines, readiness", keywords: "command center leadership readiness deadline", action: "openCommandCenter()" },
+        { id: "calendar", title: "Calendar", meta: "Deadlines and reminder health", keywords: "calendar deadlines reminders dates", action: "openCalendar()" },
+        { id: "meetings", title: "Meetings & Decisions", meta: "Notes, blockers, approvals", keywords: "meeting decision blockers notes approvals", action: "openMeetings()" },
+        { id: "feedback", title: "Feedback Dashboard", meta: "Themes, actions, targets", keywords: "feedback actions targets survey", action: "openFeedback()" },
+        { id: "runbook", title: "Event Runbook", meta: "Weekend procedures", keywords: "runbook event day procedures command room checkin", action: "openRunbook()" },
+        { id: "knowledge", title: "Rulebook Search", meta: "Competition questions and answers", keywords: "rulebook faq judging question answer", action: "openKnowledge()" },
+        { id: "teams", title: "Team Hubs", meta: "Team ownership and roles", keywords: "teams roles directors committee ownership", action: "openTeamPages()" },
+        { id: "directory", title: "Directory", meta: "People, teams, roles", keywords: "directory organizers people roles", action: "openDirectory()" },
+        { id: "tournament", title: "Weekend Manager", meta: "Rooms, conflicts, assignments", keywords: "tournament rooms conflicts sports schedule assignments", action: "openTournamentManager()" },
+        { id: "integrations", title: "MyMIST Imports", meta: "Participants, schools, badges", keywords: "mymist import badges participants schools", action: "openIntegrations()" },
+        { id: "onboarding", title: "Onboarding Checklist", meta: "Train new organizers", keywords: "onboarding training new organizers demo", action: "openOnboarding()" },
+        { id: "release", title: "Release Checklist", meta: "Leadership launch checks", keywords: "release launch checklist leadership", action: "openReleaseChecklist()" },
+        { id: "timeline", title: "Timeline", meta: "Foundations to execution", keywords: "timeline phases foundations build stabilization execution", action: "openTimeline()" },
+        { id: "progress", title: "Progress Board", meta: "Completion by role", keywords: "progress completion status board", action: "openProgressBoard()" }
+      ];
+
+      const teamItems = [...new Set(ROLE_OPTIONS.map(role => role.team).filter(Boolean))].map(team => ({
+        id: `team-${team}`,
+        title: `${team} Team`,
+        meta: "Open team hub",
+        keywords: `${team} team hub`,
+        action: `openTeamPages('${escapeJs(team)}')`
+      }));
+
+      const rulebookItems = RULEBOOK_ENTRIES.map(entry => ({
+        id: `rule-${slugify(entry.question)}`,
+        title: entry.question,
+        meta: `${entry.category} -> ${entry.page_label}`,
+        keywords: `${entry.category} ${entry.question} ${entry.keywords.join(" ")}`,
+        action: `openRulebookPage('${entry.page}')`
+      }));
+
+      return [...pageItems, ...teamItems, ...rulebookItems];
+    }
+
+    function portalSearchResults(query = APP_STATE.portalSearch) {
+      const clean = String(query || "").trim().toLowerCase();
+      if (!clean) return [];
+      return buildPortalJumpItems()
+        .filter(item => `${item.title} ${item.meta} ${item.keywords}`.toLowerCase().includes(clean))
+        .slice(0, 7);
+    }
+
+    function renderPortalUtilityBar(view = APP_STATE.view) {
+      const results = portalSearchResults();
+      return `
+        <div class="panel">
+          <div class="utility-bar">
+            <div class="utility-search">
+              <div>
+                <div class="stat-title">Quick Jump</div>
+                <p>Search pages, teams, and rulebook questions from anywhere in the portal.</p>
+              </div>
+              <div class="utility-search-row">
+                <input value="${escapeHtml(APP_STATE.portalSearch || "")}" oninput="setPortalSearch(this.value)" placeholder="Try feedback, judges, calendar, sports, runbook, or a team name" />
+                ${APP_STATE.portalSearch ? `<button class="ghost" onclick="setPortalSearch('')">Clear</button>` : `<button class="ghost" onclick="openKnowledge()">Rulebook</button>`}
+              </div>
+              <div class="utility-results">
+                ${results.length
+                  ? results.map(item => `<button class="utility-pill" onclick="${item.action}">${escapeHtml(item.title)}</button>`).join("")
+                  : APP_STATE.portalSearch
+                    ? `<span class="phase-chip">No quick matches yet</span>`
+                    : `<span class="phase-chip">Current area: ${escapeHtml(currentViewLabel(view))}</span>`}
+              </div>
+            </div>
+            <div>
+              <div class="stat-title">Common Stops</div>
+              <div class="utility-links">
+                <button class="utility-pill" onclick="goDashboard()">Dashboard</button>
+                <button class="utility-pill" onclick="openCalendar()">Calendar</button>
+                <button class="utility-pill" onclick="openMeetings()">Meetings</button>
+                <button class="utility-pill" onclick="openRunbook()">Runbook</button>
+                <button class="utility-pill" onclick="openKnowledge()">Answers</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
 
     function buildPhaseLookup(data) {
       if (data.PHASE_META) {
@@ -2688,6 +2854,11 @@
       renderApp();
     }
 
+    function setPortalSearch(value) {
+      APP_STATE.portalSearch = value;
+      renderApp();
+    }
+
     function goDashboard() {
       APP_STATE.view = "dashboard";
       APP_STATE.applicationRoleId = null;
@@ -3144,6 +3315,8 @@
             ${signedIn ? `<button class="ghost" onclick="logout()">Log Out</button>` : `<button class="ghost" onclick="openLogin()">Log In / Sign Up</button>`}
           </div>
 
+          ${renderPortalUtilityBar("dashboard")}
+
           ${!signedIn ? renderPortalGuide(signedIn, hasProfile) : ""}
 
           <div class="panel">
@@ -3193,57 +3366,47 @@
     function renderDashboardNav(signedIn, hasProfile, profile) {
       const sections = [
         {
-          label: "Do The Work",
-          hint: "Daily planning tools",
+          label: "My Work",
+          hint: "Start here day to day",
           color: "#247a52",
           cards: [
             signedIn && hasProfile
               ? { title: "My Workbook", body: "Role checklist, notes, phase plans, and autosave progress.", action: "openWorkbook()" }
               : { title: "Claim a Role", body: "Log in or create an account, then choose an open organizer role.", action: "openLogin()" },
             { title: "Team Pages", body: "Focused team hubs with roles, tasks, start phases, and claim status.", action: "openTeamPages()" },
+            { title: "Calendar", body: "Deadlines, reminder health, and what is coming up next.", action: "openCalendar()" },
             { title: "Progress Board", body: "Shared completion percentages and recent saved activity.", action: "openProgressBoard()" }
           ]
         },
         {
-          label: "Coordinate",
-          hint: "Leadership visibility",
+          label: "Leadership",
+          hint: "Shared planning and accountability",
           color: "#c9972b",
           cards: [
             { title: "Command Center", body: "Open seats, deadline risk, team readiness, and operational checks.", action: "openCommandCenter()" },
-            { title: "Meeting Hub", body: "Agendas, blockers, action items, and meeting memory.", action: "openMeetings()" },
-            { title: "Decision Log", body: "Track approved decisions, owners, impact, and follow-up.", action: "openMeetings()" },
-            { title: "Feedback Addressal", body: "Turn past-year feedback into themes, owners, action plans, and status.", action: "openFeedback()" },
-            { title: "Onboarding Checklist", body: "Simple first-steps, training data, and system orientation for new organizers.", action: "openOnboarding()" },
-            { title: "Timeline", body: "Foundations, Build, Stabilization, and Execution at a glance.", action: "openTimeline()" },
-            { title: "Calendar", body: "Deadline cards, calendar export, and reminder preferences.", action: "openCalendar()" }
+            { title: "Meetings & Decisions", body: "Agendas, blockers, approvals, and follow-up in one place.", action: "openMeetings()" },
+            { title: "Feedback & Actions", body: "Turn feedback into owned actions and 2027 targets.", action: "openFeedback()" },
+            { title: "Onboarding & Release", body: "Train new organizers and run leadership launch checks.", action: "openOnboarding()" },
+            { title: "Timeline", body: "Foundations, Build, Stabilization, and Execution at a glance.", action: "openTimeline()" }
           ]
         },
         {
-          label: "Operate",
-          hint: "Event systems",
+          label: "Event Ops",
+          hint: "Weekend systems and execution",
           color: "#7b61ff",
           cards: [
             { title: "MyMIST Integration Center", body: "Stage exports for participants, schools, badges, and rosters.", action: "openIntegrations()" },
             { title: "Weekend Tournament Manager", body: "Rooms, competition blocks, student placement, and NFC check-ins.", action: "openTournamentManager()" },
             { title: "Event Weekend Runbook", body: "Command Center, check-in, rooms, communications, and escalation procedures.", action: "openRunbook()" },
-            { title: "Release Checklist", body: "Leadership launch checks for deadlines, ops, training, and comms.", action: "openReleaseChecklist()" },
             { title: "Directory", body: "Names, roles, teams, emails, and unclaimed role seats.", action: "openDirectory()" }
           ]
         },
         {
-          label: "Find Answers",
-          hint: "Competition rulebook",
+          label: "Answers & Hiring",
+          hint: "Search rules and manage roles",
           color: "#1f8a9b",
           cards: [
-            { title: "Rulebook Search", body: "Search competition rules, judging guidance, and room-level questions.", action: "openKnowledge()" },
-            { title: "FAQ Library", body: "Fast answers for no-shows, ballots, escalations, and room integrity.", action: "openKnowledge()" }
-          ]
-        },
-        {
-          label: "Applications",
-          hint: "Recruit and assign",
-          color: "#b13f4a",
-          cards: [
+            { title: "Rulebook Search", body: "Search competition rules, judging guidance, and jump straight to the right workspace.", action: "openKnowledge()" },
             { title: "Application Status", body: "Check whether an application is pending, approved, or declined.", action: "openApplicationStatus()" },
             ...(profile?.is_admin ? [{ title: "Review Applications", body: "Approve, decline, and email role applicants.", action: "openApplications()" }] : [])
           ]
@@ -3590,6 +3753,8 @@
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
 
+          ${renderPortalUtilityBar("workbook")}
+
           <div class="panel">
             <div class="phase-header">
               <div>
@@ -3791,6 +3956,8 @@
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
 
+          ${renderPortalUtilityBar("progress")}
+
           <div class="panel">
             <h2>Team Progress Snapshot</h2>
             <p>Everyone can see the shared progress view. Unclaimed roles stay visible with blank personal info.</p>
@@ -3837,6 +4004,8 @@
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
+
+          ${renderPortalUtilityBar("command")}
 
           <div class="panel">
             <div class="phase-header">
@@ -3998,6 +4167,8 @@
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
+
+          ${renderPortalUtilityBar("tournament")}
 
           <div class="panel">
             <div class="phase-header">
@@ -4371,6 +4542,8 @@
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
 
+          ${renderPortalUtilityBar("integrations")}
+
           <div class="panel">
             <div class="phase-header">
               <div>
@@ -4711,6 +4884,8 @@
             </div>
           </div>
 
+          ${renderPortalUtilityBar("directory")}
+
           ${Object.keys(grouped).sort().map(team => `
             <div class="panel" style="--team-color:${teamColor(team)}">
               <div class="phase-header">
@@ -4749,6 +4924,8 @@
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
+
+          ${renderPortalUtilityBar("teams")}
 
           <div class="panel">
             <div class="tabs">
@@ -5093,6 +5270,8 @@
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
 
+          ${renderPortalUtilityBar("timeline")}
+
           <div class="panel">
             <h2>Season Roadmap</h2>
             <p>Use this as the common reference point for directors, chairs, leads, and ADs.</p>
@@ -5115,6 +5294,8 @@
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
+
+          ${renderPortalUtilityBar("onboarding")}
 
           <div class="panel">
             <div class="phase-header">
@@ -5181,6 +5362,8 @@
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
 
+          ${renderPortalUtilityBar("release")}
+
           <div class="panel">
             <div class="phase-header">
               <div>
@@ -5219,6 +5402,8 @@
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
+
+          ${renderPortalUtilityBar("meetings")}
 
           <div class="panel">
             <div class="phase-header">
@@ -5365,6 +5550,8 @@
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
 
+          ${renderPortalUtilityBar("runbook")}
+
           <div class="panel">
             <div class="phase-header">
               <div>
@@ -5443,6 +5630,8 @@
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
 
+          ${renderPortalUtilityBar("knowledge")}
+
           <div class="panel">
             <h2>Ask The Rulebook</h2>
             <p>Type keywords like no-show, rubric, tie, bias, early submission, roster, ballot, or escalation.</p>
@@ -5507,6 +5696,8 @@
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
+
+          ${renderPortalUtilityBar("feedback")}
 
           <div class="panel">
             <div class="phase-header">
@@ -5658,9 +5849,7 @@
               </div>
               <span class="phase-chip">${visibleItems.length} shown</span>
             </div>
-            <div class="log-list">
-              ${visibleItems.length ? visibleItems.map(item => renderFeedbackCard(item, canTrack)).join("") : renderEmptyState("No themes match this filter", "Try another phase or add a new theme from a debrief or survey note.")}
-            </div>
+            ${renderFeedbackThemeTable(visibleItems, canTrack)}
           </div>
         </div>
       `;
@@ -5694,30 +5883,32 @@
     function renderFeedbackScoreTable(items) {
       const rows = items.filter(item => item.count >= 5).slice(0, 14);
       return `
-        <table class="list-table">
-          <thead>
-            <tr>
-              <th>Metric</th>
-              <th>Average</th>
-              <th>Responses</th>
-              <th>Signal</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rows.map(item => `
+        <div class="list-table-wrap">
+          <table class="list-table">
+            <thead>
               <tr>
-                <td>${escapeHtml(item.label)}</td>
-                <td>${formatScore(item.average)}</td>
-                <td>${item.count}</td>
-                <td>
-                  <div class="progress-track" aria-label="${escapeHtml(item.label)} average">
-                    <div class="progress-fill" style="width:${Math.min(100, Math.max(0, (item.average / 5) * 100))}%"></div>
-                  </div>
-                </td>
+                <th>Metric</th>
+                <th>Average</th>
+                <th>Responses</th>
+                <th>Signal</th>
               </tr>
-            `).join("")}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${rows.map(item => `
+                <tr>
+                  <td>${escapeHtml(item.label)}</td>
+                  <td>${formatScore(item.average)}</td>
+                  <td>${item.count}</td>
+                  <td>
+                    <div class="progress-track" aria-label="${escapeHtml(item.label)} average">
+                      <div class="progress-fill" style="width:${Math.min(100, Math.max(0, (item.average / 5) * 100))}%"></div>
+                    </div>
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
       `;
     }
 
@@ -5735,30 +5926,32 @@
 
     function renderFeedbackYearAreaBreakdown(items) {
       return `
-        <table class="list-table">
-          <thead>
-            <tr>
-              <th>Area</th>
-              <th>2023</th>
-              <th>2024</th>
-              <th>2025</th>
-              <th>2026</th>
-              <th>2023 -> 2026</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${items.map(item => `
+        <div class="list-table-wrap">
+          <table class="list-table">
+            <thead>
               <tr>
-                <td>${escapeHtml(item.label)}</td>
-                <td>${formatMiniScore(item.values["2023"])}</td>
-                <td>${formatMiniScore(item.values["2024"])}</td>
-                <td>${formatMiniScore(item.values["2025"])}</td>
-                <td>${formatMiniScore(item.values["2026"])}</td>
-                <td>${formatDelta(item.change)}</td>
+                <th>Area</th>
+                <th>2023</th>
+                <th>2024</th>
+                <th>2025</th>
+                <th>2026</th>
+                <th>2023 -> 2026</th>
               </tr>
-            `).join("")}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${items.map(item => `
+                <tr>
+                  <td>${escapeHtml(item.label)}</td>
+                  <td>${formatMiniScore(item.values["2023"])}</td>
+                  <td>${formatMiniScore(item.values["2024"])}</td>
+                  <td>${formatMiniScore(item.values["2025"])}</td>
+                  <td>${formatMiniScore(item.values["2026"])}</td>
+                  <td>${formatDelta(item.change)}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
       `;
     }
 
@@ -5803,30 +5996,71 @@
       }
 
       return `
-        <table class="list-table">
-          <thead>
-            <tr>
-              <th>Action</th>
-              <th>Owner</th>
-              <th>Phase</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${items.map(item => `
+        <div class="list-table-wrap">
+          <table class="list-table">
+            <thead>
               <tr>
-                <td>${escapeHtml(item.title)}<br><span class="muted">${escapeHtml(item.target || "")}</span></td>
-                <td>${escapeHtml(item.owner || "Unassigned")}</td>
-                <td>${escapeHtml(formatPhase(item.phase || "foundations"))}</td>
-                <td>
-                  <select onchange="updateTrackedActionStatus('${escapeHtml(item.id)}', this.value)">
-                    ${["planned", "in_progress", "done"].map(status => `<option value="${status}" ${item.status === status ? "selected" : ""}>${status.replace("_", " ")}</option>`).join("")}
-                  </select>
-                </td>
+                <th>Action</th>
+                <th>Owner</th>
+                <th>Phase</th>
+                <th>Status</th>
               </tr>
-            `).join("")}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${items.map(item => `
+                <tr>
+                  <td>${escapeHtml(item.title)}<br><span class="muted">${escapeHtml(item.target || "")}</span></td>
+                  <td>${escapeHtml(item.owner || "Unassigned")}</td>
+                  <td>${escapeHtml(formatPhase(item.phase || "foundations"))}</td>
+                  <td>
+                    <select onchange="updateTrackedActionStatus('${escapeHtml(item.id)}', this.value)">
+                      ${["planned", "in_progress", "done"].map(status => `<option value="${status}" ${item.status === status ? "selected" : ""}>${status.replace("_", " ")}</option>`).join("")}
+                    </select>
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderFeedbackThemeTable(items, canTrack = false) {
+      if (!items.length) {
+        return renderEmptyState("No themes match this filter", "Try another phase or add a new theme from a debrief or survey note.");
+      }
+
+      return `
+        <div class="list-table-wrap">
+          <table class="list-table">
+            <thead>
+              <tr>
+                <th>Theme</th>
+                <th>Owner</th>
+                <th>Phase</th>
+                <th>Status</th>
+                <th>Next Move</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items.map(item => `
+                <tr>
+                  <td>
+                    <strong>${escapeHtml(item.theme || "Feedback theme")}</strong><br>
+                    <span class="muted">${escapeHtml(item.source || "Feedback source")}</span>
+                  </td>
+                  <td>${escapeHtml(item.owner || "Unassigned")}</td>
+                  <td>${escapeHtml(formatPhase(item.phase || "foundations"))}</td>
+                  <td>${escapeHtml(item.status || "Needs owner check")}</td>
+                  <td>
+                    <div class="muted">${escapeHtml(item.action || "No action yet")}</div>
+                    ${canTrack ? `<div class="inline-actions" style="margin-top:8px;"><button class="ghost" onclick="convertFeedbackThemeToAction('${escapeHtml(item.id)}', '${FEEDBACK_THEMES.some(theme => theme.id === item.id) ? "starter" : "custom"}')">Track</button></div>` : ""}
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
       `;
     }
 
@@ -5877,26 +6111,28 @@
 
     function renderProjectedImpact(items) {
       return `
-        <table class="list-table">
-          <thead>
-            <tr>
-              <th>Metric</th>
-              <th>2026</th>
-              <th>2027 Target</th>
-              <th>Lift</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${items.map(item => `
+        <div class="list-table-wrap">
+          <table class="list-table">
+            <thead>
               <tr>
-                <td>${escapeHtml(item.label)}</td>
-                <td>${formatMiniScore(item.current)}</td>
-                <td>${formatMiniScore(item.target)}</td>
-                <td>${formatDelta(item.lift)}</td>
+                <th>Metric</th>
+                <th>2026</th>
+                <th>2027 Target</th>
+                <th>Lift</th>
               </tr>
-            `).join("")}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${items.map(item => `
+                <tr>
+                  <td>${escapeHtml(item.label)}</td>
+                  <td>${formatMiniScore(item.current)}</td>
+                  <td>${formatMiniScore(item.target)}</td>
+                  <td>${formatDelta(item.lift)}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
       `;
     }
 
@@ -5918,6 +6154,8 @@
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
+
+          ${renderPortalUtilityBar("calendar")}
 
           <div class="panel">
             <div class="phase-header">
@@ -7252,6 +7490,10 @@
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+    }
+
+    function escapeJs(value) {
+      return String(value ?? "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
     }
 
     function fieldKey(...parts) {
