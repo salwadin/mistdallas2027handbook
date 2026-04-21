@@ -4128,11 +4128,6 @@
               <span class="phase-chip">${deadlines.length} deadline${deadlines.length === 1 ? "" : "s"}</span>
             </div>
             ${renderDeadlineHealth(deadlines)}
-            <div class="inline-actions">
-              <button class="primary" onclick="downloadAllDeadlinesIcs()">Download All Deadlines (.ics)</button>
-              <button class="secondary" onclick="openGoogleCalendarForAllDeadlines()">Open Google Calendar Links</button>
-              <button class="ghost" onclick="downloadDeadlineHealthCsv()">Export Deadline Health</button>
-            </div>
           </div>
 
           ${deadlines.length ? Object.keys(PHASES).map(phaseId => `
@@ -4477,7 +4472,6 @@
                 <input id="tm-student-csv-file" type="file" accept=".csv,text/csv" />
                 <textarea id="tm-student-csv" placeholder="Paste CSV here if not uploading a file"></textarea>
                 <button class="primary" type="submit">Import CSV</button>
-                <button class="secondary" type="button" onclick="downloadStudentCsvTemplate()">Download Template</button>
               </div>
             </form>
 
@@ -4555,12 +4549,6 @@
             `).join("") || `<p>No conflicts detected yet.</p>`}
           </div>
 
-          <div class="inline-actions">
-            <button class="ghost" onclick="downloadTournamentConflictsCsv()">Export Conflicts CSV</button>
-            <button class="secondary" onclick="downloadTournamentScheduleCsv()">Export Schedule CSV</button>
-            <button class="secondary" onclick="downloadRoomCsvTemplate()">Room Template</button>
-            <button class="secondary" onclick="downloadBlockCsvTemplate()">Block Template</button>
-          </div>
         </div>
       `;
     }
@@ -4654,7 +4642,6 @@
                   <h2>Import MyMIST Participants</h2>
                   <p>Use this for MyMIST participant exports. Columns can be flexible: name/full_name, email, school, competitions, badge_code, nfc_uid.</p>
                 </div>
-                <button class="secondary" onclick="downloadMyMistParticipantTemplate()">Download Template</button>
               </div>
               <form class="admin-form" onsubmit="importMyMistParticipantsCsv(event)">
                 <input id="mymist-participant-file" type="file" accept=".csv,text/csv" />
@@ -4717,7 +4704,6 @@
                 <h2>Staged Participants</h2>
                 <p>Admin-only participant staging preview from the latest MyMIST data available in Supabase.</p>
               </div>
-              <button class="secondary" onclick="downloadMyMistParticipantTemplate()">Template</button>
             </div>
             <div class="list-table-wrap">
               <table class="list-table">
@@ -4921,7 +4907,6 @@
               <p>Everyone can see the team structure, roles, and contact list.</p>
             </div>
             <div class="inline-actions">
-              <button class="ghost" onclick="downloadDirectoryCsv()">Export Directory</button>
               <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
             </div>
           </div>
@@ -4965,7 +4950,6 @@
               <p>Focused team workspaces for roles, ownership, contacts, start phase, and application openings.</p>
             </div>
             <div class="inline-actions">
-              <button class="ghost" onclick="downloadDirectoryCsv()">Export Directory</button>
               <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
             </div>
           </div>
@@ -5518,9 +5502,8 @@
               <div class="phase-header">
                 <div>
                   <h2>Recent Meeting Notes</h2>
-                  <p>Local notes saved on this device. Export them before clearing browser data.</p>
+                  <p>Local notes saved on this device for easy follow-up and review.</p>
                 </div>
-                <button class="ghost" onclick="downloadMeetingNotesCsv()">Export CSV</button>
               </div>
               <div class="log-list">
                 ${meetings.length ? meetings.map(item => renderMeetingCard(item, decisions.filter(decision => decision.meeting_id === item.id))).join("") : renderEmptyState("No meeting notes yet", "Start with one weekly check-in note so decisions, blockers, and follow-ups stop living in chat history.") }
@@ -5533,7 +5516,6 @@
                   <h2>Decision Log</h2>
                   <p>Use this for anything that affects budget, timeline, roles, rooms, or public messaging.</p>
                 </div>
-                <button class="ghost" onclick="downloadDecisionLogCsv()">Export CSV</button>
               </div>
               <div class="log-list">
                 ${decisions.length ? decisions.map(item => renderDecisionCard(item)).join("") : renderEmptyState("No decisions saved yet", "Log budget calls, comp calls, room calls, and leadership approvals here so the team can trace why something changed.") }
@@ -5673,7 +5655,6 @@
                 <h2>${query ? "Search Results" : "Competition FAQ"}</h2>
                 <p>${results.length} answer${results.length === 1 ? "" : "s"} available.</p>
               </div>
-              <button class="ghost" onclick="downloadRulebookCsv()">Export Starter CSV</button>
             </div>
             <div class="log-list">
               ${results.map(entry => `
@@ -5756,7 +5737,6 @@
               <button class="ghost" onclick="setFeedbackFilter('build')">Build</button>
               <button class="ghost" onclick="setFeedbackFilter('stabilization')">Stabilization</button>
               <button class="ghost" onclick="setFeedbackFilter('execution')">Execution</button>
-              <button class="ghost" onclick="downloadFeedbackCsv()">Themes CSV</button>
             </div>
           </div>
 
@@ -5767,10 +5747,6 @@
                   <div>
                     <h2>Performance View</h2>
                     <p>One compact place for the lowest scores, year trend, role mix, and the strongest theme signals.</p>
-                  </div>
-                  <div class="inline-actions">
-                    <button class="ghost" onclick="downloadFeedbackCsv()">Export Themes</button>
-                    <button class="ghost" onclick="downloadFeedbackYearBreakdownCsv()">Export Year View</button>
                   </div>
                 </div>
                 <div class="stat-title">Best Next Lifts</div>
@@ -5800,10 +5776,6 @@
                   <div>
                     <h2>Action Tracker</h2>
                     <p>Admin-owned actions created from feedback themes and tied directly to next year’s target numbers.</p>
-                  </div>
-                  <div class="inline-actions">
-                    <button class="ghost" onclick="downloadTrackedActionsCsv()">Export Actions</button>
-                    <button class="ghost" onclick="downloadProjectedImpactCsv()">Export Targets</button>
                   </div>
                 </div>
                 ${renderTrackedActionsTable(actionItems)}
@@ -6181,10 +6153,6 @@
           <div class="pill-row">
             <span class="phase-chip">${escapeHtml(formatPhase(item.phase))}</span>
             <span class="phase-chip">${item.send_reminders === false ? "No reminder" : "Reminder eligible"}</span>
-          </div>
-          <div class="inline-actions">
-            <button class="ghost" onclick="downloadDeadlineIcs('${escapeHtml(item.id)}')">Download .ics</button>
-            <button class="secondary" onclick="openGoogleCalendarForDeadline('${escapeHtml(item.id)}')">Google Calendar</button>
           </div>
         </div>
       `;
