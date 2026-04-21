@@ -2789,8 +2789,7 @@
     }
 
     function openDirectory() {
-      APP_STATE.view = "directory";
-      renderApp();
+      openTeamPages();
     }
 
     function openTeamPages(team = null) {
@@ -3398,8 +3397,7 @@
           cards: [
             { title: "MyMIST Integration Center", body: "Stage exports for participants, schools, badges, and rosters.", action: "openIntegrations()" },
             { title: "Weekend Tournament Manager", body: "Rooms, competition blocks, student placement, and NFC check-ins.", action: "openTournamentManager()" },
-            { title: "Event Weekend Runbook", body: "Command Center, check-in, rooms, communications, and escalation procedures.", action: "openRunbook()" },
-            { title: "Directory", body: "Names, roles, teams, emails, and unclaimed role seats.", action: "openDirectory()" }
+            { title: "Event Weekend Runbook", body: "Command Center, check-in, rooms, communications, and escalation procedures.", action: "openRunbook()" }
           ]
         },
         {
@@ -4921,9 +4919,12 @@
           <div class="topbar">
             <div>
               <h1>Team Pages</h1>
-              <p>Focused team workspaces for roles, ownership, start phase, and application openings.</p>
+              <p>Focused team workspaces for roles, ownership, contacts, start phase, and application openings.</p>
             </div>
-            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
+            <div class="inline-actions">
+              <button class="ghost" onclick="downloadDirectoryCsv()">Export Directory</button>
+              <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
+            </div>
           </div>
 
           ${renderPortalUtilityBar("teams")}
@@ -4951,6 +4952,10 @@
               <div class="stat">
                 <div class="stat-title">Claimed</div>
                 <div class="stat-value">${claimed}</div>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Contacts</div>
+                <div class="stat-value">${teamRows.filter(row => row.claimed && row.email).length}</div>
               </div>
               <div class="stat">
                 <div class="stat-title">Open</div>
@@ -5286,12 +5291,14 @@
 
     function renderOnboardingChecklist(user = null, profile = null) {
       const canEdit = !!user;
+      const items = getLocalRecords("mist_release_checklist");
+      const current = items.length ? items : RELEASE_CHECKLIST.map((item, index) => ({ id: `release-${index}`, ...item, done: false }));
       return `
         <div class="dashboard-shell">
           <div class="topbar">
             <div>
-              <h1>New Organizer Onboarding</h1>
-              <p>One clean place for first steps, training flow, and practice data before the season gets busy.</p>
+              <h1>Organizer Checklist Hub</h1>
+              <p>One place for new-organizer onboarding, training data, and leadership release checks.</p>
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
@@ -5301,7 +5308,7 @@
           <div class="panel">
             <div class="phase-header">
               <div>
-                <h2>Starter Checklist</h2>
+                <h2>New Organizer Onboarding</h2>
                 <p>Use this in week one so every new organizer reaches the same baseline fast.</p>
               </div>
               <span class="phase-chip">First 30 minutes</span>
@@ -5346,30 +5353,12 @@
               <button class="ghost" onclick="clearDemoData()">Clear Demo Data</button>
             </div>
           </div>
-        </div>
-      `;
-    }
-
-    function renderReleaseChecklist(user = null, profile = null) {
-      const items = getLocalRecords("mist_release_checklist");
-      const current = items.length ? items : RELEASE_CHECKLIST.map((item, index) => ({ id: `release-${index}`, ...item, done: false }));
-      return `
-        <div class="dashboard-shell">
-          <div class="topbar">
-            <div>
-              <h1>Leadership Release Checklist</h1>
-              <p>The final confidence pass before leadership treats a system, page, or workflow as ready for team use.</p>
-            </div>
-            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
-          </div>
-
-          ${renderPortalUtilityBar("release")}
 
           <div class="panel">
             <div class="phase-header">
               <div>
-                <h2>Release Readiness</h2>
-                <p>Use this for weekly leadership review and before event-week rollout.</p>
+                <h2>Leadership Release Checklist</h2>
+                <p>The final confidence pass before leadership treats a system, page, or workflow as ready for team use.</p>
               </div>
               <span class="phase-chip">${current.filter(item => item.done).length}/${current.length} complete</span>
             </div>
@@ -5387,6 +5376,10 @@
           </div>
         </div>
       `;
+    }
+
+    function renderReleaseChecklist(user = null, profile = null) {
+      return renderOnboardingChecklist(user, profile);
     }
 
     function renderMeetingHub(user = null, profile = null) {
@@ -7557,8 +7550,9 @@
         }
 
         if (APP_STATE.view === "directory") {
+          APP_STATE.currentDeadlines = await getDeadlines();
           const progressRows = await getAllWorkbookProgress();
-          app.innerHTML = renderDirectory(rows, progressRows);
+          app.innerHTML = renderTeamPages(rows, progressRows);
           return;
         }
 
@@ -7669,8 +7663,9 @@
       }
 
       if (APP_STATE.view === "directory") {
+        APP_STATE.currentDeadlines = await getDeadlines();
         const progressRows = await getAllWorkbookProgress();
-        app.innerHTML = renderDirectory(rows, progressRows);
+        app.innerHTML = renderTeamPages(rows, progressRows);
         return;
       }
 
