@@ -643,6 +643,7 @@
     .nav-card {
       padding: 12px 14px;
       border: 1px solid var(--border);
+      border-top: 3px solid var(--section-color, var(--teal));
       border-radius: var(--r-md);
       background: var(--surface);
       color: var(--text);
@@ -651,14 +652,14 @@
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
-      transition: background 0.12s, box-shadow 0.12s;
+      transition: background 0.12s, box-shadow 0.12s, transform 0.12s;
       width: 100%;
     }
 
     .nav-card:hover {
       background: var(--surface2);
-      box-shadow: var(--shadow-xs);
-      transform: none;
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
       opacity: 1;
     }
 
@@ -3837,34 +3838,63 @@
     }
 
     function renderDashboardNav(signedIn, hasProfile, profile) {
-      const tools = [
-        signedIn && hasProfile
-          ? { title: "Workbook",         action: "openWorkbook()" }
-          : { title: "Apply for a Role", action: "openApply()" },
-        { title: "Team Pages",           action: "openTeamPages()" },
-        { title: "Chat",                 action: "openMessaging()", hidden: !signedIn },
-        { title: "Command Center",       action: "openCommandCenter()" },
-        { title: "Calendar",             action: "openCalendar()" },
-        { title: "Timeline",             action: "openTimeline()" },
-        { title: "Meetings & Decisions", action: "openMeetings()" },
-        { title: "Progress Board",       action: "openProgressBoard()" },
-        { title: "Directory",            action: "openDirectory()" },
-        { title: "MyMIST Integration",   action: "openIntegrations()" },
-        { title: "Tournament Manager",   action: "openTournamentManager()" },
-        { title: "Feedback",             action: "openFeedback()" },
-        { title: "Rulebook",             action: "openKnowledge()" },
-        { title: "Applications",         action: profile?.is_admin ? "openApplications()" : "openApplicationStatus()" },
-      ].filter(t => !t.hidden);
+      const sections = [
+        {
+          label: "Do The Work",
+          color: "#247a52",
+          cards: [
+            signedIn && hasProfile
+              ? { title: "Workbook",         action: "openWorkbook()" }
+              : { title: "Apply for a Role", action: "openApply()" },
+            { title: "Team Pages",           action: "openTeamPages()" },
+            { title: "Chat",                 action: "openMessaging()", hidden: !signedIn },
+            { title: "Progress Board",       action: "openProgressBoard()" },
+          ]
+        },
+        {
+          label: "Coordinate",
+          color: "#c9972b",
+          cards: [
+            { title: "Command Center",       action: "openCommandCenter()" },
+            { title: "Meetings & Decisions", action: "openMeetings()" },
+            { title: "Calendar",             action: "openCalendar()" },
+            { title: "Timeline",             action: "openTimeline()" },
+            { title: "Feedback",             action: "openFeedback()" },
+          ]
+        },
+        {
+          label: "Operate",
+          color: "#7b61ff",
+          cards: [
+            { title: "MyMIST Integration",   action: "openIntegrations()" },
+            { title: "Tournament Manager",   action: "openTournamentManager()" },
+            { title: "Directory",            action: "openDirectory()" },
+          ]
+        },
+        {
+          label: "Find Answers",
+          color: "#1f8a9b",
+          cards: [
+            { title: "Rulebook",             action: "openKnowledge()" },
+            { title: "Applications",         action: profile?.is_admin ? "openApplications()" : "openApplicationStatus()" },
+          ]
+        },
+      ];
 
-      return `
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;">
-          ${tools.map(t => `
-            <button class="nav-card" onclick="${t.action}">
-              <strong>${escapeHtml(t.title)}</strong>
-            </button>
-          `).join("")}
+      return sections.map(section => `
+        <div class="nav-section" style="--section-color:${section.color};margin-bottom:16px;">
+          <div class="nav-section-head">
+            <strong>${escapeHtml(section.label)}</strong>
+          </div>
+          <div class="nav-grid">
+            ${section.cards.filter(c => !c.hidden).map(card => `
+              <button class="nav-card" onclick="${card.action}">
+                <strong>${escapeHtml(card.title)}</strong>
+              </button>
+            `).join("")}
+          </div>
         </div>
-      `;
+      `).join("");
     }
 
     function renderSystemsRoadmap() {
