@@ -3853,8 +3853,7 @@
         { title: "Tournament Manager",   action: "openTournamentManager()" },
         { title: "Feedback",             action: "openFeedback()" },
         { title: "Rulebook",             action: "openKnowledge()" },
-        { title: "Application Status",   action: "openApplicationStatus()" },
-        ...(profile?.is_admin ? [{ title: "Review Applications", action: "openApplications()" }] : [])
+        { title: "Applications",         action: profile?.is_admin ? "openApplications()" : "openApplicationStatus()" },
       ].filter(t => !t.hidden);
 
       return `
@@ -7739,6 +7738,7 @@ alter publication supabase_realtime add table messages;</pre>
             <div class="nav-wordmark-icon">M</div>
             MIST Dallas
             <span class="nav-wordmark-year">2027</span>
+            <span style="font-size:10px;font-weight:700;background:var(--gold-dim);color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 25%,transparent);border-radius:var(--r-pill);padding:1px 7px;letter-spacing:0.04em;">beta</span>
           </button>
           <div class="nav-links">
             ${visibleLinks.map(l => `
