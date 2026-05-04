@@ -2161,6 +2161,7 @@
 
     let APP_STATE = {
       view: "dashboard",
+      onboardingStep: 1,
       activePhase: "foundations",
       applicationRoleId: null,
       currentDeadlines: [],
@@ -3768,6 +3769,91 @@
       });
     }
 
+    function renderOnboarding() {
+      const step = APP_STATE.onboardingStep || 1;
+
+      const phases = [
+        {
+          id: "foundations",
+          label: "Foundations",
+          dates: "Aug – Sep",
+          color: "#1f8a9b",
+          gradient: "linear-gradient(135deg,#0f5f6b,#1f8a9b)",
+          desc: "Build the team. Every organizer is onboarded, roles are claimed, and the core structure is locked in before anything else starts."
+        },
+        {
+          id: "build",
+          label: "Build",
+          dates: "Oct – Nov",
+          color: "#c9972b",
+          gradient: "linear-gradient(135deg,#8a6f2a,#c9972b)",
+          desc: "Do the work. Competitions are designed, logistics are planned, registration opens, and every committee moves from planning to executing."
+        },
+        {
+          id: "stabilization",
+          label: "Stabilization",
+          dates: "Dec – Jan",
+          color: "#7b61ff",
+          gradient: "linear-gradient(135deg,#4b3aa3,#7b61ff)",
+          desc: "Lock it down. Rosters are finalized, rooms are assigned, schedules are confirmed, and the board runs weekend simulations."
+        },
+        {
+          id: "execution",
+          label: "Execution",
+          dates: "Feb",
+          color: "#b13f4a",
+          gradient: "linear-gradient(135deg,#7f2632,#b13f4a)",
+          desc: "Event weekend. Every plan becomes real — check-in, competitions, ceremonies, and closing. The whole season leads here."
+        }
+      ];
+
+      if (step === 1) {
+        return `
+          <div style="max-width:680px;margin:0 auto;padding:12px 0 48px;">
+
+            <div style="margin-bottom:36px;">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--teal);margin-bottom:10px;">Step 1 of 2</div>
+              <h1 style="font-size:28px;margin-bottom:10px;letter-spacing:-0.03em;">Welcome to the MIST Dallas<br>2027 Organizer Board.</h1>
+              <p style="font-size:15px;line-height:1.65;color:var(--muted);max-width:520px;">This portal is how the organizing board plans, coordinates, and executes MIST Dallas 2027. Everything — roles, deadlines, teams, and the event weekend — lives here.</p>
+            </div>
+
+            <div style="margin-bottom:32px;">
+              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--faint);margin-bottom:14px;">How the season is structured</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;">
+                ${phases.map((p, i) => `
+                  <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid ${p.color};border-radius:var(--r-md);padding:16px 18px;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                      <div style="width:24px;height:24px;border-radius:50%;background:${p.gradient};color:white;font-size:11px;font-weight:800;display:grid;place-items:center;flex-shrink:0;">${i + 1}</div>
+                      <div>
+                        <div style="font-weight:700;font-size:14px;color:var(--text);">${p.label}</div>
+                        <div style="font-size:11px;color:${p.color};font-weight:600;">${p.dates}</div>
+                      </div>
+                    </div>
+                    <p style="font-size:13px;line-height:1.55;margin:0;">${p.desc}</p>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 22px;margin-bottom:28px;">
+              <div style="font-weight:700;font-size:14px;margin-bottom:6px;">Your role in the board</div>
+              <p style="font-size:13px;line-height:1.6;margin:0;">Every organizer has a role tied to a team and a phase. Your workbook tracks your deliverables, and your team page keeps everyone aligned. The board runs on accountability — deadlines are shared, progress is visible, and decisions are logged.</p>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+              <button class="ghost" onclick="openLogin()" style="min-width:0;">Already have an account? Sign in</button>
+              <button class="primary" style="min-width:160px;" onclick="APP_STATE.onboardingStep=2;renderApp();">Continue → Apply</button>
+            </div>
+
+          </div>
+        `;
+      }
+
+      // Step 2 — handled by renderRoleApplication, just trigger it
+      APP_STATE.view = "apply";
+      return null;
+    }
+
     function renderDashboard(user, profile, rows = [], progressRows = [], deadlines = CALENDAR_DEADLINES) {
       const signedIn = !!user;
       const hasProfile = !!profile?.role_id;
@@ -3780,17 +3866,18 @@
       const announcements = APP_STATE.announcements || DEFAULT_ANNOUNCEMENTS;
       const recentAnnouncements = announcements.slice(0, 2);
 
+      // Step 2 of onboarding → redirect to apply page
+      if (!signedIn && APP_STATE.onboardingStep === 2) {
+        APP_STATE.view = "apply";
+        APP_STATE.onboardingStep = 1;
+        return `<div class="dashboard-shell">${renderRoleApplication(null, rows)}</div>`;
+      }
+
       return `
         <div class="dashboard-shell">
 
           ${!signedIn ? `
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px;">
-            <div>
-              <h1 style="margin-bottom:4px;">MIST Dallas 2027</h1>
-              <p style="font-size:14px;">${openRoleCount} open role${openRoleCount === 1 ? "" : "s"} · ${teamStats.activeOrganizers} organizers on board</p>
-            </div>
-            <button class="primary" onclick="openLogin()">Sign In</button>
-          </div>
+          <div id="onboarding-wrap">${renderOnboarding() || ""}</div>
           ` : `
           <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px;">
             <div>
