@@ -1806,7 +1806,7 @@
         title: "Reminder Emails",
         status: "Pending Domain",
         color: "#c44f7a",
-        body: "Once sender verification is complete, deadline and application emails can run through Supabase functions.",
+        body: "Deadline reminders and application decision emails send through Resend via Supabase Edge Functions.",
         action: "openCalendar()",
         cta: "Reminder Setup"
       }
@@ -1931,7 +1931,7 @@
         category: "Deadlines",
         color: "#7b61ff",
         question: "Where should organizers find deadlines?",
-        answer: "The Calendar page is the deadline source of truth. Deadlines are grouped by phase, can be exported to calendar apps, and can support reminder emails once sender verification is complete.",
+        answer: "The Calendar page is the deadline source of truth. Deadlines are grouped by phase, can be exported to calendar apps, and send reminder emails via Resend through Supabase Edge Functions.",
         keywords: ["deadline", "calendar", "reminder", "phase", "export"]
       },
       {
@@ -4622,7 +4622,7 @@
                   <div class="readiness-row">
                     <div>
                       <h3>Deadline reminder emails</h3>
-                      <p>Use the existing reminder preference data and Edge Function once Resend verification is complete.</p>
+                      <p>Reminder emails send via Resend. Deploy the Edge Function and set RESEND_API_KEY + REMINDER_FROM_EMAIL in Supabase secrets.</p>
                     </div>
                     <button class="secondary" onclick="openCalendar()">Review</button>
                   </div>
@@ -6431,7 +6431,7 @@
 
           <div class="panel">
             <h2>Reminder Integration Plan</h2>
-            <p>Deadlines and user preferences are ready for Supabase. To send emails, deploy the included Edge Function and add an email provider API key in Supabase secrets.</p>
+            <p>Deadlines and user preferences are ready. Reminder emails send via Resend — deploy the Edge Function and set RESEND_API_KEY and REMINDER_FROM_EMAIL in Supabase secrets to activate.</p>
           </div>
         </div>
       `;
@@ -7498,7 +7498,12 @@
         .eq("channel", channel)
         .order("created_at", { ascending: true })
         .limit(200);
-      if (error) { console.error("loadMessages:", error); return []; }
+      if (error) {
+        console.error("loadMessages:", error);
+        MSG_STATE.tableError = true;
+        return [];
+      }
+      MSG_STATE.tableError = false;
       return data || [];
     }
 
@@ -7544,7 +7549,15 @@
           { event: "INSERT", schema: "public", table: "messages", filter: `channel=eq.${channel}` },
           (payload) => { onNew(payload.new); }
         )
-        .subscribe();
+        .subscribe((status, err) => {
+          if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || err) {
+            const banner = document.getElementById("chat-realtime-banner");
+            if (banner) {
+              banner.style.display = "flex";
+              banner.textContent = "⚠️ Live updates unavailable — the messages table may not be set up yet. Run the SQL setup in your Supabase dashboard, then refresh.";
+            }
+          }
+        });
       MSG_STATE.subscription = sub;
     }
 
@@ -7714,10 +7727,32 @@
         </div>
       `;
 
-      const messagesHTML = renderMessagesHTML(messages);
+      const messagesHTML = MSG_STATE.tableError
+        ? `<div class="chat-empty">
+             <div class="chat-empty-icon">🛠️</div>
+             <div class="chat-empty-text">Messages table not set up yet</div>
+             <div class="chat-empty-sub">Run the SQL setup in your Supabase dashboard to enable chat.</div>
+             <details style="margin-top:12px;font-size:12px;color:var(--faint);max-width:380px;text-align:left">
+               <summary style="cursor:pointer;font-weight:600;color:var(--muted)">Show SQL</summary>
+               <pre style="margin-top:8px;background:var(--surface2);padding:12px;border-radius:8px;overflow:auto;font-size:11px;line-height:1.5">create table messages (
+  id uuid primary key default gen_random_uuid(),
+  channel text not null default 'general',
+  user_id uuid references auth.users(id) on delete cascade,
+  user_name text not null,
+  body text not null,
+  created_at timestamptz default now()
+);
+alter table messages enable row level security;
+create policy "Read messages" on messages for select using (auth.role() = 'authenticated');
+create policy "Insert own messages" on messages for insert with check (auth.uid() = user_id);
+alter publication supabase_realtime add table messages;</pre>
+             </details>
+           </div>`
+        : renderMessagesHTML(messages);
 
       const mainHTML = `
         <div class="chat-main">
+          <div id="chat-realtime-banner" style="display:none;padding:8px 16px;background:#fef3c7;border-bottom:1px solid #fde68a;font-size:12px;color:#92400e;gap:8px;align-items:center;"></div>
           <div class="chat-header">
             <span style="font-size:18px;color:var(--faint)">#</span>
             <div>
