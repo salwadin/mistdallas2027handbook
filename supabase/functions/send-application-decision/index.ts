@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const resendApiKey = Deno.env.get("RESEND_API_KEY")!;
-const fromEmail = Deno.env.get("REMINDER_FROM_EMAIL") || "MIST Dallas <reminders@example.com>";
+const fromEmail = Deno.env.get("REMINDER_FROM_EMAIL") || "MIST Dallas <onboarding@resend.dev>";
 const siteUrl = Deno.env.get("SITE_URL") || "https://salwadin.github.io/mistdallas2027handbook/";
 
 const supabase = createClient(supabaseUrl, serviceRoleKey);

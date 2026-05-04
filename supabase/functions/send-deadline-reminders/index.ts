@@ -3,13 +3,31 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const resendApiKey = Deno.env.get("RESEND_API_KEY")!;
-const fromEmail = Deno.env.get("REMINDER_FROM_EMAIL") || "MIST Dallas <reminders@example.com>";
+const fromEmail = Deno.env.get("REMINDER_FROM_EMAIL") || "MIST Dallas <onboarding@resend.dev>";
 const siteUrl = Deno.env.get("SITE_URL") || "https://salwadin.github.io/mistdallas2027handbook/";
 const cronSecret = Deno.env.get("CRON_SECRET");
 
 const supabase = createClient(supabaseUrl, serviceRoleKey);
 
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-cron-secret"
+  };
+}
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders(), "Content-Type": "application/json" }
+  });
+}
+
 Deno.serve(async (request) => {
+  if (request.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders() });
+  }
+
   if (cronSecret) {
     const providedSecret = request.headers.get("x-cron-secret");
     if (providedSecret !== cronSecret) {
@@ -97,13 +115,21 @@ Deno.serve(async (request) => {
 async function sendEmail(to: string, deadline: Record<string, string>, daysBefore: number, fullName?: string) {
   const subject = `MIST Dallas deadline in ${daysBefore} day${daysBefore === 1 ? "" : "s"}: ${deadline.title}`;
   const html = `
-    <div style="font-family:Inter,Arial,sans-serif;line-height:1.5;color:#0f172a">
-      <h2>${escapeHtml(deadline.title)}</h2>
-      <p>Hi ${escapeHtml(fullName || "there")},</p>
-      <p>This is your MIST Dallas reminder that the following deadline is coming up in ${daysBefore} day${daysBefore === 1 ? "" : "s"}.</p>
+    <div style="font-family:Inter,Arial,sans-serif;line-height:1.5;color:#0f172a;max-width:560px">
+      <h2 style="margin:0 0 16px">${escapeHtml(deadline.title)}</h2>
+      <p>Assalamu alaykum ${escapeHtml(fullName || "there")},</p>
+      <p>This is your MIST Dallas reminder that the following deadline is coming up in <strong>${daysBefore} day${daysBefore === 1 ? "" : "s"}</strong>.</p>
       <p><strong>Due:</strong> ${escapeHtml(deadline.date_label || deadline.due_date)}</p>
-      <p>${escapeHtml(deadline.detail || "")}</p>
-      <p><a href="${siteUrl}">Open the MIST Dallas Portal</a></p>
+      ${deadline.detail ? `<p>${escapeHtml(deadline.detail)}</p>` : ""}
+      <p style="margin-top:24px">
+        <a href="${siteUrl}" style="background:#18798a;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600">
+          Open the MIST Dallas Portal
+        </a>
+      </p>
+      <p style="margin-top:24px;color:#64748b;font-size:13px">
+        You're receiving this because you enabled deadline reminders in the portal.
+        <a href="${siteUrl}">Manage preferences</a>
+      </p>
     </div>
   `;
 
@@ -113,12 +139,7 @@ async function sendEmail(to: string, deadline: Record<string, string>, daysBefor
       Authorization: `Bearer ${resendApiKey}`,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      from: fromEmail,
-      to,
-      subject,
-      html
-    })
+    body: JSON.stringify({ from: fromEmail, to, subject, html })
   });
 }
 
@@ -133,11 +154,4 @@ function escapeHtml(value: string) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
-}
-
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { "Content-Type": "application/json" }
-  });
 }
