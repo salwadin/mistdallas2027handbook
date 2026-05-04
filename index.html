@@ -2196,7 +2196,7 @@
       saveTimers: {}
     };
 
-    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "calendar", "login", "apply", "application-status", "meetings", "runbook", "knowledge", "feedback"]);
+    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "calendar", "login", "apply", "application-status", "meetings", "knowledge", "feedback"]);
 
     function buildPhaseLookup(data) {
       if (data.PHASE_META) {
@@ -3793,7 +3793,7 @@
             <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px;">
               <div>
                 <h1 style="color:var(--text);margin-bottom:6px;">MIST Dallas 2027 Planning Portal</h1>
-                <p style="max-width:520px;font-size:14px;">A shared workspace for building the event with clarity, accountability, and less scattered information. Browse open roles, read the runbook, or sign in to apply for a role.</p>
+                <p style="max-width:520px;font-size:14px;">A shared workspace for building the event with clarity, accountability, and less scattered information. Browse open roles, explore the portal, or sign in to apply for a role.</p>
               </div>
               <button class="primary" onclick="openLogin()" style="flex-shrink:0;">Sign In / Join</button>
             </div>
@@ -3895,8 +3895,7 @@
           color: "#c9972b",
           cards: [
             { title: "Command Center", body: "Open seats, deadline risk, team readiness, and operational checks.", action: "openCommandCenter()" },
-            { title: "Meeting Hub", body: "Agendas, blockers, action items, and meeting memory.", action: "openMeetings()" },
-            { title: "Decision Log", body: "Track approved decisions, owners, impact, and follow-up.", action: "openMeetings()" },
+            { title: "Meeting Hub & Decision Log", body: "Agendas, blockers, action items, decisions, owners, and follow-ups.", action: "openMeetings()" },
             { title: "Feedback Addressal", body: "Turn past-year feedback into themes, owners, action plans, and status.", action: "openFeedback()" },
             { title: "Timeline", body: "Foundations, Build, Stabilization, and Execution at a glance.", action: "openTimeline()" },
             { title: "Calendar", body: "Deadline cards, calendar export, and reminder preferences.", action: "openCalendar()" }
@@ -3909,7 +3908,6 @@
           cards: [
             { title: "MyMIST Integration Center", body: "Stage exports for participants, schools, badges, and rosters.", action: "openIntegrations()" },
             { title: "Weekend Tournament Manager", body: "Rooms, competition blocks, student placement, and NFC check-ins.", action: "openTournamentManager()" },
-            { title: "Event Weekend Runbook", body: "Command Center, check-in, rooms, communications, and escalation procedures.", action: "openRunbook()" },
             { title: "Directory", body: "Names, roles, teams, emails, and unclaimed role seats.", action: "openDirectory()" }
           ]
         },
@@ -6052,7 +6050,6 @@
             <p>Next, we can add the official rulebook as a structured source: paste sections, upload CSV/JSON, or create a Supabase rulebook table. The search page can then pull from that live source instead of only these starter entries.</p>
             <div class="inline-actions">
               <button class="primary" onclick="downloadRulebookCsv()">Download Rulebook Starter CSV</button>
-              <button class="secondary" onclick="openRunbook()">Open Event Runbook</button>
             </div>
           </div>
         </div>
@@ -7770,7 +7767,6 @@
         { label: "Calendar",   action: "openCalendar()",         view: "calendar" },
         { label: "Timeline",   action: "openTimeline()",         view: "timeline" },
         { label: "Directory",  action: "openDirectory()",        view: "directory" },
-        { label: "Runbook",    action: "openRunbook()",          view: "runbook" },
         { label: "Feedback",   action: "openFeedback()",         view: "feedback" },
       ];
 
@@ -7911,11 +7907,6 @@
 
         if (APP_STATE.view === "meetings") {
           app.innerHTML = renderMeetingHub(null, null);
-          return;
-        }
-
-        if (APP_STATE.view === "runbook") {
-          app.innerHTML = renderRunbook();
           return;
         }
 
