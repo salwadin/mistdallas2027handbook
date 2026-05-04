@@ -1346,6 +1346,259 @@
     }
 
     /* ==============================================
+       ONBOARDING — SPACE THEME
+       ============================================== */
+
+    .ob-shell {
+      position: relative;
+      margin: -28px -20px 0;
+      min-height: calc(100vh - 56px);
+      padding: 72px 40px 96px;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 15% 40%, rgba(99,51,188,0.35) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 20%, rgba(6,78,120,0.4) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 80%, rgba(139,27,80,0.25) 0%, transparent 45%),
+        linear-gradient(160deg, #04040f 0%, #080820 50%, #0a0618 100%);
+    }
+
+    .ob-stars {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .ob-content {
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .ob-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(160,200,255,0.7);
+      margin-bottom: 20px;
+    }
+
+    .ob-eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #60a5fa;
+      box-shadow: 0 0 8px #60a5fa;
+    }
+
+    .ob-step {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(160,200,255,0.5);
+      margin-bottom: 10px;
+    }
+
+    .ob-title {
+      font-size: clamp(28px, 5vw, 46px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin: 0 0 18px;
+      background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 50%, #93c5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .ob-subtitle {
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(200,210,240,0.75);
+      max-width: 540px;
+      margin: 0 0 40px;
+    }
+
+    .ob-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(160,200,255,0.45);
+      margin-bottom: 14px;
+    }
+
+    .ob-phases {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .ob-phase-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-left: 3px solid var(--ob-color);
+      border-radius: var(--r-lg);
+      padding: 18px 20px;
+      backdrop-filter: blur(8px);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .ob-phase-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 0% 50%, var(--ob-color) 0%, transparent 70%);
+      opacity: 0.07;
+      pointer-events: none;
+    }
+
+    .ob-phase-card:hover {
+      background: rgba(255,255,255,0.07);
+    }
+
+    .ob-phase-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .ob-phase-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--ob-gradient);
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 12px var(--ob-color);
+    }
+
+    .ob-phase-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .ob-phase-dates {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ob-color);
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .ob-phase-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(200,210,240,0.65);
+      margin: 0;
+    }
+
+    .ob-callout {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--r-lg);
+      padding: 20px 24px;
+      margin-bottom: 40px;
+      backdrop-filter: blur(6px);
+    }
+
+    .ob-callout-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(230,240,255,0.9);
+      margin-bottom: 6px;
+    }
+
+    .ob-callout-body {
+      font-size: 13px;
+      line-height: 1.65;
+      color: rgba(180,200,240,0.65);
+      margin: 0;
+    }
+
+    .ob-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .ob-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: var(--r-pill);
+      border: none;
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 0 24px rgba(124,58,237,0.5), 0 4px 16px rgba(0,0,0,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+      letter-spacing: -0.01em;
+    }
+
+    .ob-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 36px rgba(124,58,237,0.7), 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .ob-btn-primary:active { transform: translateY(0); }
+
+    .ob-btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 13px 22px;
+      border-radius: var(--r-pill);
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+      color: rgba(200,220,255,0.8);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: background 0.15s, border-color 0.15s;
+      letter-spacing: -0.01em;
+    }
+
+    .ob-btn-ghost:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.25);
+      color: white;
+      transform: none;
+      box-shadow: none;
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      .ob-shell { padding: 48px 24px 72px; }
+      .ob-actions { flex-direction: column-reverse; align-items: stretch; }
+      .ob-btn-primary, .ob-btn-ghost { justify-content: center; }
+    }
+
+    /* ==============================================
        MESSAGING / CHAT
        ============================================== */
 
@@ -3769,87 +4022,115 @@
       });
     }
 
+    function generateStars(count) {
+      const stars = [];
+      for (let i = 0; i < count; i++) {
+        const x = (Math.random() * 100).toFixed(2);
+        const y = (Math.random() * 100).toFixed(2);
+        const r = Math.random() < 0.7 ? 0.8 : Math.random() < 0.5 ? 1.3 : 1.8;
+        const op = (0.25 + Math.random() * 0.75).toFixed(2);
+        stars.push(`<circle cx="${x}%" cy="${y}%" r="${r}" fill="white" opacity="${op}"/>`);
+      }
+      // A few colored stars
+      const colors = ["#93c5fd","#c4b5fd","#fde68a","#6ee7b7"];
+      for (let i = 0; i < 12; i++) {
+        const x = (Math.random() * 100).toFixed(2);
+        const y = (Math.random() * 100).toFixed(2);
+        const c = colors[Math.floor(Math.random() * colors.length)];
+        stars.push(`<circle cx="${x}%" cy="${y}%" r="1.5" fill="${c}" opacity="0.9"/>`);
+      }
+      return stars.join("");
+    }
+
     function renderOnboarding() {
       const step = APP_STATE.onboardingStep || 1;
 
       const phases = [
         {
-          id: "foundations",
           label: "Foundations",
           dates: "Aug – Sep",
-          color: "#1f8a9b",
-          gradient: "linear-gradient(135deg,#0f5f6b,#1f8a9b)",
-          desc: "Build the team. Every organizer is onboarded, roles are claimed, and the core structure is locked in before anything else starts."
+          color: "#22d3ee",
+          gradient: "linear-gradient(135deg,#0891b2,#22d3ee)",
+          desc: "Build the team. Every organizer is onboarded, roles are locked in, and the core structure is set before anything else starts."
         },
         {
-          id: "build",
           label: "Build",
           dates: "Oct – Nov",
-          color: "#c9972b",
-          gradient: "linear-gradient(135deg,#8a6f2a,#c9972b)",
+          color: "#fbbf24",
+          gradient: "linear-gradient(135deg,#d97706,#fbbf24)",
           desc: "Do the work. Competitions are designed, logistics are planned, registration opens, and every committee moves from planning to executing."
         },
         {
-          id: "stabilization",
           label: "Stabilization",
           dates: "Dec – Jan",
-          color: "#7b61ff",
-          gradient: "linear-gradient(135deg,#4b3aa3,#7b61ff)",
+          color: "#a78bfa",
+          gradient: "linear-gradient(135deg,#6d28d9,#a78bfa)",
           desc: "Lock it down. Rosters are finalized, rooms are assigned, schedules are confirmed, and the board runs weekend simulations."
         },
         {
-          id: "execution",
           label: "Execution",
           dates: "Feb",
-          color: "#b13f4a",
-          gradient: "linear-gradient(135deg,#7f2632,#b13f4a)",
+          color: "#f87171",
+          gradient: "linear-gradient(135deg,#b91c1c,#f87171)",
           desc: "Event weekend. Every plan becomes real — check-in, competitions, ceremonies, and closing. The whole season leads here."
         }
       ];
 
+      const stars = generateStars(220);
+
       if (step === 1) {
         return `
-          <div style="max-width:680px;margin:0 auto;padding:12px 0 48px;">
+          <div class="ob-shell">
+            <svg class="ob-stars" viewBox="0 0 100 100" preserveAspectRatio="none">${stars}</svg>
 
-            <div style="margin-bottom:36px;">
-              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--teal);margin-bottom:10px;">Step 1 of 2</div>
-              <h1 style="font-size:28px;margin-bottom:10px;letter-spacing:-0.03em;">Welcome to the MIST Dallas<br>2027 Organizer Board.</h1>
-              <p style="font-size:15px;line-height:1.65;color:var(--muted);max-width:520px;">This portal is how the organizing board plans, coordinates, and executes MIST Dallas 2027. Everything — roles, deadlines, teams, and the event weekend — lives here.</p>
-            </div>
+            <div class="ob-content">
+              <div class="ob-step">Step 1 of 2</div>
 
-            <div style="margin-bottom:32px;">
-              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--faint);margin-bottom:14px;">How the season is structured</div>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;">
+              <div class="ob-eyebrow">
+                <span class="ob-eyebrow-dot"></span>
+                MIST Dallas 2027 · Organizer Board
+              </div>
+
+              <h1 class="ob-title">Welcome to the<br>planning portal.</h1>
+
+              <p class="ob-subtitle">
+                This is where the MIST Dallas 2027 organizing board plans, coordinates, and executes the season — together. Roles, deadlines, teams, decisions, and the event weekend all live here.
+              </p>
+
+              <div class="ob-section-label">How the season works</div>
+              <div class="ob-phases">
                 ${phases.map((p, i) => `
-                  <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid ${p.color};border-radius:var(--r-md);padding:16px 18px;">
-                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                      <div style="width:24px;height:24px;border-radius:50%;background:${p.gradient};color:white;font-size:11px;font-weight:800;display:grid;place-items:center;flex-shrink:0;">${i + 1}</div>
-                      <div>
-                        <div style="font-weight:700;font-size:14px;color:var(--text);">${p.label}</div>
-                        <div style="font-size:11px;color:${p.color};font-weight:600;">${p.dates}</div>
-                      </div>
+                  <div class="ob-phase-card" style="--ob-color:${p.color};--ob-gradient:${p.gradient}">
+                    <div class="ob-phase-head">
+                      <div class="ob-phase-num">${i + 1}</div>
+                      <div class="ob-phase-name">${p.label}</div>
+                      <div class="ob-phase-dates">${p.dates}</div>
                     </div>
-                    <p style="font-size:13px;line-height:1.55;margin:0;">${p.desc}</p>
+                    <p class="ob-phase-desc">${p.desc}</p>
                   </div>
                 `).join("")}
               </div>
-            </div>
 
-            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 22px;margin-bottom:28px;">
-              <div style="font-weight:700;font-size:14px;margin-bottom:6px;">Your role in the board</div>
-              <p style="font-size:13px;line-height:1.6;margin:0;">Every organizer has a role tied to a team and a phase. Your workbook tracks your deliverables, and your team page keeps everyone aligned. The board runs on accountability — deadlines are shared, progress is visible, and decisions are logged.</p>
-            </div>
+              <div class="ob-callout">
+                <div class="ob-callout-title">Your role in all of this</div>
+                <p class="ob-callout-body">Every organizer has a role tied to a team and a start phase. Your workbook tracks deliverables, your team page keeps everyone aligned, and the board runs on shared accountability — deadlines are visible, progress is tracked, and decisions are logged for everyone.</p>
+              </div>
 
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-              <button class="ghost" onclick="openLogin()" style="min-width:0;">Already have an account? Sign in</button>
-              <button class="primary" style="min-width:160px;" onclick="APP_STATE.onboardingStep=2;renderApp();">Continue → Apply</button>
+              <div class="ob-actions">
+                <button class="ob-btn-ghost" onclick="openLogin()">
+                  Already have an account? Sign in →
+                </button>
+                <button class="ob-btn-primary" onclick="APP_STATE.onboardingStep=2;renderApp();">
+                  Continue — Apply for a Role
+                  <span style="font-size:18px;line-height:1;">→</span>
+                </button>
+              </div>
             </div>
-
           </div>
         `;
       }
 
-      // Step 2 — handled by renderRoleApplication, just trigger it
+      // Step 2 — redirect to apply
       APP_STATE.view = "apply";
       return null;
     }
