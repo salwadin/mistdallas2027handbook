@@ -3509,7 +3509,7 @@
       return `
         <div class="card">
           <h2>Complete your profile</h2>
-          <p>Choose the role you are claiming for this season. Claimed roles are locked.</p>
+          <p>Choose the role you are applying for this season. Filled roles are locked.</p>
           <div class="stack">
             <div>
               <div class="label">Email</div>
@@ -3793,7 +3793,7 @@
             <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px;">
               <div>
                 <h1 style="color:var(--text);margin-bottom:6px;">MIST Dallas 2027 Planning Portal</h1>
-                <p style="max-width:520px;font-size:14px;">A shared workspace for building the event with clarity, accountability, and less scattered information. Browse open roles, read the runbook, or sign in to claim your seat.</p>
+                <p style="max-width:520px;font-size:14px;">A shared workspace for building the event with clarity, accountability, and less scattered information. Browse open roles, read the runbook, or sign in to apply for a role.</p>
               </div>
               <button class="primary" onclick="openLogin()" style="flex-shrink:0;">Sign In / Join</button>
             </div>
@@ -3820,7 +3820,7 @@
           ` : `
           <div style="margin-bottom:20px;">
             <h1 style="margin-bottom:4px;">Good to see you${profile?.full_name ? `, ${escapeHtml(profile.full_name.split(" ")[0])}` : ""}.</h1>
-            <p>${hasProfile ? `You're on the <strong style="color:var(--text);font-weight:700;">${escapeHtml(profile.team)}</strong> team as <strong style="color:var(--text);font-weight:700;">${escapeHtml(formatRole(profile.role_id))}</strong>. Use your workbook to track phase progress.` : "Your account is connected. Claim a role below to unlock your workbook and team tools."}</p>
+            <p>${hasProfile ? `You're on the <strong style="color:var(--text);font-weight:700;">${escapeHtml(profile.team)}</strong> team as <strong style="color:var(--text);font-weight:700;">${escapeHtml(formatRole(profile.role_id))}</strong>. Use your workbook to track phase progress.` : "Your account is connected. Apply for a role below to unlock your workbook and team tools."}</p>
             ${hasProfile ? `
             <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
               <button class="primary" onclick="openWorkbook()">Open Workbook</button>
@@ -3884,7 +3884,7 @@
           cards: [
             signedIn && hasProfile
               ? { title: "My Workbook", body: "Role checklist, notes, phase plans, and autosave progress.", action: "openWorkbook()" }
-              : { title: "Claim a Role", body: "Log in or create an account, then choose an open organizer role.", action: "openLogin()" },
+              : { title: "Apply for a Role", body: "Log in or create an account, then apply for an open organizer role.", action: "openApply()" },
             { title: "Team Pages", body: "Focused team hubs with roles, tasks, start phases, and claim status.", action: "openTeamPages()" },
             { title: "Progress Board", body: "Shared completion percentages and recent saved activity.", action: "openProgressBoard()" }
           ]
@@ -4168,7 +4168,7 @@
 
       if (!profile?.role_id) {
         return [
-          { label: "Profile", title: "Claim your role", body: "Choose your assigned organizer role so your dashboard, workbook, and team page can personalize.", cta: "Claim Role", onclick: "openLogin()", primary: true },
+          { label: "Profile", title: "Apply for a role", body: "Submit an application for an open organizer role to unlock your dashboard, workbook, and team tools.", cta: "Apply for a Role", onclick: "openApply()", primary: true },
           { label: "Explore", title: "Review team pages", body: "Use team pages to understand open seats, start phases, and expectations.", cta: "View Team Pages", onclick: "openTeamPages()" },
           { label: "Status", title: "Check application status", body: "If you applied before signing up, check whether leadership has reviewed your application.", cta: "Check Status", onclick: "openApplicationStatus()" }
         ];
@@ -4208,7 +4208,7 @@
           <div class="grid">
             <div class="stat">
               <div class="stat-title">1. Find Your Place</div>
-              <p>${signedIn && hasProfile ? "Your role is connected. Use your workbook and team page to stay aligned." : "Browse open roles, apply, or sign in to claim your assigned role."}</p>
+              <p>${signedIn && hasProfile ? "Your role is connected. Use your workbook and team page to stay aligned." : "Browse open roles and apply for your organizer role to get started."}</p>
               <div class="inline-actions">
                 <button class="secondary" onclick="openTeamPages()">View Team Pages</button>
               </div>
@@ -4752,7 +4752,7 @@
           ${canScan ? renderNfcCheckInPanel(rooms, blocks, students, scans, isAdmin) : `
             <div class="panel">
               <h2>NFC Check-In</h2>
-              <p>Log in and claim a role before using scanner tools.</p>
+              <p>Log in and apply for a role before using scanner tools.</p>
               <div class="inline-actions">
                 <button class="primary" onclick="openLogin()">Log In / Sign Up</button>
               </div>
@@ -6423,7 +6423,7 @@
           ${user ? renderReminderPreferences(reminderPreference) : `
             <div class="panel">
               <h2>Email Reminders</h2>
-              <p>Log in and claim a role to choose reminder preferences for deadline emails.</p>
+              <p>Log in and apply for a role to choose reminder preferences for deadline emails.</p>
               <div class="inline-actions">
                 <button class="primary" onclick="openLogin()">Log In / Sign Up</button>
               </div>
@@ -7957,7 +7957,8 @@
       }
 
       if (!profile || !profile.role_id) {
-        app.innerHTML = renderRoleSetup(user, rows);
+        APP_STATE.view = "apply";
+        app.innerHTML = renderRoleApplication(user, rows);
         return;
       }
 
