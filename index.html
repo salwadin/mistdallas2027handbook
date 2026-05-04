@@ -4051,27 +4051,31 @@
           dates: "Aug – Sep",
           color: "#22d3ee",
           gradient: "linear-gradient(135deg,#0891b2,#22d3ee)",
-          desc: "Build the team. Every organizer is onboarded, roles are locked in, and the core structure is set before anything else starts."
+          start: "Directors · ADs · Core leads start here",
+          desc: "The leadership layer comes online. Directors and core leads are onboarded, structure is set, and the season officially begins."
         },
         {
           label: "Build",
           dates: "Oct – Nov",
           color: "#fbbf24",
           gradient: "linear-gradient(135deg,#d97706,#fbbf24)",
-          desc: "Do the work. Competitions are designed, logistics are planned, registration opens, and every committee moves from planning to executing."
+          start: "Chairs · Coordinators · Leads start here",
+          desc: "Committees go active. Competitions are designed, logistics are planned, registration opens, and every team moves from planning to executing."
         },
         {
           label: "Stabilization",
           dates: "Dec – Jan",
           color: "#a78bfa",
           gradient: "linear-gradient(135deg,#6d28d9,#a78bfa)",
-          desc: "Lock it down. Rosters are finalized, rooms are assigned, schedules are confirmed, and the board runs weekend simulations."
+          start: "Support roles · Specialists start here",
+          desc: "The final layer joins and locks everything in. Rosters are finalized, rooms are assigned, and schedules are confirmed."
         },
         {
           label: "Execution",
           dates: "Feb",
           color: "#f87171",
           gradient: "linear-gradient(135deg,#b91c1c,#f87171)",
+          start: "All hands — everyone is active",
           desc: "Event weekend. Every plan becomes real — check-in, competitions, ceremonies, and closing. The whole season leads here."
         }
       ];
@@ -4107,6 +4111,7 @@
                       <div class="ob-phase-dates">${p.dates}</div>
                     </div>
                     <p class="ob-phase-desc">${p.desc}</p>
+                    <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07);font-size:11px;font-weight:600;color:${p.color};opacity:0.85;">↳ ${p.start}</div>
                   </div>
                 `).join("")}
               </div>
