@@ -641,38 +641,29 @@
     .nav-section-head span { color: var(--faint); font-size: 12px; }
 
     .nav-card {
-      min-height: 90px;
-      padding: 14px;
+      padding: 12px 14px;
       border: 1px solid var(--border);
       border-radius: var(--r-md);
       background: var(--surface);
       color: var(--text);
       text-align: left;
-      border-top: 3px solid var(--section-color, var(--teal));
-      transition: box-shadow 0.12s, transform 0.12s;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.12s, box-shadow 0.12s;
+      width: 100%;
     }
 
     .nav-card:hover {
-      box-shadow: var(--shadow);
-      transform: translateY(-2px);
+      background: var(--surface2);
+      box-shadow: var(--shadow-xs);
+      transform: none;
       opacity: 1;
     }
 
-    .nav-card strong {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .nav-card span {
-      display: block;
-      color: var(--muted);
-      font-weight: 500;
-      line-height: 1.45;
-      font-size: 12px;
-    }
+    .nav-card strong { font-size: 13px; font-weight: 600; color: var(--text); }
+    .nav-card span { display: none; }
 
     /* ==============================================
        BADGES
@@ -3785,168 +3776,96 @@
 
       const openRoleCount = rows.filter(row => !row.claimed).length;
 
+      const announcements = APP_STATE.announcements || DEFAULT_ANNOUNCEMENTS;
+      const recentAnnouncements = announcements.slice(0, 2);
+
       return `
         <div class="dashboard-shell">
 
           ${!signedIn ? `
-          <div style="background:linear-gradient(135deg,var(--teal-dim),var(--green-dim));border:1px solid color-mix(in srgb,var(--teal) 18%,var(--border));border-radius:var(--r-xl);padding:28px 28px 24px;margin-bottom:14px;">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px;">
-              <div>
-                <h1 style="color:var(--text);margin-bottom:6px;">MIST Dallas 2027 Planning Portal</h1>
-                <p style="max-width:520px;font-size:14px;">A shared workspace for building the event with clarity, accountability, and less scattered information. Browse open roles, explore the portal, or sign in to apply for a role.</p>
-              </div>
-              <button class="primary" onclick="openLogin()" style="flex-shrink:0;">Sign In / Join</button>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px;">
+            <div>
+              <h1 style="margin-bottom:4px;">MIST Dallas 2027</h1>
+              <p style="font-size:14px;">${openRoleCount} open role${openRoleCount === 1 ? "" : "s"} · ${teamStats.activeOrganizers} organizers on board</p>
             </div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
-              <div style="background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.8);border-radius:var(--r-md);padding:14px;">
-                <div class="stat-title">Open Roles</div>
-                <div class="stat-value">${openRoleCount}</div>
-              </div>
-              <div style="background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.8);border-radius:var(--r-md);padding:14px;">
-                <div class="stat-title">Claimed</div>
-                <div class="stat-value">${teamStats.activeOrganizers} / ${teamStats.totalOrganizers}</div>
-              </div>
-              <div style="background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.8);border-radius:var(--r-md);padding:14px;">
-                <div class="stat-title">Avg Progress</div>
-                <div class="stat-value">${teamStats.averageProgress}%</div>
-                <div class="progress-track" style="margin-top:8px;"><div class="progress-fill" style="width:${teamStats.averageProgress}%"></div></div>
-              </div>
-              <div style="background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.8);border-radius:var(--r-md);padding:14px;">
-                <div class="stat-title">Teams</div>
-                <div class="stat-value">${teamStats.teamCount}</div>
-              </div>
-            </div>
+            <button class="primary" onclick="openLogin()">Sign In</button>
           </div>
           ` : `
-          <div style="margin-bottom:20px;">
-            <h1 style="margin-bottom:4px;">Good to see you${profile?.full_name ? `, ${escapeHtml(profile.full_name.split(" ")[0])}` : ""}.</h1>
-            <p>${hasProfile ? `You're on the <strong style="color:var(--text);font-weight:700;">${escapeHtml(profile.team)}</strong> team as <strong style="color:var(--text);font-weight:700;">${escapeHtml(formatRole(profile.role_id))}</strong>. Use your workbook to track phase progress.` : "Your account is connected. Apply for a role below to unlock your workbook and team tools."}</p>
-            ${hasProfile ? `
-            <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
-              <button class="primary" onclick="openWorkbook()">Open Workbook</button>
-              <button class="ghost" onclick="openTeamPages('${escapeHtml(profile.team || "")}')">My Team Page</button>
-              <button class="ghost" onclick="openCommandCenter()">Command Center</button>
-            </div>` : ""}
-          </div>
-
-          <div class="panel" style="margin-bottom:14px;">
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;">
-              <div class="stat">
-                <div class="stat-title">My Progress</div>
-                <div class="stat-value">${overallPercent}%</div>
-                <div class="progress-track"><div class="progress-fill" style="width:${overallPercent}%"></div></div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Role</div>
-                <div class="stat-value" style="font-size:15px;">${hasProfile ? escapeHtml(formatRole(profile.role_id)) : "Not claimed"}</div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Team</div>
-                <div class="stat-value" style="font-size:15px;">${escapeHtml(profile?.team || "—")}</div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Board Progress</div>
-                <div class="stat-value">${teamStats.averageProgress}%</div>
-                <div class="progress-track"><div class="progress-fill" style="width:${teamStats.averageProgress}%"></div></div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Claimed Seats</div>
-                <div class="stat-value">${teamStats.activeOrganizers} / ${teamStats.totalOrganizers}</div>
-              </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px;">
+            <div>
+              <h1 style="margin-bottom:4px;">${profile?.full_name ? escapeHtml(profile.full_name.split(" ")[0]) : "Welcome back"}</h1>
+              <p style="font-size:14px;">${hasProfile ? `${escapeHtml(formatRole(profile.role_id))} · ${escapeHtml(profile.team)}` : "Apply for a role to get started"}</p>
             </div>
+            ${hasProfile ? `
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="primary" onclick="openWorkbook()">My Workbook</button>
+              <button class="ghost" onclick="openTeamPages('${escapeHtml(profile.team || "")}')">My Team</button>
+            </div>` : `<button class="primary" onclick="openApply()">Apply for a Role</button>`}
           </div>
+          ${hasProfile ? `
+          <div style="display:flex;gap:20px;margin-bottom:24px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:140px;">
+              <div class="label">My Progress</div>
+              <div class="progress-track" style="margin-top:4px;"><div class="progress-fill" style="width:${overallPercent}%"></div></div>
+              <div style="font-size:12px;color:var(--muted);margin-top:4px;">${overallPercent}% complete</div>
+            </div>
+            <div style="flex:1;min-width:140px;">
+              <div class="label">Board Progress</div>
+              <div class="progress-track" style="margin-top:4px;"><div class="progress-fill" style="width:${teamStats.averageProgress}%"></div></div>
+              <div style="font-size:12px;color:var(--muted);margin-top:4px;">${teamStats.averageProgress}% avg · ${teamStats.activeOrganizers}/${teamStats.totalOrganizers} roles filled</div>
+            </div>
+          </div>` : ""}
           `}
 
-          <div class="panel">
-            <div class="phase-header">
-              <div>
-                <h2>Navigate the Portal</h2>
-                <p>Every tool the board needs — organized by what you're trying to do.</p>
-              </div>
-            </div>
-            ${renderDashboardNav(signedIn, hasProfile, profile)}
-          </div>
+          ${renderDashboardNav(signedIn, hasProfile, profile)}
 
-          ${renderPlanningConsole(user, profile, rows, progressRows, deadlines)}
-          ${renderSystemsRoadmap()}
-          ${renderAnnouncements(profile)}
-          ${renderMyNextActions(user, profile, rows, progressRows, deadlines)}
+          ${recentAnnouncements.length ? `
+          <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;">
+            ${recentAnnouncements.map(a => `
+              <div class="panel" style="padding:14px 18px;margin-bottom:0;display:flex;gap:12px;align-items:flex-start;">
+                <div style="flex-shrink:0;font-size:18px;line-height:1;">📌</div>
+                <div>
+                  <div style="font-weight:700;font-size:13px;margin-bottom:2px;">${escapeHtml(a.title)}</div>
+                  <div style="font-size:13px;color:var(--muted);">${escapeHtml(a.body)}</div>
+                </div>
+              </div>
+            `).join("")}
+          </div>` : ""}
+
         </div>
       `;
     }
 
     function renderDashboardNav(signedIn, hasProfile, profile) {
-      const sections = [
-        {
-          label: "Do The Work",
-          hint: "Daily planning tools",
-          color: "#247a52",
-          cards: [
-            signedIn && hasProfile
-              ? { title: "My Workbook", body: "Role checklist, notes, phase plans, and autosave progress.", action: "openWorkbook()" }
-              : { title: "Apply for a Role", body: "Log in or create an account, then apply for an open organizer role.", action: "openApply()" },
-            { title: "Team Pages", body: "Focused team hubs with roles, tasks, start phases, and claim status.", action: "openTeamPages()" },
-            { title: "Progress Board", body: "Shared completion percentages and recent saved activity.", action: "openProgressBoard()" }
-          ]
-        },
-        {
-          label: "Coordinate",
-          hint: "Leadership visibility",
-          color: "#c9972b",
-          cards: [
-            { title: "Command Center", body: "Open seats, deadline risk, team readiness, and operational checks.", action: "openCommandCenter()" },
-            { title: "Meeting Hub & Decision Log", body: "Agendas, blockers, action items, decisions, owners, and follow-ups.", action: "openMeetings()" },
-            { title: "Feedback Addressal", body: "Turn past-year feedback into themes, owners, action plans, and status.", action: "openFeedback()" },
-            { title: "Timeline", body: "Foundations, Build, Stabilization, and Execution at a glance.", action: "openTimeline()" },
-            { title: "Calendar", body: "Deadline cards, calendar export, and reminder preferences.", action: "openCalendar()" }
-          ]
-        },
-        {
-          label: "Operate",
-          hint: "Event systems",
-          color: "#7b61ff",
-          cards: [
-            { title: "MyMIST Integration Center", body: "Stage exports for participants, schools, badges, and rosters.", action: "openIntegrations()" },
-            { title: "Weekend Tournament Manager", body: "Rooms, competition blocks, student placement, and NFC check-ins.", action: "openTournamentManager()" },
-            { title: "Directory", body: "Names, roles, teams, emails, and unclaimed role seats.", action: "openDirectory()" }
-          ]
-        },
-        {
-          label: "Find Answers",
-          hint: "Organizer rulebook",
-          color: "#1f8a9b",
-          cards: [
-            { title: "Rulebook Search", body: "Search organizer expectations, policies, processes, and common questions.", action: "openKnowledge()" },
-            { title: "FAQ Library", body: "Fast answers for applications, roles, deadlines, MyMIST, and event weekend.", action: "openKnowledge()" }
-          ]
-        },
-        {
-          label: "Applications",
-          hint: "Recruit and assign",
-          color: "#b13f4a",
-          cards: [
-            { title: "Application Status", body: "Check whether an application is pending, approved, or declined.", action: "openApplicationStatus()" },
-            ...(profile?.is_admin ? [{ title: "Review Applications", body: "Approve, decline, and email role applicants.", action: "openApplications()" }] : [])
-          ]
-        }
-      ];
+      const tools = [
+        signedIn && hasProfile
+          ? { title: "Workbook",         action: "openWorkbook()" }
+          : { title: "Apply for a Role", action: "openApply()" },
+        { title: "Team Pages",           action: "openTeamPages()" },
+        { title: "Chat",                 action: "openMessaging()", hidden: !signedIn },
+        { title: "Command Center",       action: "openCommandCenter()" },
+        { title: "Calendar",             action: "openCalendar()" },
+        { title: "Timeline",             action: "openTimeline()" },
+        { title: "Meetings & Decisions", action: "openMeetings()" },
+        { title: "Progress Board",       action: "openProgressBoard()" },
+        { title: "Directory",            action: "openDirectory()" },
+        { title: "MyMIST Integration",   action: "openIntegrations()" },
+        { title: "Tournament Manager",   action: "openTournamentManager()" },
+        { title: "Feedback",             action: "openFeedback()" },
+        { title: "Rulebook",             action: "openKnowledge()" },
+        { title: "Application Status",   action: "openApplicationStatus()" },
+        ...(profile?.is_admin ? [{ title: "Review Applications", action: "openApplications()" }] : [])
+      ].filter(t => !t.hidden);
 
-      return sections.map(section => `
-        <div class="nav-section" style="--section-color:${section.color}">
-          <div class="nav-section-head">
-            <strong>${escapeHtml(section.label)}</strong>
-            <span>${escapeHtml(section.hint)}</span>
-          </div>
-          <div class="nav-grid">
-            ${section.cards.map(card => `
-              <button class="nav-card" onclick="${card.action}">
-                <strong>${escapeHtml(card.title)}</strong>
-                <span>${escapeHtml(card.body)}</span>
-              </button>
-            `).join("")}
-          </div>
+      return `
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;">
+          ${tools.map(t => `
+            <button class="nav-card" onclick="${t.action}">
+              <strong>${escapeHtml(t.title)}</strong>
+            </button>
+          `).join("")}
         </div>
-      `).join("");
+      `;
     }
 
     function renderSystemsRoadmap() {
