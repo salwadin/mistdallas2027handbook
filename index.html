@@ -4080,57 +4080,41 @@
         }
       ];
 
-      const stars = generateStars(220);
-
       if (step === 1) {
         return `
-          <div class="ob-shell">
-            <svg class="ob-stars" viewBox="0 0 100 100" preserveAspectRatio="none">${stars}</svg>
+          <div style="max-width:680px;margin:0 auto;padding:8px 0 48px;">
 
-            <div class="ob-content">
-              <div class="ob-step">Step 1 of 2</div>
-
-              <div class="ob-eyebrow">
-                <span class="ob-eyebrow-dot"></span>
-                MIST Dallas 2027 · Organizer Board
-              </div>
-
-              <h1 class="ob-title">Welcome to the<br>planning portal.</h1>
-
-              <p class="ob-subtitle">
-                This is where the MIST Dallas 2027 organizing board plans, coordinates, and executes the season — together. Roles, deadlines, teams, decisions, and the event weekend all live here.
-              </p>
-
-              <div class="ob-section-label">How the season works</div>
-              <div class="ob-phases">
-                ${phases.map((p, i) => `
-                  <div class="ob-phase-card" style="--ob-color:${p.color};--ob-gradient:${p.gradient}">
-                    <div class="ob-phase-head">
-                      <div class="ob-phase-num">${i + 1}</div>
-                      <div class="ob-phase-name">${p.label}</div>
-                      <div class="ob-phase-dates">${p.dates}</div>
-                    </div>
-                    <p class="ob-phase-desc">${p.desc}</p>
-                    <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07);font-size:11px;font-weight:600;color:${p.color};opacity:0.85;">↳ ${p.start}</div>
-                  </div>
-                `).join("")}
-              </div>
-
-              <div class="ob-callout">
-                <div class="ob-callout-title">Your role in all of this</div>
-                <p class="ob-callout-body">Every organizer has a role tied to a team and a start phase. Your workbook tracks deliverables, your team page keeps everyone aligned, and the board runs on shared accountability — deadlines are visible, progress is tracked, and decisions are logged for everyone.</p>
-              </div>
-
-              <div class="ob-actions">
-                <button class="ob-btn-ghost" onclick="openLogin()">
-                  Already have an account? Sign in →
-                </button>
-                <button class="ob-btn-primary" onclick="APP_STATE.onboardingStep=2;renderApp();">
-                  Continue — Apply for a Role
-                  <span style="font-size:18px;line-height:1;">→</span>
-                </button>
-              </div>
+            <div style="margin-bottom:32px;">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--teal);margin-bottom:10px;">Step 1 of 2</div>
+              <h1 style="font-size:32px;margin-bottom:10px;letter-spacing:-0.03em;line-height:1.1;">Welcome to the MIST Dallas<br>2027 Organizer Board.</h1>
+              <p style="font-size:15px;line-height:1.7;color:var(--muted);max-width:520px;margin:0;">This is where the organizing board plans, coordinates, and executes the season — together. Roles, deadlines, teams, decisions, and the event weekend all live here.</p>
             </div>
+
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--faint);margin-bottom:12px;">How the season works</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px;margin-bottom:28px;">
+              ${phases.map((p, i) => `
+                <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid ${p.color};border-radius:var(--r-lg);padding:18px 20px;">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                    <div style="width:26px;height:26px;border-radius:50%;background:${p.gradient};color:white;font-size:11px;font-weight:800;display:grid;place-items:center;flex-shrink:0;">${i + 1}</div>
+                    <div style="font-weight:700;font-size:14px;color:var(--text);">${p.label}</div>
+                    <div style="margin-left:auto;font-size:11px;font-weight:600;color:${p.color};">${p.dates}</div>
+                  </div>
+                  <p style="font-size:13px;line-height:1.6;margin:0 0 10px;color:var(--muted);">${p.desc}</p>
+                  <div style="font-size:11px;font-weight:600;color:${p.color};">↳ ${p.start}</div>
+                </div>
+              `).join("")}
+            </div>
+
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 22px;margin-bottom:32px;">
+              <div style="font-weight:700;font-size:14px;color:var(--text);margin-bottom:6px;">Your role in all of this</div>
+              <p style="font-size:13px;line-height:1.65;margin:0;color:var(--muted);">Every organizer has a role tied to a team and a start phase. Your workbook tracks deliverables, your team page keeps everyone aligned, and the board runs on shared accountability — deadlines are visible, progress is tracked, and decisions are logged for everyone.</p>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+              <button class="ghost" onclick="openLogin()" style="min-width:0;font-size:13px;">Already have an account? Sign in</button>
+              <button class="primary" style="min-width:180px;" onclick="APP_STATE.onboardingStep=2;renderApp();">Continue — Apply for a Role →</button>
+            </div>
+
           </div>
         `;
       }
