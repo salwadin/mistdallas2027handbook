@@ -2906,8 +2906,9 @@
         return alert("Could not find that application.");
       }
 
+      const applicationEmail = String(application.email || "").trim();
+
       if (status === "approved") {
-        const applicationEmail = String(application.email || "").trim();
         const { data: existingClaim, error: claimError } = await supabaseClient
           .from("profiles")
           .select("id,full_name,email")
@@ -2923,50 +2924,35 @@
           return alert(`This role is already claimed by ${existingClaim.full_name || existingClaim.email}.`);
         }
 
-        // Find profile by user_id (if stored on application) or by email
+        // If they already have an account, assign the role immediately
         let applicantProfile = null;
-        let applicantError = null;
         if (application.user_id) {
           const result = await supabaseClient.from("profiles").select("*").eq("id", application.user_id).maybeSingle();
           applicantProfile = result.data;
-          applicantError = result.error;
         }
         if (!applicantProfile) {
           const result = await supabaseClient.from("profiles").select("*").ilike("email", applicationEmail).maybeSingle();
           applicantProfile = result.data;
-          applicantError = result.error;
         }
 
-        if (applicantError) {
-          console.error("Applicant profile lookup error:", applicantError);
-          return alert("Could not look up the applicant profile.");
-        }
+        if (applicantProfile) {
+          const selectedRole = ROLE_OPTIONS.find(role => role.id === application.role_id);
+          const { error: assignError } = await supabaseClient
+            .from("profiles")
+            .update({
+              full_name: applicantProfile.full_name || application.full_name,
+              role_id: application.role_id,
+              team: selectedRole ? selectedRole.team : null,
+              updated_at: new Date().toISOString()
+            })
+            .eq("id", applicantProfile.id);
 
-        if (!applicantProfile) {
-          return alert("Application approved, but this person has not created an account yet. Ask them to sign up at the portal with the same email (" + applicationEmail + "), then approve again to assign the role.");
+          if (assignError) {
+            console.error("Role assignment error:", assignError);
+            return alert(assignError.message);
+          }
         }
-
-        const selectedRole = ROLE_OPTIONS.find(role => role.id === application.role_id);
-        const { data: assignedProfile, error: assignError } = await supabaseClient
-          .from("profiles")
-          .update({
-            full_name: applicantProfile.full_name || application.full_name,
-            role_id: application.role_id,
-            team: selectedRole ? selectedRole.team : null,
-            updated_at: new Date().toISOString()
-          })
-          .eq("id", applicantProfile.id)
-          .select("id,email,role_id,team")
-          .maybeSingle();
-
-        if (assignError) {
-          console.error("Role assignment error:", assignError);
-          return alert(assignError.message);
-        }
-
-        if (!assignedProfile || assignedProfile.role_id !== application.role_id) {
-          return alert("The application was found, but the role was not assigned. Re-run the Supabase admin profile policy, then try Approve again.");
-        }
+        // If no account yet, role will be assigned when they sign up via the invite link
       }
 
       const { error } = await supabaseClient
@@ -2985,8 +2971,22 @@
         return alert(error.message);
       }
 
-      if (status === "approved") {
-        alert("Application approved and role assigned.");
+      // Auto-send decision email on approve or decline
+      if (status === "approved" || status === "declined") {
+        const { data: emailError } = await supabaseClient.functions.invoke("send-application-decision", {
+          body: {
+            application_id: applicationId,
+            decision: status,
+            role_title: formatRole(application.role_id),
+            applicant_email: applicationEmail,
+            applicant_name: application.full_name || "",
+          }
+        });
+        if (status === "approved") {
+          alert("Approved! An account setup email has been sent to " + applicationEmail + ".");
+        } else {
+          alert("Application declined. A notification email has been sent to " + applicationEmail + ".");
+        }
       }
 
       renderApp();
@@ -8403,25 +8403,37 @@ alter publication supabase_realtime add table messages;</pre>
         return;
       }
 
-      // If no role yet, show pending state or apply form
+      // If no role yet, check for an approved application and auto-assign the role
       if (!profile || !profile.role_id) {
-        // Check if they already have a pending application
         const { data: existingApp } = await supabaseClient
           .from("role_applications")
-          .select("id,role_id,status,created_at")
+          .select("id,role_id,status,created_at,full_name")
           .ilike("email", user.email)
           .order("created_at", { ascending: false })
           .limit(1)
           .maybeSingle();
 
-        if (existingApp) {
+        // Auto-assign role if their application was approved
+        if (existingApp?.status === "approved" && existingApp.role_id) {
+          const selectedRole = ROLE_OPTIONS.find(r => r.id === existingApp.role_id);
+          await supabaseClient.from("profiles").upsert({
+            id: user.id,
+            email: user.email,
+            full_name: profile?.full_name || existingApp.full_name || "",
+            role_id: existingApp.role_id,
+            team: selectedRole ? selectedRole.team : null,
+            updated_at: new Date().toISOString()
+          }, { onConflict: "id" });
+          profile = await getProfile(user.id);
+          setNav(user, profile);
+        } else if (existingApp) {
           app.innerHTML = renderApplicationPending(user, profile, existingApp, rows);
           return;
+        } else {
+          APP_STATE.view = "apply";
+          app.innerHTML = renderRoleApplication(user, rows);
+          return;
         }
-
-        APP_STATE.view = "apply";
-        app.innerHTML = renderRoleApplication(user, rows);
-        return;
       }
 
       APP_STATE.progress = await getWorkbookProgress(user.id);
