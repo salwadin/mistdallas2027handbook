@@ -2762,9 +2762,26 @@
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
       if (!email || !password) return alert("Enter email and password.");
-      const { error } = await supabaseClient.auth.signUp({ email, password });
+      const { data, error } = await supabaseClient.auth.signUp({ email, password });
       if (error) return alert(error.message);
-      alert("Account created. Then log in.");
+      // Email confirmation may be required — session is null until confirmed
+      if (!data.session) {
+        const app = document.getElementById("app");
+        app.innerHTML = `
+          <div class="card" style="max-width:440px;margin:40px auto;text-align:center;">
+            <div style="font-size:40px;margin-bottom:12px;">📬</div>
+            <h2 style="margin-bottom:8px;">Check your email</h2>
+            <p style="color:var(--faint);margin-bottom:16px;">
+              We sent a confirmation link to <strong>${email}</strong>.<br>
+              Click it to activate your account, then come back here to log in.
+            </p>
+            <p style="font-size:13px;color:var(--faint);">Didn't get it? Check spam, or try signing up again.</p>
+            <button class="ghost full" style="margin-top:16px;" onclick="APP_STATE.view='login';renderApp();">Back to Sign In</button>
+          </div>`;
+        return;
+      }
+      // If session exists (email confirmations disabled), go straight in
+      location.reload();
     }
 
     async function login() {
@@ -2845,6 +2862,8 @@
         return alert("Please fill out all required application questions.");
       }
 
+      const currentUser = await getUser();
+
       const { error } = await supabaseClient
         .from("role_applications")
         .insert({
@@ -2856,7 +2875,8 @@
           availability,
           selected_roles: selectedRoles,
           responses,
-          status: "pending"
+          status: "pending",
+          ...(currentUser ? { user_id: currentUser.id } : {})
         });
 
       if (error) {
@@ -2864,7 +2884,6 @@
         return alert(error.message);
       }
 
-      alert("Application submitted. Leadership will review it.");
       APP_STATE.applicationRoleId = null;
       APP_STATE.view = "dashboard";
       renderApp();
@@ -2904,11 +2923,19 @@
           return alert(`This role is already claimed by ${existingClaim.full_name || existingClaim.email}.`);
         }
 
-        const { data: applicantProfile, error: applicantError } = await supabaseClient
-          .from("profiles")
-          .select("*")
-          .ilike("email", applicationEmail)
-          .maybeSingle();
+        // Find profile by user_id (if stored on application) or by email
+        let applicantProfile = null;
+        let applicantError = null;
+        if (application.user_id) {
+          const result = await supabaseClient.from("profiles").select("*").eq("id", application.user_id).maybeSingle();
+          applicantProfile = result.data;
+          applicantError = result.error;
+        }
+        if (!applicantProfile) {
+          const result = await supabaseClient.from("profiles").select("*").ilike("email", applicationEmail).maybeSingle();
+          applicantProfile = result.data;
+          applicantError = result.error;
+        }
 
         if (applicantError) {
           console.error("Applicant profile lookup error:", applicantError);
@@ -2916,7 +2943,7 @@
         }
 
         if (!applicantProfile) {
-          return alert("Application approved, but this person has not created an account yet. Ask them to sign up with the same email first, then approve again to assign the role.");
+          return alert("Application approved, but this person has not created an account yet. Ask them to sign up at the portal with the same email (" + applicationEmail + "), then approve again to assign the role.");
         }
 
         const selectedRole = ROLE_OPTIONS.find(role => role.id === application.role_id);
@@ -3751,9 +3778,9 @@
               <input id="password" type="password" placeholder="Your password" />
             </div>
             <button class="primary full" onclick="login()">Log In</button>
-            <button class="ghost full" onclick="signUp()" style="min-width:0;">Create an account</button>
+            <button class="ghost full" onclick="signUp()" style="min-width:0;">Create Account</button>
           </div>
-          <p class="subtext" style="text-align:center;">New organizer? Create your account first, then log in.</p>
+          <p class="subtext" style="text-align:center;">New organizer? Create your account — you'll get a confirmation email, then log in and apply for your role.</p>
         </div>
       `;
     }
@@ -3788,6 +3815,47 @@
           <div class="note">For now, each organizer selects their role once. We can make this admin-assigned later.</div>
         </div>
       `;
+    }
+
+    function renderApplicationPending(user, profile, existingApp, rows) {
+      const roleLabel = existingApp?.role_id
+        ? (ROLE_OPTIONS.find(r => r.id === existingApp.role_id)?.title || existingApp.role_id)
+        : "a role";
+      const statusColor = existingApp?.status === "approved" ? "var(--green)" : existingApp?.status === "declined" ? "#ef4444" : "var(--gold)";
+      const statusLabel = existingApp?.status === "approved" ? "Approved" : existingApp?.status === "declined" ? "Not moving forward" : "Pending review";
+
+      return `
+        <div class="dashboard-shell">
+          <div class="topbar">
+            <div>
+              <h1>Application Submitted</h1>
+              <p>Leadership is reviewing your application.</p>
+            </div>
+            <button class="ghost" onclick="logout()">Sign Out</button>
+          </div>
+          <div style="max-width:520px;">
+            <div class="card" style="margin-bottom:16px;">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                <div style="width:40px;height:40px;border-radius:50%;background:var(--teal-dim);display:grid;place-items:center;font-size:20px;">⏳</div>
+                <div>
+                  <div style="font-weight:700;font-size:16px;">${roleLabel}</div>
+                  <div style="font-size:13px;color:var(--faint);">Applied · Status: <span style="color:${statusColor};font-weight:600;">${statusLabel}</span></div>
+                </div>
+              </div>
+              <p style="color:var(--faint);font-size:14px;margin:0;">
+                ${existingApp?.status === "approved"
+                  ? "Your role has been approved. If you don't see your dashboard yet, try signing out and back in."
+                  : existingApp?.status === "declined"
+                  ? "Leadership reviewed your application and isn't moving forward with this assignment right now. Reach out to the director for next steps."
+                  : "Your application is in the queue. You'll get an email once leadership reviews it. No action needed from you right now."}
+              </p>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="ghost" onclick="APP_STATE.view='apply';renderApp();">Edit / Resubmit</button>
+              <button class="ghost" onclick="renderApp();">Refresh Status</button>
+            </div>
+          </div>
+        </div>`;
     }
 
     function renderRoleApplication(user, rows = []) {
@@ -8304,7 +8372,18 @@ alter publication supabase_realtime add table messages;</pre>
         return;
       }
 
-      const profile = await getProfile(user.id);
+      let profile = await getProfile(user.id);
+
+      // Auto-create a bare profile on first login so the admin can find this user
+      if (!profile) {
+        await supabaseClient.from("profiles").upsert({
+          id: user.id,
+          email: user.email,
+          updated_at: new Date().toISOString()
+        }, { onConflict: "id" });
+        profile = await getProfile(user.id);
+      }
+
       // Re-render nav now that we have profile (workbook link, user name, etc.)
       setNav(user, profile);
 
@@ -8313,7 +8392,22 @@ alter publication supabase_realtime add table messages;</pre>
         return;
       }
 
+      // If no role yet, show pending state or apply form
       if (!profile || !profile.role_id) {
+        // Check if they already have a pending application
+        const { data: existingApp } = await supabaseClient
+          .from("role_applications")
+          .select("id,role_id,status,created_at")
+          .ilike("email", user.email)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (existingApp) {
+          app.innerHTML = renderApplicationPending(user, profile, existingApp, rows);
+          return;
+        }
+
         APP_STATE.view = "apply";
         app.innerHTML = renderRoleApplication(user, rows);
         return;
