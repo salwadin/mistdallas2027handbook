@@ -2997,7 +2997,7 @@
 
       const { data: app } = await supabaseClient
         .from("role_applications")
-        .select("email, name")
+        .select("email, full_name")
         .eq("id", applicationId)
         .maybeSingle();
 
@@ -3009,7 +3009,7 @@
           decision,
           role_title: roleTitle,
           applicant_email: app.email,
-          applicant_name: app.name || "",
+          applicant_name: app.full_name || "",
         }
       });
 
@@ -3019,7 +3019,7 @@
         return alert(detail || error?.message || data?.error || "Could not send application email.");
       }
 
-      alert("Decision email sent to " + app.email);
+      alert("Decision email sent to " + app.email + (app.full_name ? " (" + app.full_name + ")" : ""));
     }
 
     async function functionErrorDetail(error) {
