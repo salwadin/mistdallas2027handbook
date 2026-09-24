@@ -1971,19 +1971,14 @@
     const PHASES = buildPhaseLookup(SOURCE_DATA);
     const ROLE_OPTIONS = buildRoleOptions(SOURCE_DATA);
     const WORKBOOKS = buildWorkbookLookup(SOURCE_DATA);
-    const TIMELINE = buildTimeline(SOURCE_DATA);
     const TEAM_COLORS = buildTeamColors(SOURCE_DATA);
-    const PHASE_COLORS = {
-      foundations: "#1f8a9b",
-      build: "#c9972b",
-      stabilization: "#7b61ff",
-      execution: "#b13f4a"
-    };
-    const PHASE_GRADIENTS = {
-      foundations: "linear-gradient(135deg, #0f5f6b, #1f8a9b)",
-      build: "linear-gradient(135deg, #8a6f2a, #c9972b)",
-      stabilization: "linear-gradient(135deg, #4b3aa3, #7b61ff)",
-      execution: "linear-gradient(135deg, #7f2632, #b13f4a)"
+    const MILESTONE_COLORS = {
+      hard:         "#b13f4a",
+      registration: "#1f8a9b",
+      review:       "#c9972b",
+      tournament:   "#247a52",
+      postevent:    "#7b61ff",
+      default:      "#888"
     };
     const TOURNAMENT_MANAGER_STEPS = [
       {
@@ -2028,7 +2023,7 @@
         title: "Calendar & Deadlines",
         status: "Live",
         color: "#c9972b",
-        body: "Deadlines are grouped by phase, export to calendar files, and support reminder preferences.",
+        body: "Deadlines are grouped by month, export to calendar files, and support reminder preferences.",
         action: "openCalendar()",
         cta: "Calendar"
       },
@@ -2409,12 +2404,12 @@
       { id: "interested_roles", section: "Positions", type: "checkbox", label: "Check off as many as you are interested in!", options: [], required: true },
       { id: "role_preference_order", section: "Positions", type: "textarea", label: "If multiple positions selected, list roles in order of preference below", required: false }
     ];
-    const CALENDAR_DEADLINES = buildCalendarDeadlines();
+    // CALENDAR_DEADLINES and TIMELINE are set after MASTER_MILESTONES is defined below
     const DEFAULT_ANNOUNCEMENTS = [
       {
         id: "welcome",
         title: "Welcome to the MIST Dallas 2027 portal",
-        body: "Use this space to find roles, apply, track planning phases, and keep team work organized in one place.",
+        body: "Use this space to find roles, apply, track deliverables on the Tasks page, and keep work organized toward tournament weekend March 25–28, 2027.",
         audience: "all",
         priority: "medium",
         created_at: new Date().toISOString()
@@ -2425,6 +2420,7 @@
       view: "dashboard",
       onboardingStep: 1,
       activePhase: "foundations",
+      taskFilter: { dept: "all", month: "all", status: "all" },
       applicationRoleId: null,
       currentDeadlines: [],
       tournament: {
@@ -2451,7 +2447,7 @@
       saveTimers: {}
     };
 
-    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "calendar", "login", "apply", "application-status", "meetings", "knowledge", "feedback"]);
+    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "tasks", "calendar", "login", "apply", "application-status", "meetings", "knowledge", "feedback"]);
 
     function buildPhaseLookup(data) {
       if (data.PHASE_META) {
@@ -2534,29 +2530,59 @@
     }
 
     function buildTimeline(data) {
-      if (data.timeline) return data.timeline;
-
-      return Object.values(PHASES).map(phase => ({
-        date: phase.dates,
-        phase: phase.label,
-        title: phase.title,
-        description: "Use this phase as a shared checkpoint for organizer planning and readiness.",
-        owners: ["All Teams"]
-      }));
+      return []; // replaced by MASTER_MILESTONES defined below
     }
 
-    function buildCalendarDeadlines() {
-      return [
-        { id: "foundations-core-roles", date: "Sep 15", due_date: "2026-09-15", phase: "foundations", title: "Core roles claimed", detail: "RD, ADs, directors, and foundational leads are claimed in the portal." },
-        { id: "foundations-checkin", date: "Sep 30", due_date: "2026-09-30", phase: "foundations", title: "Foundations check-in", detail: "Team structures, communication norms, and first planning priorities are drafted." },
-        { id: "build-roles-onboarded", date: "Oct 15", due_date: "2026-10-15", phase: "build", title: "Build roles onboarded", detail: "Build-phase chairs and leads are claimed and briefed on first deliverables." },
-        { id: "build-mid-review", date: "Nov 15", due_date: "2026-11-15", phase: "build", title: "Mid-build progress review", detail: "Venue, registration, competitions, PR, sponsorship, and DT progress are reviewed." },
-        { id: "stabilization-roles", date: "Dec 1", due_date: "2026-12-01", phase: "stabilization", title: "Stabilization roles onboarded", detail: "December roles are claimed and readiness gaps are assigned owners." },
-        { id: "stabilization-lock", date: "Dec 20", due_date: "2026-12-20", phase: "stabilization", title: "Schedules and rosters locked", detail: "Major schedules, rosters, brackets, and staffing plans are ready for execution prep." },
-        { id: "execution-training", date: "Jan 10", due_date: "2027-01-10", phase: "execution", title: "Execution training complete", detail: "Dream Team and event-day operators complete walkthroughs and escalation training." },
-        { id: "execution-run-show", date: "Event Week", due_date: "2027-01-20", phase: "execution", title: "Final run-of-show confirmed", detail: "Command Center, communications, and all team leads confirm event-week readiness." }
-      ];
-    }
+    const MASTER_MILESTONES = [
+      // OCTOBER 2026
+      { id: "oct-01-onboard",    due_date: "2026-10-01", date: "Oct 1",  month: "October 2026",  type: "default",  title: "All Leads & Coordinators onboarded", detail: "Every position receives responsibilities, folders, templates, reporting structure, and deadlines." },
+      { id: "oct-05-meetings",   due_date: "2026-10-05", date: "Oct 5",  month: "October 2026",  type: "default",  title: "First department meetings held", detail: "Every department holds its first internal meeting." },
+      { id: "oct-11-biweekly",   due_date: "2026-10-11", date: "Oct 11", month: "October 2026",  type: "review",   title: "Biweekly accountability check-in #1", detail: "Board members report: what was due, what is complete, what is incomplete, blockers, and status (ON TRACK / AT RISK / BLOCKED)." },
+      { id: "oct-15-needs",      due_date: "2026-10-15", date: "Oct 15", month: "October 2026",  type: "default",  title: "Dept needs, goals & budget items submitted", detail: "Every department submits preliminary needs, goals, dependencies, and anticipated budget items." },
+      { id: "oct-25-biweekly",   due_date: "2026-10-25", date: "Oct 25", month: "October 2026",  type: "review",   title: "Biweekly accountability check-in #2", detail: "Board members report status update." },
+      { id: "oct-31-op-plan",    due_date: "2026-10-31", date: "Oct 31", month: "October 2026",  type: "hard",     title: "First complete dept operational plan due", detail: "Every department submits its first complete operational plan." },
+      // NOVEMBER 2026
+      { id: "nov-07-budgets",    due_date: "2026-11-07", date: "Nov 7",  month: "November 2026", type: "hard",     title: "ALL department budgets due to Finance", detail: "No extensions. Finance Lead will not wait for missing budgets." },
+      { id: "nov-08-biweekly",   due_date: "2026-11-08", date: "Nov 8",  month: "November 2026", type: "review",   title: "Biweekly accountability check-in #3", detail: "Board members report status update." },
+      { id: "nov-15-drafts",     due_date: "2026-11-15", date: "Nov 15", month: "November 2026", type: "default",  title: "First drafts of all major plans due", detail: "Nationals-facing materials, pilots/addenda, program plans, registration systems, and other major plans due internally." },
+      { id: "nov-22-review",     due_date: "2026-11-22", date: "Nov 22", month: "November 2026", type: "review",   title: "Internal review & corrections complete", detail: "Biweekly check-in #4. Internal review and corrections of all November 15 submissions completed." },
+      { id: "nov-30-nationals",  due_date: "2026-11-30", date: "Nov 30", month: "November 2026", type: "hard",     title: "NATIONALS DEADLINE — Everything for Nationals approval complete", detail: "Everything required for Nationals approval and the December registration announcement must be complete. This is one of the most important deadlines in the portal." },
+      // DECEMBER 2026
+      { id: "dec-01-nationals",  due_date: "2026-12-01", date: "Dec 1",  month: "December 2026", type: "hard",     title: "Nationals submissions & final registration infrastructure", detail: "Nationals submissions/approvals and final registration infrastructure completed." },
+      { id: "dec-06-biweekly",   due_date: "2026-12-06", date: "Dec 6",  month: "December 2026", type: "review",   title: "Biweekly accountability check-in #5", detail: "Board members report status update." },
+      { id: "dec-10-announce",   due_date: "2026-12-10", date: "Dec 10", month: "December 2026", type: "default",  title: "Registration dates publicly announced", detail: "Dec 10 public announcement of registration opening Jan 1." },
+      { id: "dec-15-website",    due_date: "2026-12-15", date: "Dec 15", month: "December 2026", type: "hard",     title: "Website, resources & FAQ live", detail: "Website, registration resources, organizer guidance, FAQ, and related participant resources ready." },
+      { id: "dec-20-biweekly",   due_date: "2026-12-20", date: "Dec 20", month: "December 2026", type: "review",   title: "Biweekly accountability check-in #6", detail: "Board members report status update." },
+      // JANUARY 2027
+      { id: "jan-01-reg-open",   due_date: "2027-01-01", date: "Jan 1",  month: "January 2027",  type: "registration", title: "REGISTRATION OPENS", detail: "MyMIST registration opens for all schools. Confirm launch is successful." },
+      { id: "jan-03-biweekly",   due_date: "2027-01-03", date: "Jan 3",  month: "January 2027",  type: "review",   title: "Biweekly accountability check-in #7", detail: "Board members report status update." },
+      { id: "jan-15-audit",      due_date: "2027-01-15", date: "Jan 15", month: "January 2027",  type: "default",  title: "Mid-registration audit", detail: "Registration Coordinator reviews school counts, incomplete registrations, and communicates issues." },
+      { id: "jan-17-biweekly",   due_date: "2027-01-17", date: "Jan 17", month: "January 2027",  type: "review",   title: "Biweekly accountability check-in #8", detail: "Board members report status update." },
+      { id: "jan-25-push",       due_date: "2027-01-25", date: "Jan 25", month: "January 2027",  type: "default",  title: "Final registration push begins", detail: "Outreach and Marketing coordinate final push for unregistered schools." },
+      { id: "jan-31-reg-close",  due_date: "2027-01-31", date: "Jan 31", month: "January 2027",  type: "registration", title: "REGISTRATION CLOSES", detail: "MyMIST registration closes. Biweekly check-in #9." },
+      // FEBRUARY 2027
+      { id: "feb-01-cleanup",    due_date: "2027-02-01", date: "Feb 1",  month: "February 2027", type: "default",  title: "Registration cleanup & preliminary rosters", detail: "Registration cleanup and preliminary rosters completed Feb 1–7." },
+      { id: "feb-14-biweekly",   due_date: "2027-02-14", date: "Feb 14", month: "February 2027", type: "review",   title: "Biweekly accountability check-in #10", detail: "Board members report status update." },
+      { id: "feb-15-ops",        due_date: "2027-02-15", date: "Feb 15", month: "February 2027", type: "default",  title: "Operational plans updated with registration numbers", detail: "All departments update their plans using actual registration counts." },
+      { id: "feb-28-lock",       due_date: "2027-02-28", date: "Feb 28", month: "February 2027", type: "hard",     title: "Operations substantially locked", detail: "Biweekly check-in #11. Rosters, rooms, judges, volunteers, sports brackets, food counts, technology needs substantially locked." },
+      // MARCH 2027
+      { id: "mar-07-schedules",  due_date: "2027-03-07", date: "Mar 7",  month: "March 2027",    type: "hard",     title: "Major schedules & assignments substantially locked", detail: "All major schedules and assignments finalized." },
+      { id: "mar-14-readiness",  due_date: "2027-03-14", date: "Mar 14", month: "March 2027",    type: "review",   title: "Two-week readiness review (Final check-in #12)", detail: "Final biweekly check-in. All teams confirm readiness." },
+      { id: "mar-18-purchases",  due_date: "2027-03-18", date: "Mar 18", month: "March 2027",    type: "hard",     title: "Final purchasing & printing deadline", detail: "No major purchases or print orders after this date without Finance Lead approval." },
+      { id: "mar-21-final",      due_date: "2027-03-21", date: "Mar 21", month: "March 2027",    type: "review",   title: "Final Readiness Report — all instructions distributed", detail: "Final volunteer, judge, organizer, competitor, and board instructions distributed. All teams confirm 100% ready." },
+      { id: "mar-22-sims",       due_date: "2027-03-22", date: "Mar 22", month: "March 2027",    type: "default",  title: "Final simulations, packing & contingency checks", detail: "Mar 22–23: Final simulations, packing, and contingency checks." },
+      { id: "mar-24-setup",      due_date: "2027-03-24", date: "Mar 24", month: "March 2027",    type: "tournament", title: "Setup & final venue readiness", detail: "Venue setup. All systems tested on-site." },
+      { id: "mar-25-sports",     due_date: "2027-03-25", date: "Mar 25", month: "March 2027",    type: "tournament", title: "SPORTS DAY", detail: "Thursday March 25: All sports competitions at sports venue." },
+      { id: "mar-26-tournament", due_date: "2027-03-26", date: "Mar 26", month: "March 2027",    type: "tournament", title: "TOURNAMENT DAY 1", detail: "Friday March 26: Full tournament in session." },
+      { id: "mar-27-tournament", due_date: "2027-03-27", date: "Mar 27", month: "March 2027",    type: "tournament", title: "TOURNAMENT DAY 2", detail: "Saturday March 27: Full tournament in session." },
+      { id: "mar-28-finals",     due_date: "2027-03-28", date: "Mar 28", month: "March 2027",    type: "tournament", title: "FINALS / AWARDS / CLOSING", detail: "Sunday March 28: Finals, awards, and closing ceremonies." },
+      // POST EVENT
+      { id: "apr-04-closeout",   due_date: "2027-04-04", date: "Apr 4",  month: "Post-Event",    type: "postevent", title: "Post-event closeout tasks due", detail: "Financial closeout, thank-yous, inventory, sponsor stewardship, lost-and-found, incident documentation." },
+      { id: "apr-11-reports",    due_date: "2027-04-11", date: "Apr 11", month: "Post-Event",    type: "postevent", title: "Department after-action reports due", detail: "Every department submits its after-action report. Donor retention notes and annual giving follow-ups entered in CRM." },
+    ];
+
+    const CALENDAR_DEADLINES = MASTER_MILESTONES;
+    const TIMELINE = MASTER_MILESTONES;
 
     async function getUser() {
       const { data } = await supabaseClient.auth.getUser();
@@ -3058,8 +3084,8 @@
         updated_at: new Date().toISOString()
       };
 
-      if (!payload.title || !payload.phase || !payload.due_date) {
-        return alert("Deadline title, phase, and due date are required.");
+      if (!payload.title || !payload.due_date) {
+        return alert("Deadline title and due date are required.");
       }
 
       const { error } = await supabaseClient
@@ -4274,6 +4300,24 @@
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--teal);margin-bottom:4px;">Open Seats</div>
                 <div style="font-size:28px;font-weight:800;color:var(--text);letter-spacing:-0.03em;">${openRoleCount}</div>
               </div>
+              ${(() => {
+                const today2 = new Date(); today2.setHours(0,0,0,0);
+                const tourn = new Date("2027-03-25");
+                const days = Math.ceil((tourn - today2) / 86400000);
+                const next2 = MASTER_MILESTONES.find(m => new Date(m.due_date) >= today2);
+                return `
+              <div style="background:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.7);border-radius:var(--r-md);padding:16px 18px;">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#247a52;margin-bottom:4px;">Days to Tournament</div>
+                <div style="font-size:28px;font-weight:800;color:var(--text);letter-spacing:-0.03em;">${days > 0 ? days : "🎉"}</div>
+                <div style="font-size:11px;color:var(--muted);">Mar 25, 2027</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.7);border-radius:var(--r-md);padding:16px 18px;">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#b13f4a;margin-bottom:4px;">Next Deadline</div>
+                <div style="font-size:13px;font-weight:700;color:var(--text);line-height:1.3;">${next2 ? escapeHtml(next2.title) : "All done!"}</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:3px;">${next2 ? next2.date : ""}</div>
+              </div>
+                `;
+              })()}
             </div>` : ""}
           </div>
 
@@ -4317,9 +4361,10 @@
           color: "#c9972b",
           cards: [
             { title: "Command Center",       action: "openCommandCenter()" },
-            { title: "Meetings & Decisions", action: "openMeetings()" },
+            { title: "Tasks",                action: "openTasks()" },
+            { title: "Master Timeline",      action: "openTimeline()" },
             { title: "Calendar",             action: "openCalendar()" },
-            { title: "Timeline",             action: "openTimeline()" },
+            { title: "Meetings & Decisions", action: "openMeetings()" },
             { title: "Feedback",             action: "openFeedback()" },
           ]
         },
@@ -5016,7 +5061,7 @@
                       <div class="readiness-row ${timing.daysAway <= 3 ? "warning" : ""}" style="--phase-color:${phaseColor(item.phase)}">
                         <div>
                           <h3>${escapeHtml(item.title)}</h3>
-                          <p>${escapeHtml(formatPhase(item.phase))} • ${escapeHtml(item.owner_label || "All Teams")}</p>
+                          <p>${escapeHtml(item.month || formatPhase(item.phase))} • ${escapeHtml(item.owner_label || "All Teams")}</p>
                         </div>
                         <span class="phase-chip">${escapeHtml(timing.label)}</span>
                       </div>
@@ -6182,25 +6227,268 @@
     }
 
     function renderTimeline() {
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const TOURNAMENT = new Date("2027-03-25");
+      const daysUntil = Math.ceil((TOURNAMENT - today) / 86400000);
+
+      const next = MASTER_MILESTONES.find(m => new Date(m.due_date) >= today);
+      const overdue = MASTER_MILESTONES.filter(m => new Date(m.due_date) < today);
+
+      const byMonth = {};
+      MASTER_MILESTONES.forEach(m => {
+        if (!byMonth[m.month]) byMonth[m.month] = [];
+        byMonth[m.month].push(m);
+      });
+
+      const typeLabel = { hard: "HARD DEADLINE", registration: "REGISTRATION", review: "READINESS REVIEW", tournament: "TOURNAMENT", postevent: "POST-EVENT", default: "" };
+      const typeColor = MILESTONE_COLORS;
+
       return `
         <div class="dashboard-shell">
           <div class="topbar">
             <div>
-              <h1>Planning Timeline</h1>
-              <p>Shared MIST Dallas season roadmap from onboarding through event execution.</p>
+              <h1>Master Timeline</h1>
+              <p>MIST Dallas 2027 · Oct 2026 – Apr 2027 · Tournament: Mar 25–28, 2027</p>
             </div>
-            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
+            <button class="ghost" onclick="goDashboard()">← Dashboard</button>
           </div>
 
-          <div class="panel">
-            <h2>Season Roadmap</h2>
-            <p>Use this as the common reference point for directors, chairs, leads, and ADs.</p>
-            <div class="timeline">
-              ${TIMELINE.map(item => renderTimelineItem(item)).join("")}
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;">
+            <div class="card" style="text-align:center;padding:20px 16px;">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--teal);margin-bottom:4px;">Days to Tournament</div>
+              <div style="font-size:36px;font-weight:800;color:var(--text);">${daysUntil > 0 ? daysUntil : "🎉"}</div>
+              <div style="font-size:12px;color:var(--muted);">Mar 25, 2027</div>
+            </div>
+            <div class="card" style="text-align:center;padding:20px 16px;">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:${typeColor.hard};margin-bottom:4px;">Next Milestone</div>
+              <div style="font-size:14px;font-weight:700;color:var(--text);line-height:1.3;">${next ? escapeHtml(next.title) : "All done!"}</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:4px;">${next ? next.date : ""}</div>
+            </div>
+            <div class="card" style="text-align:center;padding:20px 16px;">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:${overdue.length ? typeColor.hard : "var(--teal)"};margin-bottom:4px;">Overdue</div>
+              <div style="font-size:36px;font-weight:800;color:${overdue.length ? typeColor.hard : "var(--text)"};">${overdue.length}</div>
+              <div style="font-size:12px;color:var(--muted);">milestone${overdue.length !== 1 ? "s" : ""}</div>
+            </div>
+            <div class="card" style="text-align:center;padding:20px 16px;">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:6px;">Legend</div>
+              ${Object.entries(typeLabel).filter(([k,v]) => v).map(([k,v]) => `
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;justify-content:center;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:${typeColor[k]};flex-shrink:0;"></div>
+                  <span style="font-size:11px;color:var(--muted);font-weight:600;">${v}</span>
+                </div>
+              `).join("")}
             </div>
           </div>
+
+          ${Object.entries(byMonth).map(([month, items]) => `
+            <div class="panel" style="margin-bottom:12px;">
+              <h2 style="margin-bottom:16px;font-size:16px;font-weight:800;letter-spacing:0.01em;">${escapeHtml(month)}</h2>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                ${items.map(item => {
+                  const isPast = new Date(item.due_date) < today;
+                  const isNext = item.id === next?.id;
+                  const color = typeColor[item.type] || typeColor.default;
+                  const label = typeLabel[item.type];
+                  return `
+                    <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:var(--r-md);border:1px solid ${isNext ? color : "var(--border)"};background:${isNext ? `color-mix(in srgb,${color} 6%,var(--surface))` : isPast ? "var(--surface-dim,var(--surface))" : "var(--surface)"};">
+                      <div style="flex-shrink:0;margin-top:2px;">
+                        <div style="width:10px;height:10px;border-radius:50%;background:${isPast ? "#ccc" : color};"></div>
+                      </div>
+                      <div style="flex:1;min-width:0;">
+                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px;">
+                          <span style="font-size:12px;font-weight:700;color:var(--muted);min-width:42px;">${escapeHtml(item.date)}</span>
+                          ${label ? `<span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:${color};background:color-mix(in srgb,${color} 12%,transparent);border:1px solid color-mix(in srgb,${color} 25%,transparent);border-radius:4px;padding:1px 6px;">${label}</span>` : ""}
+                          ${isNext ? `<span style="font-size:10px;font-weight:700;color:var(--teal);background:var(--teal-dim);border-radius:4px;padding:1px 6px;">NEXT</span>` : ""}
+                          ${isPast ? `<span style="font-size:10px;color:var(--muted);opacity:0.6;">past</span>` : ""}
+                        </div>
+                        <div style="font-size:14px;font-weight:${item.type === "hard" || item.type === "tournament" ? "700" : "600"};color:${isPast ? "var(--muted)" : "var(--text)"};margin-bottom:3px;">${escapeHtml(item.title)}</div>
+                        <div style="font-size:12px;color:var(--muted);line-height:1.4;">${escapeHtml(item.detail)}</div>
+                      </div>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+            </div>
+          `).join("")}
         </div>
       `;
+    }
+
+    function buildTasksFromRoles() {
+      const tasks = [];
+      const monthOrder = { Oct: 1, Nov: 2, Dec: 3, Jan: 4, Feb: 5, Mar: 6, Apr: 7 };
+      const dateMap = { "Oct 1":"2026-10-01","Oct 5":"2026-10-05","Oct 11":"2026-10-11","Oct 15":"2026-10-15","Oct 25":"2026-10-25","Oct 31":"2026-10-31","Nov 7":"2026-11-07","Nov 8":"2026-11-08","Nov 15":"2026-11-15","Nov 22":"2026-11-22","Nov 30":"2026-11-30","Dec 1":"2026-12-01","Dec 6":"2026-12-06","Dec 10":"2026-12-10","Dec 15":"2026-12-15","Dec 20":"2026-12-20","Dec 31":"2026-12-31","Jan 1":"2027-01-01","Jan 3":"2027-01-03","Jan 8":"2027-01-08","Jan 15":"2027-01-15","Jan 17":"2027-01-17","Jan 22":"2027-01-22","Jan 25":"2027-01-25","Jan 31":"2027-01-31","Feb 1":"2027-02-01","Feb 7":"2027-02-07","Feb 14":"2027-02-14","Feb 15":"2027-02-15","Feb 28":"2027-02-28","Mar 1":"2027-03-01","Mar 7":"2027-03-07","Mar 14":"2027-03-14","Mar 18":"2027-03-18","Mar 21":"2027-03-21","Mar 24":"2027-03-24","Mar 25":"2027-03-25","Mar 28":"2027-03-28","Apr 4":"2027-04-04","Apr 11":"2027-04-11" };
+      const saved = JSON.parse(localStorage.getItem("mist_task_status") || "{}");
+      let idx = 0;
+      (SOURCE_DATA.ROLES || []).forEach(role => {
+        const teamLabel = SOURCE_DATA.TEAMS?.[role.team]?.label || role.team;
+        Object.entries(role.phases || {}).forEach(([phaseId, phaseData]) => {
+          (phaseData.deliverables || []).forEach(deliverable => {
+            const m = deliverable.match(/^([A-Z][a-z]+ \d+(?:–\d+)?): (.+)$/);
+            if (!m) return;
+            const [, dateLabel, title] = m;
+            const cleanDate = dateLabel.split("–")[0].trim();
+            const isoDate = dateMap[cleanDate];
+            if (!isoDate) return;
+            const id = `task-${role.id}-${idx++}`;
+            tasks.push({ id, title, role_id: role.id, role_title: role.title, dept: teamLabel, due_date: isoDate, due_label: cleanDate, status: saved[id] || "not_started" });
+          });
+        });
+      });
+      tasks.sort((a, b) => a.due_date.localeCompare(b.due_date));
+      return tasks;
+    }
+
+    function saveTaskStatus(id, status) {
+      const saved = JSON.parse(localStorage.getItem("mist_task_status") || "{}");
+      saved[id] = status;
+      localStorage.setItem("mist_task_status", JSON.stringify(saved));
+      const el = document.getElementById(`task-status-${id}`);
+      if (el) el.value = status;
+      const row = document.getElementById(`task-row-${id}`);
+      if (row) row.setAttribute("data-status", status);
+    }
+
+    function renderTasks(profile = null) {
+      const ALL_TASKS = buildTasksFromRoles();
+      const depts = [...new Set(ALL_TASKS.map(t => t.dept))].sort();
+      const roles = [...new Set(ALL_TASKS.map(t => t.role_title))].sort();
+      const months = [...new Set(ALL_TASKS.map(t => t.due_date.slice(0, 7)))].sort();
+      const monthLabels = { "2026-10": "October 2026", "2026-11": "November 2026", "2026-12": "December 2026", "2027-01": "January 2027", "2027-02": "February 2027", "2027-03": "March 2027", "2027-04": "Post-Event" };
+
+      const f = APP_STATE.taskFilter || {};
+      const today = new Date(); today.setHours(0,0,0,0);
+
+      let tasks = ALL_TASKS.filter(t => {
+        if (f.dept && f.dept !== "all" && t.dept !== f.dept) return false;
+        if (f.role && f.role !== "all" && t.role_title !== f.role) return false;
+        if (f.month && f.month !== "all" && t.due_date.slice(0, 7) !== f.month) return false;
+        if (f.status && f.status !== "all") {
+          const d = new Date(t.due_date);
+          if (f.status === "overdue") return d < today && t.status !== "completed";
+          if (f.status === "this_week") { const w = new Date(today); w.setDate(w.getDate()+7); return d >= today && d <= w; }
+          if (f.status === "next_14") { const n = new Date(today); n.setDate(n.getDate()+14); return d >= today && d <= n; }
+          if (f.status === "completed") return t.status === "completed";
+          return t.status === f.status;
+        }
+        return true;
+      });
+
+      const statusColors = { not_started: "var(--muted)", in_progress: "#1f8a9b", on_track: "#247a52", at_risk: "#c9972b", blocked: "#b13f4a", completed: "#4ade80" };
+      const statusLabels = { not_started: "Not Started", in_progress: "In Progress", on_track: "On Track", at_risk: "AT RISK", blocked: "BLOCKED", completed: "Completed" };
+
+      const overdue = ALL_TASKS.filter(t => new Date(t.due_date) < today && t.status !== "completed").length;
+      const atRisk  = ALL_TASKS.filter(t => t.status === "at_risk").length;
+      const blocked = ALL_TASKS.filter(t => t.status === "blocked").length;
+      const done    = ALL_TASKS.filter(t => t.status === "completed").length;
+
+      return `
+        <div class="dashboard-shell">
+          <div class="topbar">
+            <div>
+              <h1>Tasks</h1>
+              <p>Role-specific deliverables — filterable by dept, role, month, and status.</p>
+            </div>
+            <button class="ghost" onclick="goDashboard()">← Dashboard</button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px;">
+            <div class="card" style="padding:14px 16px;text-align:center;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:2px;">Total</div>
+              <div style="font-size:28px;font-weight:800;">${ALL_TASKS.length}</div>
+            </div>
+            <div class="card" style="padding:14px 16px;text-align:center;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#b13f4a;margin-bottom:2px;">Overdue</div>
+              <div style="font-size:28px;font-weight:800;color:${overdue ? "#b13f4a" : "var(--text)"};">${overdue}</div>
+            </div>
+            <div class="card" style="padding:14px 16px;text-align:center;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#c9972b;margin-bottom:2px;">At Risk</div>
+              <div style="font-size:28px;font-weight:800;color:${atRisk ? "#c9972b" : "var(--text)"};">${atRisk}</div>
+            </div>
+            <div class="card" style="padding:14px 16px;text-align:center;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#b13f4a;margin-bottom:2px;">Blocked</div>
+              <div style="font-size:28px;font-weight:800;color:${blocked ? "#b13f4a" : "var(--text)"};">${blocked}</div>
+            </div>
+            <div class="card" style="padding:14px 16px;text-align:center;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#247a52;margin-bottom:2px;">Completed</div>
+              <div style="font-size:28px;font-weight:800;color:#247a52;">${done}</div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-bottom:16px;">
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <select onchange="APP_STATE.taskFilter.dept=this.value;renderApp()" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font-size:13px;">
+                <option value="all" ${(!f.dept||f.dept==="all")?"selected":""}>All Departments</option>
+                ${depts.map(d => `<option value="${escapeHtml(d)}" ${f.dept===d?"selected":""}>${escapeHtml(d)}</option>`).join("")}
+              </select>
+              <select onchange="APP_STATE.taskFilter.role=this.value;renderApp()" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font-size:13px;">
+                <option value="all" ${(!f.role||f.role==="all")?"selected":""}>All Roles</option>
+                ${roles.map(r => `<option value="${escapeHtml(r)}" ${f.role===r?"selected":""}>${escapeHtml(r)}</option>`).join("")}
+              </select>
+              <select onchange="APP_STATE.taskFilter.month=this.value;renderApp()" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font-size:13px;">
+                <option value="all" ${(!f.month||f.month==="all")?"selected":""}>All Months</option>
+                ${months.map(m => `<option value="${m}" ${f.month===m?"selected":""}>${monthLabels[m]||m}</option>`).join("")}
+              </select>
+              <select onchange="APP_STATE.taskFilter.status=this.value;renderApp()" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font-size:13px;">
+                <option value="all" ${(!f.status||f.status==="all")?"selected":""}>All Statuses</option>
+                <option value="overdue" ${f.status==="overdue"?"selected":""}>Overdue</option>
+                <option value="this_week" ${f.status==="this_week"?"selected":""}>Due This Week</option>
+                <option value="next_14" ${f.status==="next_14"?"selected":""}>Due Next 14 Days</option>
+                <option value="not_started" ${f.status==="not_started"?"selected":""}>Not Started</option>
+                <option value="in_progress" ${f.status==="in_progress"?"selected":""}>In Progress</option>
+                <option value="on_track" ${f.status==="on_track"?"selected":""}>On Track</option>
+                <option value="at_risk" ${f.status==="at_risk"?"selected":""}>At Risk</option>
+                <option value="blocked" ${f.status==="blocked"?"selected":""}>Blocked</option>
+                <option value="completed" ${f.status==="completed"?"selected":""}>Completed</option>
+              </select>
+              <button class="ghost" onclick="APP_STATE.taskFilter={dept:'all',month:'all',status:'all'};renderApp()">Clear</button>
+              <span style="font-size:13px;color:var(--muted);margin-left:auto;">${tasks.length} task${tasks.length!==1?"s":""}</span>
+            </div>
+          </div>
+
+          ${tasks.length === 0 ? `<div class="panel"><p style="color:var(--muted);text-align:center;">No tasks match the current filters.</p></div>` : `
+          <div class="panel" style="padding:0;overflow:hidden;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <thead>
+                <tr style="border-bottom:2px solid var(--border);background:var(--surface-dim,var(--surface));">
+                  <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);">Due</th>
+                  <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);">Task</th>
+                  <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);">Role</th>
+                  <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);">Dept</th>
+                  <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${tasks.map((t, i) => {
+                  const isPast = new Date(t.due_date) < today && t.status !== "completed";
+                  const sc = statusColors[t.status] || "var(--muted)";
+                  const isAtRisk = t.status === "at_risk";
+                  const isBlocked = t.status === "blocked";
+                  return `
+                    <tr id="task-row-${t.id}" data-status="${t.status}" style="border-bottom:1px solid var(--border);background:${isBlocked?"color-mix(in srgb,#b13f4a 5%,var(--surface))":isAtRisk?"color-mix(in srgb,#c9972b 5%,var(--surface))":"var(--surface)"};">
+                      <td style="padding:10px 14px;font-weight:${isPast?"700":"400"};color:${isPast?"#b13f4a":"var(--muted)"};white-space:nowrap;">${escapeHtml(t.due_label)}</td>
+                      <td style="padding:10px 14px;font-weight:500;color:var(--text);max-width:340px;">${escapeHtml(t.title)}</td>
+                      <td style="padding:10px 14px;color:var(--muted);white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(t.role_title)}</td>
+                      <td style="padding:10px 14px;color:var(--muted);white-space:nowrap;">${escapeHtml(t.dept)}</td>
+                      <td style="padding:10px 14px;">
+                        <select id="task-status-${t.id}" onchange="saveTaskStatus('${t.id}',this.value)" style="padding:4px 8px;border:1px solid ${sc};border-radius:4px;font-size:12px;font-weight:600;color:${sc};background:var(--surface);cursor:pointer;">
+                          ${Object.entries(statusLabels).map(([k,v]) => `<option value="${k}" ${t.status===k?"selected":""}>${v}</option>`).join("")}
+                        </select>
+                      </td>
+                    </tr>
+                  `;
+                }).join("")}
+              </tbody>
+            </table>
+          </div>`}
+        </div>
+      `;
+    }
+
+    function openTasks() {
+      APP_STATE.view = "tasks";
+      renderApp();
     }
 
     function renderMeetingHub(user = null, profile = null) {
@@ -6514,10 +6802,6 @@
             </div>
             <div class="inline-actions">
               <button class="secondary" onclick="setFeedbackFilter('all')">All</button>
-              <button class="ghost" onclick="setFeedbackFilter('foundations')">Foundations</button>
-              <button class="ghost" onclick="setFeedbackFilter('build')">Build</button>
-              <button class="ghost" onclick="setFeedbackFilter('stabilization')">Stabilization</button>
-              <button class="ghost" onclick="setFeedbackFilter('execution')">Execution</button>
               <button class="ghost" onclick="downloadFeedbackCsv()">Export CSV</button>
             </div>
           </div>
@@ -6781,8 +7065,9 @@
     function renderCalendar(deadlines = CALENDAR_DEADLINES, user = null, profile = null, reminderPreference = null) {
       APP_STATE.currentDeadlines = deadlines;
       const grouped = deadlines.reduce((map, item) => {
-        if (!map[item.phase]) map[item.phase] = [];
-        map[item.phase].push(item);
+        const key = item.month || item.phase || "General";
+        if (!map[key]) map[key] = [];
+        map[key].push(item);
         return map;
       }, {});
       const isAdmin = !!profile?.is_admin;
@@ -6851,7 +7136,7 @@
       const type = deadlineType(item);
       const timing = deadlineTiming(item);
       return `
-        <div class="deadline-card ${timing.isOverdue ? "overdue" : ""}" style="--phase-color:${phaseColor(item.phase)};--phase-gradient:${phaseGradient(item.phase)}">
+        <div class="deadline-card ${timing.isOverdue ? "overdue" : ""}" style="--phase-color:${MILESTONE_COLORS[item.type] || phaseColor(item.phase)};--phase-gradient:${phaseGradient(item.phase)}">
           <div class="deadline-date">${escapeHtml(item.date)}</div>
           <h3>${escapeHtml(item.title)}</h3>
           <p>${escapeHtml(item.detail)}</p>
@@ -6862,7 +7147,7 @@
             <span class="phase-chip">${escapeHtml(timing.label)}</span>
           </div>
           <div class="pill-row">
-            <span class="phase-chip">${escapeHtml(formatPhase(item.phase))}</span>
+            <span class="phase-chip">${escapeHtml(item.month || formatPhase(item.phase))}</span>
             <span class="phase-chip">${item.send_reminders === false ? "No reminder" : "Reminder eligible"}</span>
           </div>
           <div class="inline-actions">
@@ -6926,7 +7211,7 @@
           `DTSTART;VALUE=DATE:${start}`,
           `DTEND;VALUE=DATE:${end}`,
           `SUMMARY:${escapeIcs(`MIST Dallas: ${deadline.title}`)}`,
-          `DESCRIPTION:${escapeIcs(`${deadline.detail || ""}\\n\\nPhase: ${formatPhase(deadline.phase)}\\nPortal: ${window.location.href.split("?")[0]}`)}`,
+          `DESCRIPTION:${escapeIcs(`${deadline.detail || ""}\\n\\nPortal: ${window.location.href.split("?")[0]}`)}`,
           "END:VEVENT"
         ].join("\r\n");
       }).join("\r\n");
@@ -6949,7 +7234,7 @@
         action: "TEMPLATE",
         text: `MIST Dallas: ${deadline.title}`,
         dates: `${start}/${end}`,
-        details: `${deadline.detail || ""}\n\nPhase: ${formatPhase(deadline.phase)}\nPortal: ${window.location.href.split("?")[0]}`
+        details: `${deadline.detail || ""}\n\nPortal: ${window.location.href.split("?")[0]}`
       });
       return `https://calendar.google.com/calendar/render?${params.toString()}`;
     }
@@ -7065,7 +7350,7 @@
                   <tr>
                     <td>${escapeHtml(item.date)}</td>
                     <td>${escapeHtml(item.title)}</td>
-                    <td>${escapeHtml(formatPhase(item.phase))}</td>
+                    <td>${escapeHtml(item.month || formatPhase(item.phase))}</td>
                     <td>${escapeHtml(item.owner_label || "All Teams")}</td>
                     <td>${escapeHtml(deadlinePriority(item))}</td>
                     <td><button class="danger" onclick="deleteDeadline('${escapeHtml(item.id)}')">Delete</button></td>
@@ -7197,12 +7482,15 @@
       return PHASES[phaseId]?.label || phaseId || "Not set";
     }
 
+    const _PHASE_COLORS = { foundations: "#1f8a9b", build: "#c9972b", stabilization: "#7b61ff", execution: "#b13f4a" };
+    const _PHASE_GRADIENTS = { foundations: "linear-gradient(135deg, #0f5f6b, #1f8a9b)", build: "linear-gradient(135deg, #8a6f2a, #c9972b)", stabilization: "linear-gradient(135deg, #4b3aa3, #7b61ff)", execution: "linear-gradient(135deg, #7f2632, #b13f4a)" };
+
     function phaseColor(phaseId) {
-      return PHASE_COLORS[phaseId] || "#1f8a9b";
+      return _PHASE_COLORS[phaseId] || "#1f8a9b";
     }
 
     function phaseGradient(phaseId) {
-      return PHASE_GRADIENTS[phaseId] || "linear-gradient(135deg, #0f5f6b, #1f8a9b)";
+      return _PHASE_GRADIENTS[phaseId] || "linear-gradient(135deg, #0f5f6b, #1f8a9b)";
     }
 
     function teamColor(team) {
@@ -8210,6 +8498,7 @@ alter publication supabase_realtime add table messages;</pre>
         { label: "Command",    action: "openCommandCenter()",    view: "command" },
         { label: "Calendar",   action: "openCalendar()",         view: "calendar" },
         { label: "Timeline",   action: "openTimeline()",         view: "timeline" },
+        { label: "Tasks",      action: "openTasks()",            view: "tasks" },
         { label: "Directory",  action: "openDirectory()",        view: "directory" },
         { label: "Feedback",   action: "openFeedback()",         view: "feedback" },
       ];
@@ -8350,6 +8639,11 @@ alter publication supabase_realtime add table messages;</pre>
           return;
         }
 
+        if (APP_STATE.view === "tasks") {
+          app.innerHTML = renderTasks(null);
+          return;
+        }
+
         if (APP_STATE.view === "meetings") {
           app.innerHTML = renderMeetingHub(null, null);
           return;
@@ -8486,6 +8780,11 @@ alter publication supabase_realtime add table messages;</pre>
 
       if (APP_STATE.view === "timeline") {
         app.innerHTML = renderTimeline();
+        return;
+      }
+
+      if (APP_STATE.view === "tasks") {
+        app.innerHTML = renderTasks(profile);
         return;
       }
 
