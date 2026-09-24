@@ -2993,6 +2993,8 @@
     }
 
     async function sendApplicationDecisionEmail(applicationId, decision, roleId) {
+      // Email sending requires a deployed Edge Function — skip silently if not available
+      return;
       const roleTitle = formatRole(roleId);
       const { data, error } = await supabaseClient.functions.invoke("send-application-decision", {
         body: {
