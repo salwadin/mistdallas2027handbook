@@ -3592,8 +3592,7 @@
     }
 
     function openDirectory() {
-      APP_STATE.view = "directory";
-      renderApp();
+      openTeamPages();
     }
 
     function openTeamPages(team = null) {
@@ -4380,7 +4379,7 @@
           cards: [
             { title: "MyMIST Integration",   action: "openIntegrations()" },
             { title: "Tournament Manager",   action: "openTournamentManager()" },
-            { title: "Directory",            action: "openDirectory()" },
+            { title: "Teams",                action: "openTeamPages()" },
           ]
         },
         {
@@ -5843,127 +5842,42 @@
     }
 
     function renderDirectory(rows, progressRows) {
-      const progressByUser = groupProgressByUser(progressRows);
-      const grouped = rows.reduce((map, row) => {
-        const team = row.team || "Unassigned";
-        if (!map[team]) map[team] = [];
-        map[team].push(row);
-        return map;
-      }, {});
-
-      return `
-        <div class="dashboard-shell">
-          <div class="topbar">
-            <div>
-              <h1>Organizer Directory</h1>
-              <p>Everyone can see the team structure, roles, and contact list.</p>
-            </div>
-            <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
-          </div>
-
-          ${Object.keys(grouped).sort().map(team => `
-            <div class="panel" style="--team-color:${teamColor(team)}">
-              <div class="phase-header">
-                <div>
-                <h2>${escapeHtml(team)}</h2>
-                  <p>${grouped[team].length} planned role${grouped[team].length === 1 ? "" : "s"}</p>
-                </div>
-              </div>
-              <div class="directory-grid">
-                ${grouped[team].map(person => renderPersonCard(person, progressByUser[person.profile_id] || [])).join("")}
-              </div>
-            </div>
-          `).join("")}
-        </div>
-      `;
+      return renderTeamPages(rows, progressRows);
     }
 
     function renderTeamPages(rows, progressRows = []) {
       const progressByUser = groupProgressByUser(progressRows);
       const grouped = groupRowsByTeam(rows);
       const teams = Object.keys(grouped).sort();
-      const selectedTeam = APP_STATE.selectedTeam && grouped[APP_STATE.selectedTeam]
-        ? APP_STATE.selectedTeam
-        : teams[0];
-      const teamRows = grouped[selectedTeam] || [];
-      const claimed = teamRows.filter(row => row.claimed).length;
-      const teamDeadlines = upcomingDeadlines(teamRelevantDeadlines(selectedTeam), 4);
-      const teamProgress = calculateTeamProgress(teamRows, progressByUser);
 
       return `
         <div class="dashboard-shell">
           <div class="topbar">
             <div>
-              <h1>Team Pages</h1>
-              <p>Focused team workspaces for roles, ownership, start phase, and application openings.</p>
+              <h1>Teams</h1>
+              <p>All organizer roles grouped by team.</p>
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
 
-          <div class="panel">
-            <div class="tabs">
-              ${teams.map(team => `
-                <button class="tab-btn ${team === selectedTeam ? "active" : ""}" style="--phase-color:${teamColor(team)};--phase-gradient:linear-gradient(135deg, ${teamColor(team)}, #38bdf8)" onclick="openTeamPages('${escapeHtml(team)}')">
-                  ${escapeHtml(team)}
-                </button>
-              `).join("")}
-            </div>
-          </div>
-
-          <div class="panel" style="--team-color:${teamColor(selectedTeam)}">
-            <div class="phase-header">
-              <div>
-                <h2>${escapeHtml(selectedTeam)}</h2>
-                <p>${claimed} of ${teamRows.length} roles claimed. ${teamRows.length - claimed} open.</p>
-              </div>
-              <span class="phase-chip">${teamRows.length} role${teamRows.length === 1 ? "" : "s"}</span>
-            </div>
-
-            <div class="grid">
-              <div class="stat">
-                <div class="stat-title">Claimed</div>
-                <div class="stat-value">${claimed}</div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Open</div>
-                <div class="stat-value">${teamRows.length - claimed}</div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Starts</div>
-                <div class="stat-value">${escapeHtml(teamStartSummary(teamRows))}</div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Team Progress</div>
-                <div class="stat-value">${teamProgress}%</div>
-                <div class="progress-track"><div class="progress-fill" style="width:${teamProgress}%"></div></div>
-              </div>
-            </div>
-
-            <div class="panel" style="margin-top:18px;margin-bottom:0;">
-              <div class="phase-header">
-                <div>
-                  <h3>Team Deadlines</h3>
-                  <p>Deadlines owned by ${escapeHtml(selectedTeam)} or assigned to all teams.</p>
+          ${teams.map(team => {
+            const teamRows = grouped[team] || [];
+            const claimed = teamRows.filter(r => r.claimed).length;
+            return `
+              <div class="panel" style="--team-color:${teamColor(team)}">
+                <div class="phase-header">
+                  <div>
+                    <h2>${escapeHtml(team)}</h2>
+                    <p>${claimed} of ${teamRows.length} roles filled</p>
+                  </div>
+                  <span class="phase-chip">${teamRows.length} role${teamRows.length === 1 ? "" : "s"}</span>
                 </div>
-                <button class="ghost" onclick="openCalendar()">Open Calendar</button>
-              </div>
-              <div class="calendar-grid">
-                ${teamDeadlines.length ? teamDeadlines.map(item => renderDeadlineCard(item)).join("") : `<p>No upcoming team deadlines listed.</p>`}
-              </div>
-            </div>
-
-            <div class="panel" style="margin-top:18px;margin-bottom:0;">
-              <div class="phase-header">
-                <div>
-                  <h3>Team Roles</h3>
-                  <p>Open roles show application details. Claimed roles show progress only.</p>
+                <div class="directory-grid">
+                  ${teamRows.map(person => renderPersonCard(person, progressByUser[person.profile_id] || [])).join("")}
                 </div>
               </div>
-              <div class="directory-grid">
-                ${teamRows.map(person => renderPersonCard(person, progressByUser[person.profile_id] || [])).join("")}
-              </div>
-            </div>
-          </div>
+            `;
+          }).join("")}
         </div>
       `;
     }
@@ -6176,27 +6090,14 @@
       const startPhase = person.start_phase || firstPhaseForRole(person.role_id);
 
       return `
-        <div class="person-card ${person.claimed ? "" : "unclaimed"}" style="--team-color:${teamColor(person.team)}">
-          <h3>${escapeHtml(person.full_name || "Open Role")}</h3>
+        <div class="person-card" style="--team-color:${teamColor(person.team)}">
+          <h3>${escapeHtml(person.full_name || "—")}</h3>
           <p>${escapeHtml(formatRole(person.role_id))}</p>
-          <p>${escapeHtml(person.team || "Unassigned")}</p>
-          <div class="role-meta-row">
-            <span class="phase-chip" style="--phase-color:${phaseColor(startPhase)}">Starts: ${escapeHtml(formatPhase(startPhase))}</span>
-            <span class="phase-chip">${person.claimed ? "Claimed" : "Open"}</span>
-          </div>
-          <p class="muted">${escapeHtml(person.email || "Not claimed yet")}</p>
-          ${!person.claimed && person.task_preview?.length ? `
-            <ul class="task-list">
-              ${person.task_preview.map(task => `<li>${escapeHtml(task)}</li>`).join("")}
-            </ul>
+          ${person.email ? `<p class="muted">${escapeHtml(person.email)}</p>` : ""}
+          ${person.claimed ? `
+            <div class="progress-track"><div class="progress-fill" style="width:${percent}%"></div></div>
+            <div class="note">${percent}% complete</div>
           ` : ""}
-          ${!person.claimed ? `
-            <div class="inline-actions">
-              <button class="secondary" onclick="openApply('${escapeHtml(person.role_id)}')">Apply for This Role</button>
-            </div>
-          ` : ""}
-          <div class="progress-track"><div class="progress-fill" style="width:${percent}%"></div></div>
-          <div class="note">${person.claimed ? `${percent}% complete` : "Waiting for organizer claim"}</div>
         </div>
       `;
     }
@@ -7478,6 +7379,8 @@
     }
 
     function formatRole(roleId) {
+      const overrides = { "tech-lead": "Tech Coordinator" };
+      if (overrides[roleId]) return overrides[roleId];
       const role = ROLE_OPTIONS.find(r => r.id === roleId);
       return role ? role.title : (roleId || "Not set");
     }
@@ -8502,7 +8405,6 @@ alter publication supabase_realtime add table messages;</pre>
         { label: "Master Timeline", action: "openTimeline()",         view: "timeline" },
         { label: "Calendar",        action: "openCalendar()",         view: "calendar" },
         { label: "Teams",           action: "openTeamPages()",        view: "teams" },
-        { label: "Directory",       action: "openDirectory()",        view: "directory" },
         { label: "Feedback",        action: "openFeedback()",         view: "feedback",  hidden: true },
         { label: "Chat",            action: "openMessaging()",        view: "messaging", hidden: true },
         { label: "Command",         action: "openCommandCenter()",    view: "command",   hidden: true },
