@@ -2404,6 +2404,11 @@
       { id: "interested_roles", section: "Positions", type: "checkbox", label: "Check off as many as you are interested in!", options: [], required: true },
       { id: "role_preference_order", section: "Positions", type: "textarea", label: "If multiple positions selected, list roles in order of preference below", required: false }
     ];
+    // Only these roles are currently accepting applications
+    const OPEN_FOR_APPLICATIONS = new Set([
+      "food", "hospitality", "arts", "sports-brothers", "registration", "tech-lead"
+    ]);
+
     // CALENDAR_DEADLINES and TIMELINE are set after MASTER_MILESTONES is defined below
     const DEFAULT_ANNOUNCEMENTS = [
       {
@@ -3896,7 +3901,7 @@
     }
 
     function renderRoleApplication(user, rows = []) {
-      const openRoles = rows.filter(row => !row.claimed);
+      const openRoles = rows.filter(row => !row.claimed && OPEN_FOR_APPLICATIONS.has(row.role_id));
       const selectedRoleId = APP_STATE.applicationRoleId || openRoles[0]?.role_id || "";
       const selectedRole = rows.find(row => row.role_id === selectedRoleId) || openRoles[0];
       const startPhase = selectedRole ? (selectedRole.start_phase || firstPhaseForRole(selectedRole.role_id)) : "foundations";
