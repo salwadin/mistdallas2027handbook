@@ -2395,10 +2395,10 @@
       { id: "stick_with_mist", section: "The Real Stuff", type: "radio", label: "I plan to stick with MIST for a few years.", options: ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"], required: false },
       { id: "delivered_well", section: "The Real Stuff", type: "textarea", label: "What have you consistently delivered well in MIST this past year? Give 2-3 specific examples", required: true },
       { id: "feedback", section: "The Real Stuff", type: "textarea", label: "What feedback have you received this year, and how have you acted on it or plan to?", required: true },
-      { id: "weekly_commitments", section: "The Real Stuff", type: "textarea", label: "List your weekly commitments (school, work, MCAT, etc.) and realistically how many hours per week you can dedicate to MIST during each phase", required: false },
+      { id: "weekly_commitments", section: "The Real Stuff", type: "textarea", label: "List your weekly commitments (school, work, MCAT, etc.) and realistically how many hours per week you can dedicate to MIST", required: false },
       { id: "peak_weeks", section: "The Real Stuff", type: "textarea", label: "During peak weeks (January), how will you prioritize MIST alongside your other responsibilities?", required: false },
       { id: "disagree_leadership", section: "The Real Stuff", type: "textarea", label: "How do you handle situations where you disagree with leadership decisions?", required: false },
-      { id: "best_phase", section: "The Real Stuff", type: "textarea", label: "Which phase are you BEST suited for and why?", required: false },
+      { id: "best_phase", section: "The Real Stuff", type: "textarea", label: "Which part of the season (early planning, mid-season logistics, or event weekend) are you BEST suited for and why?", required: false },
       { id: "top_skills", section: "The Real Stuff", type: "textarea", label: "Rank your top 3 skills from the list below: Organization; Communication; Leadership; Problem-solving; Reliability; Creativity; Attention to detail", required: false },
       { id: "not_tolerated", section: "The Real Stuff", type: "textarea", label: "What behaviors do you think should NOT be tolerated on the MIST board?", required: false },
       { id: "interested_roles", section: "Positions", type: "checkbox", label: "Check off as many as you are interested in!", options: [], required: true },
@@ -4166,32 +4166,32 @@
 
       const phases = [
         {
-          label: "Foundations",
-          dates: "Aug – Sep",
+          label: "Aug – Sep",
+          dates: "Directors · ADs · Core leads",
           color: "#22d3ee",
           gradient: "linear-gradient(135deg,#0891b2,#22d3ee)",
           start: "Directors · ADs · Core leads start here",
           desc: "The leadership layer comes online. Directors and core leads are onboarded, structure is set, and the season officially begins."
         },
         {
-          label: "Build",
-          dates: "Oct – Nov",
+          label: "Oct – Nov",
+          dates: "Chairs · Coordinators · Leads",
           color: "#fbbf24",
           gradient: "linear-gradient(135deg,#d97706,#fbbf24)",
           start: "Chairs · Coordinators · Leads start here",
           desc: "Committees go active. Competitions are designed, logistics are planned, registration opens, and every team moves from planning to executing."
         },
         {
-          label: "Stabilization",
-          dates: "Dec – Jan",
+          label: "Dec – Jan",
+          dates: "Support roles · Specialists",
           color: "#a78bfa",
           gradient: "linear-gradient(135deg,#6d28d9,#a78bfa)",
           start: "Support roles · Specialists start here",
           desc: "The final layer joins and locks everything in. Rosters are finalized, rooms are assigned, and schedules are confirmed."
         },
         {
-          label: "Execution",
-          dates: "Feb",
+          label: "Feb – Mar",
+          dates: "All hands — everyone active",
           color: "#f87171",
           gradient: "linear-gradient(135deg,#b91c1c,#f87171)",
           start: "All hands — everyone is active",
@@ -4209,7 +4209,7 @@
               <p style="font-size:15px;line-height:1.7;color:var(--muted);max-width:520px;margin:0;">This is where the organizing board plans, coordinates, and executes the season — together. Roles, deadlines, teams, decisions, and the event weekend all live here.</p>
             </div>
 
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--faint);margin-bottom:12px;">How the season works</div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--faint);margin-bottom:12px;">The season at a glance</div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px;margin-bottom:28px;">
               ${phases.map((p, i) => `
                 <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid ${p.color};border-radius:var(--r-lg);padding:18px 20px;">
@@ -4217,6 +4217,7 @@
                     <div style="width:26px;height:26px;border-radius:50%;background:${p.gradient};color:white;font-size:11px;font-weight:800;display:grid;place-items:center;flex-shrink:0;">${i + 1}</div>
                     <div style="font-weight:700;font-size:14px;color:var(--text);">${p.label}</div>
                     <div style="margin-left:auto;font-size:11px;font-weight:600;color:${p.color};">${p.dates}</div>
+
                   </div>
                   <p style="font-size:13px;line-height:1.6;margin:0 0 10px;color:var(--muted);">${p.desc}</p>
                   <div style="font-size:11px;font-weight:600;color:${p.color};">↳ ${p.start}</div>
@@ -4619,7 +4620,7 @@
         return [
           { label: "Step 1", title: "Apply or sign in", body: "Browse team pages, apply for open roles, or log in if you already have an account.", cta: "View Team Pages", onclick: "openTeamPages()", primary: true },
           { label: "Step 2", title: "Check application status", body: "Already applied? Enter your email to see whether your application is pending, approved, or declined.", cta: "Check Status", onclick: "openApplicationStatus()" },
-          { label: "Step 3", title: "Learn the planning flow", body: "Review the timeline to understand Foundations, Build, Stabilization, and Execution.", cta: "View Timeline", onclick: "openTimeline()" }
+          { label: "Step 3", title: "See the full schedule", body: "Check the Master Timeline for every deadline from October 2026 through tournament weekend in March 2027.", cta: "View Timeline", onclick: "openTimeline()" }
         ];
       }
 
@@ -4672,8 +4673,8 @@
             </div>
 
             <div class="stat">
-              <div class="stat-title">2. Work by Phase</div>
-              <p>Planning moves through Foundations, Build, Stabilization, and Execution. Each role starts where it is needed most.</p>
+              <div class="stat-title">2. Work by Month</div>
+              <p>Planning runs Oct 2026 – Apr 2027. Each role starts when it's needed and has a dedicated workbook and task list.</p>
               <div class="inline-actions">
                 <button class="secondary" onclick="openTimeline()">View Timeline</button>
               </div>
@@ -6650,7 +6651,7 @@
                 <h2>Weekend Command Flow</h2>
                 <p>Use this as the official field guide during event weekend. Keep it simple, clear, and escalation-friendly.</p>
               </div>
-              <span class="phase-chip">Execution Phase</span>
+              <span class="phase-chip">Event Weekend</span>
             </div>
             <div class="ops-flow">
               <div class="ops-step" style="--ops-color:#1f8a9b">
@@ -6885,9 +6886,7 @@
               <form class="admin-form" onsubmit="saveFeedbackTheme(event)">
                 <input id="feedback-theme" placeholder="Feedback theme" />
                 <input id="feedback-source" placeholder="Source, e.g. 2026 debrief, student survey" />
-                <select id="feedback-phase">
-                  ${Object.keys(PHASES).map(phaseId => `<option value="${phaseId}">${escapeHtml(formatPhase(phaseId))}</option>`).join("")}
-                </select>
+                <input id="feedback-phase" placeholder="Category (e.g. Logistics, Registration, Competitions)" />
                 <select id="feedback-status">
                   <option value="Needs owner check">Needs owner check</option>
                   <option value="Staged">Staged</option>
@@ -6963,7 +6962,7 @@
           <p><strong>How it will be addressed:</strong> ${escapeHtml(item.action || "—")}</p>
           <div class="deadline-meta">
             <span class="phase-chip">${escapeHtml(item.owner || "Unassigned")}</span>
-            <span class="phase-chip">${escapeHtml(formatPhase(item.phase || "foundations"))}</span>
+            ${item.phase ? `<span class="phase-chip">${escapeHtml(item.phase)}</span>` : ""}
           </div>
         </div>
       `;
@@ -7484,7 +7483,8 @@
     }
 
     function formatPhase(phaseId) {
-      return PHASES[phaseId]?.label || phaseId || "Not set";
+      const dates = { foundations: "Aug – Sep", build: "Oct – Nov", stabilization: "Dec – Jan", execution: "Feb – Mar" };
+      return dates[phaseId] || PHASES[phaseId]?.label || phaseId || "";
     }
 
     const _PHASE_COLORS = { foundations: "#1f8a9b", build: "#c9972b", stabilization: "#7b61ff", execution: "#b13f4a" };
@@ -8022,7 +8022,7 @@
         owner: document.getElementById("feedback-owner").value.trim(),
         sentiment: document.getElementById("feedback-sentiment").value.trim(),
         action: document.getElementById("feedback-action").value.trim(),
-        color: phaseColor(document.getElementById("feedback-phase").value),
+        color: "#1f8a9b",
         created_at: new Date().toISOString()
       };
 
@@ -8496,16 +8496,16 @@ alter publication supabase_realtime add table messages;</pre>
       const hasRole = !!profile?.role_id;
 
       const links = [
-        { label: "Dashboard",  action: "goDashboard()",         view: "dashboard" },
-        { label: "Workbook",   action: "openWorkbook()",         view: "workbook",  hidden: !hasRole },
-        { label: "Teams",      action: "openTeamPages()",        view: "teams" },
-        { label: "Chat",       action: "openMessaging()",        view: "messaging", hidden: !user },
-        { label: "Command",    action: "openCommandCenter()",    view: "command" },
-        { label: "Calendar",   action: "openCalendar()",         view: "calendar" },
-        { label: "Timeline",   action: "openTimeline()",         view: "timeline" },
-        { label: "Tasks",      action: "openTasks()",            view: "tasks" },
-        { label: "Directory",  action: "openDirectory()",        view: "directory" },
-        { label: "Feedback",   action: "openFeedback()",         view: "feedback" },
+        { label: "Dashboard",       action: "goDashboard()",         view: "dashboard" },
+        { label: "My Workbook",     action: "openWorkbook()",         view: "workbook",  hidden: !hasRole },
+        { label: "Tasks",           action: "openTasks()",            view: "tasks" },
+        { label: "Master Timeline", action: "openTimeline()",         view: "timeline" },
+        { label: "Calendar",        action: "openCalendar()",         view: "calendar" },
+        { label: "Teams",           action: "openTeamPages()",        view: "teams" },
+        { label: "Directory",       action: "openDirectory()",        view: "directory" },
+        { label: "Feedback",        action: "openFeedback()",         view: "feedback",  hidden: true },
+        { label: "Chat",            action: "openMessaging()",        view: "messaging", hidden: true },
+        { label: "Command",         action: "openCommandCenter()",    view: "command",   hidden: true },
       ];
 
       const visibleLinks = links.filter(l => !l.hidden);
@@ -8536,12 +8536,16 @@ alter publication supabase_realtime add table messages;</pre>
           </div>
         </div>
         <div class="nav-mobile-drawer" id="nav-mobile-drawer">
-          ${visibleLinks.map(l => `
+          ${links.filter(l => !l.hidden || l.view === v).map(l => `
             <button class="nav-mobile-link ${v === l.view ? "active" : ""}"
                     onclick="${l.action}; document.getElementById('nav-mobile-drawer').classList.remove('open')">
               ${escapeHtml(l.label)}
             </button>
           `).join("")}
+          <div style="border-top:1px solid var(--border);margin:6px 0 0;padding-top:6px;">
+            ${!links.find(l => l.view === "feedback" && !l.hidden) ? `<button class="nav-mobile-link" onclick="openFeedback(); document.getElementById('nav-mobile-drawer').classList.remove('open')">Feedback</button>` : ""}
+            ${user ? `<button class="nav-mobile-link" onclick="openMessaging(); document.getElementById('nav-mobile-drawer').classList.remove('open')">Chat</button>` : ""}
+          </div>
           ${user
             ? `<button class="nav-mobile-link" style="color:var(--red);margin-top:6px;border-top:1px solid var(--border);border-radius:0;padding-top:14px;" onclick="logout()">Log Out</button>`
             : `<button class="nav-mobile-link" style="color:var(--teal);margin-top:6px;border-top:1px solid var(--border);border-radius:0;padding-top:14px;" onclick="openLogin()">Log In / Sign Up</button>`
