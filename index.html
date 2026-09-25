@@ -2452,7 +2452,7 @@
       saveTimers: {}
     };
 
-    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "tasks", "calendar", "login", "apply", "application-status", "meetings", "knowledge", "feedback"]);
+    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "tasks", "calendar", "login", "apply", "application-status", "application-submitted", "meetings", "knowledge", "feedback"]);
 
     function buildPhaseLookup(data) {
       if (data.PHASE_META) {
@@ -2915,8 +2915,19 @@
         return alert(error.message);
       }
 
+      // Send confirmation email (fire and forget — don't block the UI)
+      supabaseClient.functions.invoke("send-application-decision", {
+        body: {
+          decision: "submitted",
+          role_title: formatRole(roleId),
+          applicant_email: contactEmail,
+          applicant_name: fullName,
+        }
+      }).catch(err => console.warn("Confirmation email error:", err));
+
       APP_STATE.applicationRoleId = null;
-      APP_STATE.view = "dashboard";
+      APP_STATE.applicationSubmitted = { name: fullName, role: formatRole(roleId), email: contactEmail };
+      APP_STATE.view = "application-submitted";
       renderApp();
     }
 
@@ -3854,6 +3865,26 @@
             <button class="primary full" onclick="saveProfile()">Save and Continue</button>
           </div>
           <div class="note">For now, each organizer selects their role once. We can make this admin-assigned later.</div>
+        </div>
+      `;
+    }
+
+    function renderApplicationSubmitted() {
+      const { name, role, email } = APP_STATE.applicationSubmitted || {};
+      return `
+        <div class="dashboard-shell">
+          <div style="max-width:520px;margin:64px auto;text-align:center;padding:0 20px;">
+            <div style="width:64px;height:64px;border-radius:50%;background:var(--teal-dim);color:var(--teal);font-size:28px;display:grid;place-items:center;margin:0 auto 24px;">✓</div>
+            <h1 style="margin-bottom:10px;">Application submitted!</h1>
+            <p style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:8px;">
+              We received your application for <strong>${escapeHtml(role || "your role")}</strong>.
+            </p>
+            ${email ? `<p style="font-size:14px;color:var(--muted);margin-bottom:28px;">A confirmation was sent to <strong>${escapeHtml(email)}</strong>. Leadership will be in touch once they've reviewed it.</p>` : ""}
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px;">
+              <button class="primary" onclick="openApplicationStatus()">Check My Status</button>
+              <button class="ghost" onclick="goDashboard()">Back to Home</button>
+            </div>
+          </div>
         </div>
       `;
     }
@@ -8501,6 +8532,11 @@ alter publication supabase_realtime add table messages;</pre>
       }
 
       if (!user) {
+        if (APP_STATE.view === "application-submitted") {
+          app.innerHTML = renderApplicationSubmitted();
+          return;
+        }
+
         if (APP_STATE.view === "apply") {
           app.innerHTML = renderRoleApplication(null, rows);
           return;
@@ -8602,6 +8638,11 @@ alter publication supabase_realtime add table messages;</pre>
 
       // Re-render nav now that we have profile (workbook link, user name, etc.)
       setNav(user, profile);
+
+      if (APP_STATE.view === "application-submitted") {
+        app.innerHTML = renderApplicationSubmitted();
+        return;
+      }
 
       if (APP_STATE.view === "apply") {
         app.innerHTML = renderRoleApplication(user, rows);

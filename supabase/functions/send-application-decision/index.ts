@@ -24,7 +24,38 @@ serve(async (req) => {
     }
 
     const name = applicant_name || "Organizer";
+    const isSubmitted = decision === "submitted";
     const isApproved = decision === "approved";
+
+    if (isSubmitted) {
+      const subject = `Application received — MIST Dallas 2027`;
+      const html = `
+        <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#ffffff;">
+          <h2 style="color:#1a1a1a;margin-bottom:8px;">Assalamu Alaikum ${name},</h2>
+          <p style="color:#444;font-size:16px;line-height:1.6;">
+            We received your application for <strong>${role_title}</strong> on the MIST Dallas 2027 organizing team.
+          </p>
+          <p style="color:#444;font-size:16px;line-height:1.6;">
+            Leadership will review your application and reach out with a decision. In the meantime, you can check your status anytime at:
+          </p>
+          <div style="text-align:center;margin:28px 0;">
+            <a href="https://organizers.mistdallas.org" style="display:inline-block;padding:12px 24px;background:#1f8a9b;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:700;font-size:15px;">
+              Check Application Status
+            </a>
+          </div>
+          <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+          <p style="color:#aaa;font-size:12px;">MIST Dallas 2027 Organizing Team</p>
+        </div>
+      `;
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ from: `MIST Dallas <${FROM_EMAIL}>`, to: [applicant_email], subject, html }),
+      });
+      const resData = await res.json();
+      if (!res.ok) return new Response(JSON.stringify({ error: resData }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ success: true, id: resData.id }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
 
     let inviteLink = "https://organizers.mistdallas.org";
 
