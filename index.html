@@ -7,51 +7,56 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2318798a'/><text x='16' y='23' font-family='system-ui,sans-serif' font-size='19' font-weight='900' fill='white' text-anchor='middle'>M</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
   <style>
     /* ==============================================
        MIST DALLAS 2027 — DESIGN SYSTEM
-       Warm · Light · Human
+       Dark · Cosmic · Editorial
        ============================================== */
 
     :root {
       /* — Base — */
-      --bg:          #ede8df;
-      --surface:     #ffffff;
-      --surface2:    #f7f3ee;
-      --border:      #e2d9ce;
-      --border-lt:   #ede8e0;
-      --text:        #1c1914;
-      --muted:       #78706a;
-      --faint:       #b0a89f;
+      --bg:          #0e0c0a;
+      --surface:     #1a1714;
+      --surface2:    #231f1b;
+      --border:      #2e2925;
+      --border-lt:   #3a342f;
+      --text:        #e8ddd4;
+      --muted:       #9a8f87;
+      --faint:       #5a504a;
 
       /* — Brand — */
-      --teal:        #18798a;
-      --teal-dim:    #e4f2f4;
-      --green:       #1c6b43;
-      --green-dim:   #e3f0ea;
-      --gold:        #b88216;
-      --gold-dim:    #fdf1d0;
-      --purple:      #6950e4;
-      --purple-dim:  #ece8fc;
-      --red:         #a5364a;
-      --red-dim:     #fce3e7;
-      --pink:        #b23d6c;
-      --pink-dim:    #fce2ee;
-      --blue:        #1e86a0;
-      --blue2:       #2255a2;
+      --teal:        #c9a07a;
+      --teal-dim:    #2a1e14;
+      --green:       #7cb88a;
+      --green-dim:   #162219;
+      --gold:        #c9a84c;
+      --gold-dim:    #2a2010;
+      --purple:      #a78bfa;
+      --purple-dim:  #1e1828;
+      --red:         #d47070;
+      --red-dim:     #2a1616;
+      --pink:        #c4917a;
+      --pink-dim:    #2a1a16;
+      --blue:        #7ab3c9;
+      --blue2:       #5a8fba;
 
-      /* — Legacy aliases (JS uses these names) — */
-      --ink:   #1c1914;
-      --paper: #ede8df;
-      --input: #f7f3ee;
-      --card:  #ffffff;
+      /* — Cosmic accents — */
+      --rose:        #c4917a;
+      --cream:       #e8ddd4;
+      --warm-dark:   #1a1714;
+
+      /* — Legacy aliases — */
+      --ink:   #e8ddd4;
+      --paper: #0e0c0a;
+      --input: #231f1b;
+      --card:  #1a1714;
 
       /* — Elevation — */
-      --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 3px 10px rgba(0,0,0,0.05);
-      --shadow:    0 1px 4px rgba(0,0,0,0.06), 0 6px 20px rgba(0,0,0,0.07);
-      --shadow-md: 0 2px 8px rgba(0,0,0,0.07), 0 14px 36px rgba(0,0,0,0.09);
+      --shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.35), 0 3px 10px rgba(0,0,0,0.3);
+      --shadow:    0 1px 4px rgba(0,0,0,0.4), 0 6px 20px rgba(0,0,0,0.35);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.4), 0 14px 36px rgba(0,0,0,0.45);
 
       /* — Radius — */
       --r-sm:   8px;
@@ -229,6 +234,11 @@
       width: 100%;
       min-height: calc(100vh - 56px);
       padding: 28px 20px 64px;
+    }
+
+    /* Landing pages use full bleed — no padding */
+    #app:has(.orbit-landing) {
+      padding: 0;
     }
 
     .dashboard-shell {
@@ -1951,6 +1961,274 @@
       .chat-channel-btn { flex-shrink: 0; width: auto; white-space: nowrap; margin: 0 2px; }
       .chat-header-desc { display: none; }
     }
+
+    /* ==============================================
+       ORBIT LANDING PAGE
+       ============================================== */
+
+    .orbit-landing {
+      min-height: calc(100vh - 56px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 48px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .orbit-stars {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 80%, rgba(201,160,122,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 80% 10%, rgba(201,160,122,0.04) 0%, transparent 60%);
+    }
+
+    .orbit-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      margin-bottom: 40px;
+    }
+
+    .orbit-logo-star {
+      font-size: 18px;
+      color: var(--cream);
+      margin-bottom: 4px;
+    }
+
+    .orbit-logo-wordmark {
+      font-family: "Playfair Display", serif;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      color: var(--cream);
+      line-height: 1.1;
+    }
+
+    .orbit-logo-sub {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .orbit-hero {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(52px, 12vw, 96px);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: var(--cream);
+      margin: 0 0 24px;
+      position: relative;
+    }
+
+    .orbit-tagline {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .orbit-deadline {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 48px;
+    }
+
+    .orbit-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      max-width: 560px;
+      margin-bottom: 40px;
+      color: var(--faint);
+      font-size: 12px;
+    }
+    .orbit-divider::before, .orbit-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .orbit-diff-heading {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(28px, 6vw, 48px);
+      font-weight: 900;
+      color: var(--cream);
+      margin-bottom: 36px;
+      letter-spacing: -0.01em;
+      line-height: 1.05;
+    }
+
+    .orbit-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      max-width: 680px;
+      width: 100%;
+      margin-bottom: 40px;
+    }
+
+    .orbit-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .orbit-card-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: var(--surface2);
+      border: 1px solid var(--border-lt);
+      color: var(--cream);
+      width: fit-content;
+    }
+
+    .orbit-card.dreamteam .orbit-card-label {
+      background: rgba(201,160,122,0.15);
+      border-color: rgba(201,160,122,0.3);
+      color: var(--rose);
+    }
+
+    .orbit-card-body {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--muted);
+      font-style: italic;
+      font-family: "Playfair Display", serif;
+    }
+
+    .orbit-card-btn {
+      margin-top: auto;
+      padding: 13px 20px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: opacity 0.15s, transform 0.15s;
+      text-align: center;
+    }
+    .orbit-card-btn:hover { opacity: 0.85; transform: translateY(-1px); box-shadow: none; }
+
+    .orbit-card-btn.primary-btn {
+      background: var(--cream);
+      color: #0e0c0a;
+    }
+
+    .orbit-card-btn.outline-btn {
+      background: transparent;
+      color: var(--rose);
+      border: 1px solid rgba(201,160,122,0.4);
+    }
+    .orbit-card-btn.outline-btn:hover { background: rgba(201,160,122,0.08); }
+
+    .orbit-signin {
+      font-size: 13px;
+      color: var(--faint);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .orbit-signin:hover { color: var(--muted); transform: none; box-shadow: none; }
+
+    /* Dream Team form */
+    .orbit-form-wrap {
+      width: 100%;
+      max-width: 480px;
+      text-align: left;
+    }
+
+    .orbit-form-title {
+      font-family: "Playfair Display", serif;
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--cream);
+      margin-bottom: 6px;
+      line-height: 1.05;
+    }
+
+    .orbit-form-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 28px;
+      line-height: 1.65;
+    }
+
+    /* Confirmation */
+    .orbit-confirm {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      max-width: 480px;
+      text-align: center;
+      margin: 0 auto;
+      padding: 64px 24px;
+    }
+
+    .orbit-confirm-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(201,160,122,0.15);
+      border: 1px solid rgba(201,160,122,0.3);
+      color: var(--rose);
+      font-size: 26px;
+      display: grid;
+      place-items: center;
+    }
+
+    .orbit-confirm-title {
+      font-family: "Playfair Display", serif;
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--cream);
+      line-height: 1.1;
+    }
+
+    .orbit-confirm-body {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-style: italic;
+      font-family: "Playfair Display", serif;
+    }
+
+    @media (max-width: 640px) {
+      .orbit-landing { padding: 36px 20px 60px; }
+      .orbit-hero { font-size: 52px; }
+      .orbit-cards { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -2448,7 +2726,7 @@
       saveTimers: {}
     };
 
-    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "tasks", "calendar", "login", "apply", "application-status", "application-submitted", "meetings", "knowledge", "feedback"]);
+    const PUBLIC_VIEWS = new Set(["dashboard", "command", "integrations", "tournament", "progress", "directory", "teams", "timeline", "tasks", "calendar", "login", "apply", "application-status", "application-submitted", "dream-team", "dream-team-confirmed", "meetings", "knowledge", "feedback"]);
 
     function buildPhaseLookup(data) {
       if (data.PHASE_META) {
@@ -4188,86 +4466,128 @@
     }
 
     function renderOnboarding() {
-      const step = APP_STATE.onboardingStep || 1;
+      return `
+        <div class="orbit-landing">
+          <div class="orbit-stars"></div>
 
-      const phases = [
-        {
-          label: "Aug – Sep",
-          dates: "Directors · ADs · Core leads",
-          color: "#22d3ee",
-          gradient: "linear-gradient(135deg,#0891b2,#22d3ee)",
-          start: "Directors · ADs · Core leads start here",
-          desc: "The leadership layer comes online. Directors and core leads are onboarded, structure is set, and the season officially begins."
-        },
-        {
-          label: "Oct – Nov",
-          dates: "Chairs · Coordinators · Leads",
-          color: "#fbbf24",
-          gradient: "linear-gradient(135deg,#d97706,#fbbf24)",
-          start: "Chairs · Coordinators · Leads start here",
-          desc: "Committees go active. Competitions are designed, logistics are planned, registration opens, and every team moves from planning to executing."
-        },
-        {
-          label: "Dec – Jan",
-          dates: "Support roles · Specialists",
-          color: "#a78bfa",
-          gradient: "linear-gradient(135deg,#6d28d9,#a78bfa)",
-          start: "Support roles · Specialists start here",
-          desc: "The final layer joins and locks everything in. Rosters are finalized, rooms are assigned, and schedules are confirmed."
-        },
-        {
-          label: "Feb – Mar",
-          dates: "All hands — everyone active",
-          color: "#f87171",
-          gradient: "linear-gradient(135deg,#b91c1c,#f87171)",
-          start: "All hands — everyone is active",
-          desc: "Event weekend. Every plan becomes real — check-in, competitions, ceremonies, and closing. The whole season leads here."
-        }
-      ];
-
-      if (step === 1) {
-        return `
-          <div style="max-width:680px;margin:0 auto;padding:8px 0 48px;">
-
-            <div style="margin-bottom:32px;">
-              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--teal);margin-bottom:10px;">Step 1 of 2</div>
-              <h1 style="font-size:32px;margin-bottom:10px;letter-spacing:-0.03em;line-height:1.1;">Welcome to the MIST Dallas<br>2027 Organizer Board.</h1>
-              <p style="font-size:15px;line-height:1.7;color:var(--muted);max-width:520px;margin:0;">This is where the organizing board plans, coordinates, and executes the season — together. Roles, deadlines, teams, decisions, and the event weekend all live here.</p>
-            </div>
-
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--faint);margin-bottom:12px;">The season at a glance</div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px;margin-bottom:28px;">
-              ${phases.map((p, i) => `
-                <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid ${p.color};border-radius:var(--r-lg);padding:18px 20px;">
-                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-                    <div style="width:26px;height:26px;border-radius:50%;background:${p.gradient};color:white;font-size:11px;font-weight:800;display:grid;place-items:center;flex-shrink:0;">${i + 1}</div>
-                    <div style="font-weight:700;font-size:14px;color:var(--text);">${p.label}</div>
-                    <div style="margin-left:auto;font-size:11px;font-weight:600;color:${p.color};">${p.dates}</div>
-
-                  </div>
-                  <p style="font-size:13px;line-height:1.6;margin:0 0 10px;color:var(--muted);">${p.desc}</p>
-                  <div style="font-size:11px;font-weight:600;color:${p.color};">↳ ${p.start}</div>
-                </div>
-              `).join("")}
-            </div>
-
-            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 22px;margin-bottom:32px;">
-              <div style="font-weight:700;font-size:14px;color:var(--text);margin-bottom:6px;">Your role in all of this</div>
-              <p style="font-size:13px;line-height:1.65;margin:0;color:var(--muted);">Every organizer has a role tied to a team and a start phase. Your workbook tracks deliverables, your team page keeps everyone aligned, and the board runs on shared accountability — deadlines are visible, progress is tracked, and decisions are logged for everyone.</p>
-            </div>
-
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-              <button class="ghost" onclick="openLogin()" style="min-width:0;font-size:13px;">Already have an account? Sign in</button>
-              <button class="primary" style="min-width:180px;" onclick="APP_STATE.onboardingStep=2;renderApp();">Continue — Apply for a Role →</button>
-            </div>
-
+          <div class="orbit-logo">
+            <div class="orbit-logo-star">✦</div>
+            <div class="orbit-logo-wordmark">MIST</div>
+            <div class="orbit-logo-sub">Dallas</div>
           </div>
-        `;
+
+          <div class="orbit-tagline">Organizer Applications Open</div>
+          <h1 class="orbit-hero">JOIN OUR<br>ORBIT</h1>
+          <div class="orbit-deadline">Applications Due Sept 30</div>
+
+          <div class="orbit-divider">✦</div>
+
+          <h2 class="orbit-diff-heading">What's the Difference?</h2>
+
+          <div class="orbit-cards">
+            <div class="orbit-card">
+              <div class="orbit-card-label">Organizers</div>
+              <p class="orbit-card-body">Organizers are responsible for planning and executing MIST Dallas. They take on leadership roles, oversee key areas, and work directly throughout the year and weekend to bring the tournament to life.</p>
+              <button class="orbit-card-btn primary-btn" onclick="APP_STATE.view='apply';renderApp();">Apply as Organizer →</button>
+            </div>
+            <div class="orbit-card dreamteam">
+              <div class="orbit-card-label">Dream Team</div>
+              <p class="orbit-card-body">Dream Team is made up of dedicated volunteers who support on a more flexible basis, primarily during the tournament weekend. A great way to get involved, gain experience, and be part of the MIST Dallas community.</p>
+              <button class="orbit-card-btn outline-btn" onclick="APP_STATE.view='dream-team';renderApp();">Join Dream Team →</button>
+            </div>
+          </div>
+
+          <button class="orbit-signin" onclick="openLogin()">Already have an account? Sign in →</button>
+        </div>
+      `;
+    }
+
+    function renderDreamTeamForm() {
+      return `
+        <div class="orbit-landing">
+          <div class="orbit-stars"></div>
+          <div class="orbit-form-wrap">
+            <button class="orbit-signin" onclick="APP_STATE.view='dashboard';renderApp();" style="margin-bottom:24px;text-decoration:none;color:var(--faint);font-size:12px;letter-spacing:0.05em;">← Back</button>
+            <div class="orbit-logo" style="align-items:flex-start;margin-bottom:28px;">
+              <div class="orbit-logo-star">✦</div>
+            </div>
+            <div class="orbit-card-label dreamteam-label" style="background:rgba(201,160,122,0.15);border:1px solid rgba(201,160,122,0.3);color:var(--rose);padding:5px 14px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;width:fit-content;margin-bottom:16px;">Dream Team</div>
+            <div class="orbit-form-title">Join the<br>Dream Team.</div>
+            <p class="orbit-form-sub">Drop your info below and we'll reach out in January with details on how to get involved for tournament weekend.</p>
+            <form class="stack" onsubmit="submitDreamTeam(event)" style="margin-top:0;">
+              <div>
+                <div class="label">Full name</div>
+                <input id="dt-name" placeholder="Your full name" required />
+              </div>
+              <div>
+                <div class="label">Email</div>
+                <input id="dt-email" type="email" placeholder="your@email.com" required />
+              </div>
+              <div>
+                <div class="label">Phone / WhatsApp (optional)</div>
+                <input id="dt-phone" placeholder="Best number to reach you" />
+              </div>
+              <button class="orbit-card-btn primary-btn" type="submit" style="margin-top:8px;">Submit Interest →</button>
+            </form>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDreamTeamConfirmation() {
+      return `
+        <div class="orbit-landing">
+          <div class="orbit-stars"></div>
+          <div class="orbit-confirm">
+            <div class="orbit-confirm-icon">✦</div>
+            <div class="orbit-confirm-title">You're on<br>our radar.</div>
+            <p class="orbit-confirm-body">Thank you for your interest in Dream Team. We'll be in touch in January with everything you need to get involved for tournament weekend. May Allah bless your time and efforts.</p>
+            <button class="orbit-card-btn primary-btn" onclick="APP_STATE.view='dashboard';renderApp();" style="width:fit-content;padding:12px 28px;margin-top:8px;">Back to Home</button>
+          </div>
+        </div>
+      `;
+    }
+
+    async function submitDreamTeam(event) {
+      event.preventDefault();
+      const name = document.getElementById("dt-name").value.trim();
+      const email = document.getElementById("dt-email").value.trim();
+      const phone = document.getElementById("dt-phone").value.trim();
+
+      if (!name || !email) return alert("Please enter your name and email.");
+
+      const btn = event.target.querySelector("button[type=submit]");
+      if (btn) { btn.textContent = "Submitting…"; btn.disabled = true; }
+
+      const { error } = await supabaseClient
+        .from("role_applications")
+        .insert({
+          role_id: "dream-team",
+          full_name: name,
+          email,
+          phone,
+          status: "pending",
+          responses: { interest: "dream-team" }
+        });
+
+      if (error) {
+        console.error("Dream Team submit error:", error);
+        if (btn) { btn.textContent = "Submit Interest →"; btn.disabled = false; }
+        return alert("Something went wrong. Please try again.");
       }
 
-      // Step 2 — redirect to apply
-      APP_STATE.view = "apply";
-      return null;
+      // Send confirmation email (fire and forget)
+      supabaseClient.functions.invoke("send-application-decision", {
+        body: {
+          decision: "submitted",
+          role_title: "Dream Team",
+          applicant_email: email,
+          applicant_name: name,
+        }
+      }).catch(() => {});
+
+      APP_STATE.view = "dream-team-confirmed";
+      renderApp();
     }
 
     function renderDashboard(user, profile, rows = [], progressRows = [], deadlines = CALENDAR_DEADLINES) {
@@ -4289,11 +4609,15 @@
         return `<div class="dashboard-shell">${renderRoleApplication(null, rows)}</div>`;
       }
 
+      if (!signedIn) {
+        return renderOnboarding();
+      }
+
       return `
         <div class="dashboard-shell">
 
-          ${!signedIn ? `
-          <div id="onboarding-wrap">${renderOnboarding() || ""}</div>
+          ${false ? `
+          <div id="onboarding-wrap"></div>
           ` : `
 
           <!-- Hero banner -->
@@ -8533,6 +8857,16 @@ alter publication supabase_realtime add table messages;</pre>
           return;
         }
 
+        if (APP_STATE.view === "dream-team") {
+          app.innerHTML = renderDreamTeamForm();
+          return;
+        }
+
+        if (APP_STATE.view === "dream-team-confirmed") {
+          app.innerHTML = renderDreamTeamConfirmation();
+          return;
+        }
+
         if (APP_STATE.view === "apply") {
           app.innerHTML = renderRoleApplication(null, rows);
           return;
@@ -8637,6 +8971,16 @@ alter publication supabase_realtime add table messages;</pre>
 
       if (APP_STATE.view === "application-submitted") {
         app.innerHTML = renderApplicationSubmitted();
+        return;
+      }
+
+      if (APP_STATE.view === "dream-team") {
+        app.innerHTML = renderDreamTeamForm();
+        return;
+      }
+
+      if (APP_STATE.view === "dream-team-confirmed") {
+        app.innerHTML = renderDreamTeamConfirmation();
         return;
       }
 
