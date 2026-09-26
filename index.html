@@ -2386,14 +2386,10 @@
       { id: "name", section: "About You", type: "text", label: "My name is:", required: true },
       { id: "gender", section: "About You", type: "radio", label: "I am", options: ["A brother", "A sister"], required: true },
       { id: "still_in_school", section: "About You", type: "radio", label: "Are you still in school?", options: ["Yes", "No"], required: false },
-      { id: "position_change", section: "About You", type: "radio", label: "Do you want to change your position or remain in your current position?", options: ["I like where I am!", "I want to explore other options"], required: true },
       { id: "time_commitment", section: "About You", type: "radio", label: "What are you expecting the time commitment to be?", options: ["1-5 hours a week", "6-10 hours a week", "11-15 hours a week", "This is actually my newest full time job, what are the employee benefits?"], required: true },
-      { id: "team_change", section: "About You", type: "textarea", label: "What is ONE change you would implement in your team next year, and how would you execute it step-by-step", required: false },
-      { id: "fell_short", section: "About You", type: "textarea", label: "Describe a time this year where you fell short in your role. What happened, and what would you do differently?", required: false },
-      { id: "build_case", section: "The Real Stuff", type: "textarea", label: "Build your case: why do you want to remain in your position or why do you want to change your position? What qualifies you for the change in position?", required: true },
+      { id: "build_case", section: "The Real Stuff", type: "textarea", label: "Why you? What qualifies you for this role and what will you bring to the team?", required: true },
       { id: "i_am_traits", section: "The Real Stuff", type: "checkbox", label: "I am", options: ["Good at delegation", "Good at tasks", "Terrible with authority", "In need of direction", "In want of a smaller role", "In want of a bigger role"], required: true },
       { id: "stick_with_mist", section: "The Real Stuff", type: "radio", label: "I plan to stick with MIST for a few years.", options: ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"], required: false },
-      { id: "delivered_well", section: "The Real Stuff", type: "textarea", label: "What have you consistently delivered well in MIST this past year? Give 2-3 specific examples", required: true },
       { id: "feedback", section: "The Real Stuff", type: "textarea", label: "What feedback have you received this year, and how have you acted on it or plan to?", required: true },
       { id: "weekly_commitments", section: "The Real Stuff", type: "textarea", label: "List your weekly commitments (school, work, MCAT, etc.) and realistically how many hours per week you can dedicate to MIST", required: false },
       { id: "peak_weeks", section: "The Real Stuff", type: "textarea", label: "During peak weeks (January), how will you prioritize MIST alongside your other responsibilities?", required: false },
@@ -4010,7 +4006,7 @@
       let currentSection = "";
       return questions.map(question => {
         const sectionHeading = question.section !== currentSection
-          ? `<div class="panel phase-panel" style="margin:12px 0 0;padding:18px;--phase-color:${sectionColor(question.section)};"><h2>${escapeHtml(question.section)}</h2>${question.section === "Positions" ? `<p>You will have priority to remain in your current position, then your committee, if a seat is available.</p>` : ""}</div>`
+          ? `<div class="panel phase-panel" style="margin:12px 0 0;padding:18px;--phase-color:${sectionColor(question.section)};"><h2>${escapeHtml(question.section)}</h2></div>`
           : "";
         currentSection = question.section;
         return `${sectionHeading}${renderApplicationQuestion(question, selectedRoleId)}`;
