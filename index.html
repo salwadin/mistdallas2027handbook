@@ -6586,23 +6586,27 @@
 
     function renderApplicationsAdmin(applications = [], rows = []) {
       const roleClaims = Object.fromEntries(rows.map(row => [row.role_id, row]));
-      const pendingCount = applications.filter(item => item.status === "pending").length;
+
+      const dreamTeam  = applications.filter(item => item.role_id === "dream-team");
+      const organizers = applications.filter(item => item.role_id !== "dream-team");
+      const pendingCount = organizers.filter(item => item.status === "pending").length;
 
       return `
         <div class="dashboard-shell">
           <div class="topbar">
             <div>
-              <h1>Role Applications</h1>
-              <p>Review interest forms for open organizer roles. Approving here does not automatically claim the role yet.</p>
+              <h1>Applications</h1>
+              <p>Organizer applications and Dream Team interest forms.</p>
             </div>
             <button class="ghost" onclick="goDashboard()">Back to Dashboard</button>
           </div>
 
+          <!-- Stats -->
           <div class="panel">
             <div class="grid">
               <div class="stat">
-                <div class="stat-title">Total Applications</div>
-                <div class="stat-value">${applications.length}</div>
+                <div class="stat-title">Organizer Apps</div>
+                <div class="stat-value">${organizers.length}</div>
               </div>
               <div class="stat">
                 <div class="stat-title">Pending Review</div>
@@ -6612,15 +6616,24 @@
                 <div class="stat-title">Open Roles</div>
                 <div class="stat-value">${rows.filter(row => !row.claimed).length}</div>
               </div>
+              <div class="stat">
+                <div class="stat-title">Dream Team</div>
+                <div class="stat-value">${dreamTeam.length}</div>
+              </div>
             </div>
           </div>
 
+          <!-- Organizer Applications -->
           <div class="panel">
-            <h2>Application Queue</h2>
-            <p>Use the notes box for internal review comments. Approving an application assigns the role if the applicant has already created an account with the same email.</p>
-
+            <div class="phase-header">
+              <div>
+                <h2>Organizer Applications</h2>
+                <p>Approving assigns the role if the applicant already has an account with the same email.</p>
+              </div>
+              <span class="phase-chip">${organizers.length} total · ${pendingCount} pending</span>
+            </div>
             <div class="team-board">
-              ${applications.length ? applications.map(item => {
+              ${organizers.length ? organizers.map(item => {
                 const claim = roleClaims[item.role_id];
                 const claimedLabel = claim?.claimed ? `Claimed by ${claim.full_name || claim.email || "organizer"}` : "Still open";
                 return `
@@ -6628,7 +6641,7 @@
                     <div class="phase-header">
                       <div>
                         <h3>${escapeHtml(item.full_name)}</h3>
-                        <p>${escapeHtml(item.email)}${item.phone ? ` - ${escapeHtml(item.phone)}` : ""}</p>
+                        <p>${escapeHtml(item.email)}${item.phone ? ` · ${escapeHtml(item.phone)}` : ""}</p>
                       </div>
                       <span class="status-pill ${escapeHtml(item.status || "pending")}">${escapeHtml(item.status || "pending")}</span>
                     </div>
@@ -6667,9 +6680,34 @@
                     </div>
                   </div>
                 `;
-              }).join("") : `<p>No applications have been submitted yet.</p>`}
+              }).join("") : `<p style="color:var(--muted);">No organizer applications yet.</p>`}
             </div>
           </div>
+
+          <!-- Dream Team -->
+          <div class="panel">
+            <div class="phase-header">
+              <div>
+                <h2>Dream Team Interest</h2>
+                <p>Weekend volunteers — reach out in January with details.</p>
+              </div>
+              <span class="phase-chip" style="--phase-color:var(--rose)">${dreamTeam.length} submitted</span>
+            </div>
+            <div class="team-board">
+              ${dreamTeam.length ? dreamTeam.map(item => `
+                <div class="stat" style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px;justify-content:space-between;">
+                  <div style="flex:1;min-width:200px;">
+                    <h3 style="margin-bottom:4px;">${escapeHtml(item.full_name || "—")}</h3>
+                    <p style="color:var(--muted);font-size:13px;">${escapeHtml(item.email || "")}</p>
+                    ${item.phone ? `<p style="color:var(--muted);font-size:13px;">${escapeHtml(item.phone)}</p>` : ""}
+                    <p style="color:var(--faint);font-size:12px;margin-top:6px;">Submitted ${escapeHtml(formatDate(item.created_at))}</p>
+                  </div>
+                  <span class="status-pill ${escapeHtml(item.status || "pending")}">${escapeHtml(item.status || "pending")}</span>
+                </div>
+              `).join("") : `<p style="color:var(--muted);">No Dream Team submissions yet.</p>`}
+            </div>
+          </div>
+
         </div>
       `;
     }
