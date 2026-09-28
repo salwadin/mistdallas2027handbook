@@ -3455,6 +3455,91 @@ const ROLES = [
       },
     },
   },
+  {
+    id: 'knowledge-brothers', title: 'Brothers Knowledge & Quran Coordinator', team: 'competitions', startPhase: 'build', badge: 'BUILD',
+    reportsTo: 'Competitions Lead',
+    phases: {
+      foundations: {
+        focus: 'This role starts in Phase II: Build.',
+        responsibilities: ['Connect with Competitions Lead to understand scope and Nationals requirements'],
+        deliverables: ['Early orientation if applicable'],
+        frameworks: [],
+        weeklyPlan: [{ week: 'Pre-Build', tasks: 'Connect with Comps Lead.' }],
+        reflections: ['What Knowledge Bowl and Quran formats are permitted by Nationals?'],
+        risks: ['Starting planning without confirming Nationals rules'],
+      },
+      build: {
+        focus: 'Finalize competition formats, rules, and study materials for Knowledge Bowl and Quran.',
+        responsibilities: [
+          'Confirm Knowledge Bowl categories, question formats, and Nationals rules',
+          'Confirm Quran recitation/memorization divisions and judging criteria',
+          'Recruit and brief subject-matter judges for both competitions',
+          'Draft competition rules and participant study guides',
+          'Coordinate room and timing requirements with Logistics',
+        ],
+        deliverables: [
+          'Oct 15: Competition formats confirmed with Comps Lead',
+          'Oct 31: Judge recruitment plan submitted',
+          'Nov 15: Draft rules and study guide complete',
+          'Nov 30: Logistics room requirements submitted',
+        ],
+        frameworks: [
+          { type: 'table', title: 'Knowledge Bowl Question Bank Tracker', columns: ['Category', 'Difficulty', 'Question Count', 'Reviewed By', 'Status'], rows: 10 },
+          { type: 'table', title: 'Quran Division Breakdown', columns: ['Division', 'Requirement', 'Judging Criteria', 'Judge Assigned', 'Notes'], rows: 8 },
+        ],
+        weeklyPlan: [
+          { week: 'Oct 1–15', tasks: 'Confirm formats. Begin judge outreach.' },
+          { week: 'Oct 15–31', tasks: 'Draft rules. Submit room requirements.' },
+          { week: 'Nov 1–30', tasks: 'Finalize study guide. Confirm all judges.' },
+        ],
+        reflections: [
+          'Are the Quran divisions accessible to both experienced reciters and beginners?',
+          'Does the Knowledge Bowl question bank reflect diverse Islamic and academic topics?',
+        ],
+        risks: ['Judges not confirmed early enough', 'Question bank incomplete before event', 'Format not approved by Nationals'],
+      },
+      stabilization: {
+        focus: 'Register participants, assign brackets, and finalize logistics.',
+        responsibilities: [
+          'Track participant registrations per division',
+          'Assign Quran participants to correct divisions based on registration data',
+          'Draft Knowledge Bowl brackets with Brackets Coordinator',
+          'Confirm final judge list and brief all judges',
+        ],
+        deliverables: [
+          'Jan 31: Participant registration reviewed',
+          'Feb 15: Quran division assignments complete',
+          'Feb 28: Knowledge Bowl brackets drafted and submitted',
+        ],
+        frameworks: [{ type: 'table', title: 'Participant Division Assignments', columns: ['Name', 'School', 'Competition', 'Division', 'Confirmed', 'Notes'], rows: 15 }],
+        weeklyPlan: [{ week: 'Feb 1–28', tasks: 'Review registrations. Assign divisions. Draft brackets. Brief judges.' }],
+        reflections: ['Are all participants placed in the correct division based on their registration?'],
+        risks: ['Participant placed in wrong division', 'Bracket errors', 'Judge pulling out last minute'],
+      },
+      execution: {
+        focus: 'Run Knowledge Bowl rounds and Quran recitation smoothly across all divisions.',
+        responsibilities: [
+          'Brief judges and volunteers day-of',
+          'Run all Knowledge Bowl rounds and record results accurately',
+          'Oversee Quran recitation sessions and coordinate with judges on scoring',
+          'Handle participant questions and disputes with fairness',
+          'Submit final results to Brackets/Results Coordinator',
+        ],
+        deliverables: [
+          'Mar 21: Final judge and volunteer brief',
+          'Mar 24: Day-of setup and room check',
+          'Mar 26–28: Run all rounds, record results, submit to brackets',
+        ],
+        frameworks: [{ type: 'table', title: 'Results Log', columns: ['Round', 'Participant/Team', 'Score', 'Judge', 'Time', 'Notes'], rows: 20 }],
+        weeklyPlan: [
+          { week: 'Mar 21–24', tasks: 'Final briefings. Room setup.' },
+          { week: 'Mar 26–28', tasks: 'Run competitions. Record and submit all results.' },
+        ],
+        reflections: ['Were scoring disputes handled consistently and fairly?'],
+        risks: ['Judge no-show on event day', 'Scoring dispute with no clear resolution process', 'Room scheduling conflict'],
+      },
+    },
+  },
 ];
 
 // Export to window for use in main app
