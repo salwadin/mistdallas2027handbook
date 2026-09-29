@@ -3136,6 +3136,8 @@
     const TIMELINE = MASTER_MILESTONES;
 
     async function getUser() {
+      // getSession() processes #access_token hash from invite/magic links before returning
+      await supabaseClient.auth.getSession();
       const { data } = await supabaseClient.auth.getUser();
       return data.user;
     }
@@ -4352,6 +4354,59 @@
       if (overallFill) overallFill.style.width = `${overall}%`;
       if (phaseText) phaseText.textContent = `${phaseState.percent_complete || 0}% complete`;
       if (phaseFill) phaseFill.style.width = `${phaseState.percent_complete || 0}%`;
+    }
+
+    function renderSetPassword() {
+      return `
+        <div class="card">
+          <div style="text-align:center;margin-bottom:24px;">
+            <div style="font-size:32px;color:var(--rose);margin-bottom:12px;">✦</div>
+            <h2 style="margin-bottom:6px;">Set your password</h2>
+            <p style="color:var(--muted);">You're in. Create a password to finish setting up your organizer account.</p>
+          </div>
+          <div class="stack">
+            <div>
+              <div class="label">New password</div>
+              <input id="new-password" type="password" placeholder="At least 8 characters" />
+            </div>
+            <div>
+              <div class="label">Confirm password</div>
+              <input id="confirm-password" type="password" placeholder="Repeat password" />
+            </div>
+            <button class="primary full" onclick="submitSetPassword()">Set Password & Enter Portal</button>
+          </div>
+          <p id="set-pw-error" style="color:var(--red);font-size:13px;margin-top:12px;display:none;"></p>
+        </div>
+      `;
+    }
+
+    async function submitSetPassword() {
+      const pw  = document.getElementById("new-password").value;
+      const pw2 = document.getElementById("confirm-password").value;
+      const err = document.getElementById("set-pw-error");
+
+      if (pw.length < 8) {
+        err.textContent = "Password must be at least 8 characters.";
+        err.style.display = "block"; return;
+      }
+      if (pw !== pw2) {
+        err.textContent = "Passwords don't match.";
+        err.style.display = "block"; return;
+      }
+
+      const btn = document.querySelector("#app button.primary");
+      if (btn) { btn.textContent = "Saving…"; btn.disabled = true; }
+
+      const { error } = await supabaseClient.auth.updateUser({ password: pw });
+      if (error) {
+        err.textContent = error.message;
+        err.style.display = "block";
+        if (btn) { btn.textContent = "Set Password & Enter Portal"; btn.disabled = false; }
+        return;
+      }
+
+      APP_STATE.view = "dashboard";
+      renderApp();
     }
 
     function renderLogin() {
@@ -9195,12 +9250,27 @@ alter publication supabase_realtime add table messages;</pre>
       // Show shimmer immediately — before any network calls
       app.innerHTML = renderSkeleton();
 
+      // Detect invite/recovery tokens in URL hash and route to set-password screen
+      const hashParams = new URLSearchParams(window.location.hash.replace("#", "?").slice(1));
+      const hashType = hashParams.get("type");
+      if (hashType === "invite" || hashType === "recovery") {
+        // getUser() already called getSession() which consumed the hash — user is now signed in
+        // Clear hash from URL so refreshing doesn't re-trigger
+        history.replaceState(null, "", window.location.pathname);
+        APP_STATE.view = "set-password";
+      }
+
       const user = await getUser();
       const profiles = await getAllProfiles();
       const rows = buildRoleDirectoryRows(profiles);
 
       // Render nav immediately with auth state (profile may be null for public views)
       setNav(user, null);
+
+      if (APP_STATE.view === "set-password") {
+        app.innerHTML = renderSetPassword();
+        return;
+      }
 
       if (!user && APP_STATE.view === "login") {
         app.innerHTML = renderLogin();
