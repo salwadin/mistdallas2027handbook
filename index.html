@@ -3346,7 +3346,12 @@
         // If account already exists, sign them in directly instead of showing an error
         if (error.message.toLowerCase().includes("already registered") || error.message.toLowerCase().includes("user already")) {
           const { error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
-          if (signInError) return alert("You already have an account. " + signInError.message);
+          if (signInError) {
+            const errEl = document.getElementById("login-error");
+            const msg = "You already have an account but the password didn't match. Use the magic link below to sign in without a password.";
+            if (errEl) { errEl.textContent = msg; errEl.style.display = "block"; } else alert(msg);
+            return;
+          }
           return location.reload();
         }
         return alert(error.message);
@@ -3374,10 +3379,26 @@
     async function login() {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
-      if (!email || !password) return alert("Enter email and password.");
+      const errEl = document.getElementById("login-error");
+      if (!email || !password) { if (errEl) { errEl.textContent = "Enter your email and password."; errEl.style.display = "block"; } return; }
       const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      if (error) return alert(error.message);
+      if (error) {
+        const msg = error.message.toLowerCase().includes("invalid") ? "Incorrect password. Use the magic link below if you haven't set one yet." : error.message;
+        if (errEl) { errEl.textContent = msg; errEl.style.display = "block"; } else alert(msg);
+        return;
+      }
       location.reload();
+    }
+
+    async function sendMagicLink() {
+      const email = document.getElementById("email").value.trim();
+      const errEl = document.getElementById("login-error");
+      const okEl = document.getElementById("magic-success");
+      if (!email) { if (errEl) { errEl.textContent = "Enter your email first."; errEl.style.display = "block"; } return; }
+      const { error } = await supabaseClient.auth.signInWithOtp({ email, options: { emailRedirectTo: "https://organizers.mistdallas.org" } });
+      if (error) { if (errEl) { errEl.textContent = error.message; errEl.style.display = "block"; } return; }
+      if (errEl) errEl.style.display = "none";
+      if (okEl) { okEl.textContent = "Magic link sent to " + email + ". Check your inbox and click the link to sign in."; okEl.style.display = "block"; }
     }
 
     async function logout() {
@@ -4432,16 +4453,23 @@
           <div class="stack">
             <div>
               <div class="label">Email</div>
-              <input id="email" type="email" placeholder="you@example.com" />
+              <input id="email" type="email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')document.getElementById('password').focus()" />
             </div>
             <div>
               <div class="label">Password</div>
-              <input id="password" type="password" placeholder="Your password" />
+              <input id="password" type="password" placeholder="Your password" onkeydown="if(event.key==='Enter')login()" />
             </div>
             <button class="primary full" onclick="login()">Log In</button>
             <button class="ghost full" onclick="signUp()" style="min-width:0;">Create Account</button>
           </div>
-          <p class="subtext" style="text-align:center;">New organizer? Create your account — you'll get a confirmation email, then log in and apply for your role.</p>
+          <p id="login-error" style="color:var(--red);font-size:13px;margin-top:10px;display:none;text-align:center;"></p>
+          <div style="margin-top:16px;text-align:center;">
+            <button onclick="sendMagicLink()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;font-family:inherit;">
+              Can't log in? Send a magic link →
+            </button>
+          </div>
+          <p class="subtext" style="text-align:center;margin-top:12px;">New organizer? Create your account — you'll get a confirmation email, then log in and apply for your role.</p>
+          <p id="magic-success" style="color:var(--green);font-size:13px;margin-top:10px;display:none;text-align:center;"></p>
         </div>
       `;
     }
