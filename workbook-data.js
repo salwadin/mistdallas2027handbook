@@ -722,85 +722,6 @@ const ROLES = [
   },
 
   {
-    id: 'brothers-kq', title: 'Brothers Knowledge & Quran Coordinator', team: 'competitions', startPhase: 'build', badge: 'BUILD',
-    reportsTo: 'Competitions Lead',
-    phases: {
-      foundations: {
-        focus: 'This role starts in Phase II: Build.',
-        responsibilities: ['Review available Nationals rules for Knowledge Bowl and Quran competitions'],
-        deliverables: ['Early orientation if applicable'],
-        frameworks: [],
-        weeklyPlan: [{ week: 'Pre-Build', tasks: 'Connect with Comps Lead.' }],
-        reflections: ['What do you know about the Quran and Knowledge competition formats?'],
-        risks: ['Starting Build without having read the rules'],
-      },
-      build: {
-        focus: 'Master all rules for Brothers Knowledge and Quran competitions and finalize all requirements.',
-        responsibilities: [
-          'Master applicable rules, formats, and rubrics for Knowledge Bowl and Quran',
-          'Determine judge requirements including Quran judge qualifications',
-          'Determine recitation/testing setup, privacy/quiet-space requirements',
-          'Determine supplies, technology, and competitor flow procedures',
-          'Coordinate Quran judge needs with Judges Coordinator',
-        ],
-        deliverables: [
-          'Oct 15: Requirements sheet submitted for Brothers Knowledge and Quran',
-          'Oct 31: Preliminary competition workflow and competitor flow created',
-          'Nov 15: Any pilot/addendum needs identified',
-          'Nov 30: All requirements finalized through Competitions Lead',
-        ],
-        frameworks: [
-          { type: 'table', title: 'Brothers KQ Requirements', columns: ['Competition', 'Format', 'Room Setup', 'Judges Required', 'Privacy Needed?', 'Tech/Supplies'], rows: 4 },
-        ],
-        weeklyPlan: [
-          { week: 'Oct 1–15', tasks: 'Read all rules. Complete requirements sheet.' },
-          { week: 'Oct 15–31', tasks: 'Build competitor flow. Identify Quran judge needs.' },
-          { week: 'Nov 1–30', tasks: 'Finalize with Comps Lead and Judges Coord.' },
-        ],
-        reflections: [
-          'Do you have access to qualified Quran judges — and is this enough lead time?',
-          'What environment do Quran competitors need that standard competition rooms may not provide?',
-        ],
-        risks: ['Insufficient qualified Quran judges', 'Privacy/quiet-space requirements not accommodated', 'Knowledge Bowl format misunderstood'],
-      },
-      stabilization: {
-        focus: 'Review registration numbers and build the actual schedule.',
-        responsibilities: ['Review actual roster', 'Build schedule with Comps Lead', 'Identify conflicts', 'Verify competitors placed correctly'],
-        deliverables: ['Feb 7: Review actual competitor roster', 'Feb 15: Schedule built', 'Feb 28: Requirements finalized'],
-        frameworks: [{ type: 'table', title: 'Brothers KQ Schedule', columns: ['Competition', 'Time Block', 'Room', 'Judge(s)', 'Competitors', 'Notes'], rows: 5 }],
-        weeklyPlan: [
-          { week: 'Jan 1–31', tasks: 'Monitor registration.' },
-          { week: 'Feb 1–28', tasks: 'Receive roster. Build schedule. Confirm judge assignments.' },
-        ],
-        reflections: ['Are Quran judge commitments confirmed for actual tournament dates?'],
-        risks: ['Quran judge cancellation after commitment', 'Room not suitable for recitation'],
-      },
-      execution: {
-        focus: 'Complete materials, simulate, and own Brothers Knowledge & Quran competition operations.',
-        responsibilities: [
-          'Prepare room packets and materials for all assigned competitions',
-          'Train assigned volunteers including on respectful Quran environment protocols',
-          'Conduct pre-event room walkthrough',
-          'Run competition rooms, timing, and maintain respectful testing/recitation environments',
-          'Escalate judging or rules disputes to Competitions Lead — never improvise',
-        ],
-        deliverables: [
-          'Mar 7: Room confirmed', 'Mar 14: Simulate workflow', 'Mar 18: Room packets complete',
-          'Mar 21: Volunteer briefing completed', 'Mar 24: Room walkthrough', 'Mar 26–28: Own all assigned rooms',
-        ],
-        frameworks: [{ type: 'table', title: 'Quran Competition Checklist', columns: ['Item', 'Status', 'Notes'], rows: 8 }],
-        weeklyPlan: [
-          { week: 'Mar 1–21', tasks: 'Build packets. Train volunteers. Simulate.' },
-          { week: 'Mar 24', tasks: 'Walkthrough. Confirm Quran room setup.' },
-          { week: 'Mar 26–28', tasks: 'Own rooms. Maintain respectful environment.' },
-        ],
-        reflections: ['Are your volunteers prepared to maintain a quiet, respectful recitation environment?'],
-        risks: ['Disruption of Quran recitation environment', 'Judge not present at start time'],
-      },
-    },
-  },
-
-  {
     id: 'sisters-kq', title: 'Sisters Knowledge & Quran Coordinator', team: 'competitions', startPhase: 'build', badge: 'BUILD',
     reportsTo: 'Competitions Lead',
     phases: {
@@ -1575,6 +1496,91 @@ const ROLES = [
         ],
         reflections: ['Have you personally confirmed every print file is print-ready — correct dimensions, bleed, resolution?'],
         risks: ['Print file submitted with errors and no time for reprints', 'Print deadline missed', 'Ceremony slides not done before rehearsal'],
+      },
+    },
+  },
+
+  {
+    id: 'marketing-coord', title: 'Marketing Coordinator', team: 'marketing', startPhase: 'build', badge: 'BUILD',
+    reportsTo: 'Marketing Lead',
+    phases: {
+      foundations: {
+        focus: 'This role starts in Phase II: Build.',
+        responsibilities: ['Review Marketing Lead\'s brand and content strategy'],
+        deliverables: ['Early orientation if applicable'],
+        frameworks: [],
+        weeklyPlan: [{ week: 'Pre-Build', tasks: 'Connect with Marketing Lead.' }],
+        reflections: ['What marketing gaps exist that this role is specifically filling?'],
+        risks: ['Starting without a clear scope defined by Marketing Lead'],
+      },
+      build: {
+        focus: 'Support the marketing strategy with cross-channel coordination and campaign execution.',
+        responsibilities: [
+          'Coordinate between Content Creator, Graphic Design, and Outreach',
+          'Assist Marketing Lead in campaign planning and tracking',
+          'Maintain marketing calendar and ensure deliverables are on track',
+          'Support registration announcement campaign preparation',
+          'Identify gaps in coverage and flag to Marketing Lead',
+        ],
+        deliverables: [
+          'Oct 31: Marketing calendar up to date and shared with team',
+          'Nov 30: All registration campaign assets coordinated and ready',
+          'Dec 10: Registration announcement support complete',
+        ],
+        frameworks: [
+          { type: 'table', title: 'Marketing Campaign Tracker', columns: ['Campaign', 'Owner', 'Deadline', 'Status', 'Notes'], rows: 12 },
+        ],
+        weeklyPlan: [
+          { week: 'Oct 1–31', tasks: 'Calendar. Cross-team coordination. Asset tracking.' },
+          { week: 'Nov 1–30', tasks: 'Registration campaign prep. Ensure team on track.' },
+          { week: 'Dec 1–15', tasks: 'Registration announcement support.' },
+        ],
+        reflections: [
+          'Are all marketing sub-roles clear on their deliverables?',
+          'What is slipping that Marketing Lead doesn\'t know about yet?',
+        ],
+        risks: ['Coordination gaps between Content, Design, and Outreach', 'Marketing Lead not informed of blockers early enough'],
+      },
+      stabilization: {
+        focus: 'Drive January registration campaign coordination and ensure all channels are active.',
+        responsibilities: [
+          'Coordinate January campaign across all marketing channels',
+          'Track registration numbers and report to Marketing Lead weekly',
+          'Ensure countdown content is published on schedule',
+          'Support last-minute registration push Jan 25–31',
+        ],
+        deliverables: [
+          'Jan 1–31: Weekly campaign coordination active',
+          'Jan 31: Final registration push completed',
+        ],
+        frameworks: [{ type: 'table', title: 'January Campaign Log', columns: ['Week', 'Campaign Activity', 'Owner', 'Completed?', 'Notes'], rows: 8 }],
+        weeklyPlan: [
+          { week: 'Jan 1–15', tasks: 'Campaign coordination. Weekly check-ins.' },
+          { week: 'Jan 25–31', tasks: 'Final push. Close out January campaign.' },
+        ],
+        reflections: ['Is the registration campaign hitting targets — or just going through the motions?'],
+        risks: ['January campaign running without coordination', 'Registration target missed due to low visibility'],
+      },
+      execution: {
+        focus: 'Tournament marketing support, live coverage coordination, and post-event wrap.',
+        responsibilities: [
+          'Coordinate tournament marketing timeline Feb–Mar',
+          'Support live content strategy during Mar 25–28',
+          'Assist with post-event recap and year-end marketing wrap',
+        ],
+        deliverables: [
+          'Feb–Mar: Tournament marketing coordination active',
+          'Mar 25–28: Live coverage support',
+          'Apr 4: Post-event marketing wrap complete',
+        ],
+        frameworks: [{ type: 'table', title: 'Tournament Marketing Checklist', columns: ['Task', 'Owner', 'Due', 'Done?'], rows: 10 }],
+        weeklyPlan: [
+          { week: 'Feb 1–Mar 14', tasks: 'Tournament marketing. Hype coordination.' },
+          { week: 'Mar 25–28', tasks: 'Live coverage support.' },
+          { week: 'Apr 4', tasks: 'Post-event wrap.' },
+        ],
+        reflections: ['Did the marketing successfully build energy going into the tournament?'],
+        risks: ['Post-event recap never produced', 'Tournament marketing deprioritized during busy execution weeks'],
       },
     },
   },
