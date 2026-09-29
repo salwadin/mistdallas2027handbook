@@ -3035,6 +3035,87 @@ const ROLES = [
   },
 
   {
+    id: 'tech-coord', title: 'Tech Coordinator', team: 'registration', startPhase: 'build', badge: 'BUILD',
+    reportsTo: 'Tech Lead',
+    phases: {
+      foundations: {
+        focus: 'This role starts in Phase II: Build.',
+        responsibilities: ['Connect with Tech Lead to understand scope and priority areas'],
+        deliverables: ['Early orientation if applicable'],
+        frameworks: [],
+        weeklyPlan: [{ week: 'Pre-Build', tasks: 'Connect with Tech Lead.' }],
+        reflections: ['What tech systems will you be supporting?'],
+        risks: ['Starting without a clear scope from Tech Lead'],
+      },
+      build: {
+        focus: 'Support the Tech Lead in building, maintaining, and documenting organizer-facing tech systems.',
+        responsibilities: [
+          'Assist in building or updating the MIST Dallas website',
+          'Support development of the organizer portal and participant-facing tools',
+          'Document technical processes so knowledge is not lost after the event',
+          'Assist with testing registration workflows and tech integrations',
+          'Take ownership of specific tech tasks delegated by Tech Lead',
+        ],
+        deliverables: [
+          'Oct 31: Assigned tech tasks scoped and in progress',
+          'Nov 15: Documentation started for any systems you own',
+          'Nov 30: Build deliverables complete per Tech Lead direction',
+        ],
+        frameworks: [
+          { type: 'table', title: 'Tech Task Tracker', columns: ['Task', 'System', 'Priority', 'Status', 'Owner', 'Due Date', 'Notes'], rows: 10 },
+        ],
+        weeklyPlan: [
+          { week: 'Oct 1–15', tasks: 'Receive task assignments. Begin active work.' },
+          { week: 'Oct 15–31', tasks: 'Build and test assigned systems.' },
+          { week: 'Nov 1–30', tasks: 'Complete build deliverables. Start documentation.' },
+        ],
+        reflections: [
+          'Are the systems you are building intuitive for non-technical organizers?',
+          'Is your work documented well enough for someone else to maintain it?',
+        ],
+        risks: ['Undocumented work creating a knowledge gap post-event', 'Build falling behind without regular check-ins with Tech Lead'],
+      },
+      stabilization: {
+        focus: 'Test all systems with real registration data and fix issues before launch.',
+        responsibilities: [
+          'Test all tech systems with actual registration data',
+          'Fix bugs or UX issues found during testing',
+          'Ensure website and participant-facing tools are accurate and live',
+          'Support Tech Lead in pre-launch checklist completion',
+        ],
+        deliverables: [
+          'Jan 15: System testing complete',
+          'Jan 31: All issues resolved, systems live and accurate',
+        ],
+        frameworks: [{ type: 'table', title: 'Pre-Launch Testing Log', columns: ['System', 'Test Case', 'Result', 'Issue Found', 'Fix Applied', 'Status'], rows: 10 }],
+        weeklyPlan: [{ week: 'Jan 1–31', tasks: 'Test systems. Fix issues. Confirm everything is live.' }],
+        reflections: ['What would a first-time participant experience trying to navigate your systems?'],
+        risks: ['Bug found after registration launches publicly', 'Website outdated when participants are actively checking it'],
+      },
+      execution: {
+        focus: 'Be the on-site tech support — keep systems running and resolve issues in real time.',
+        responsibilities: [
+          'Provide real-time tech support during tournament weekend',
+          'Troubleshoot check-in, results, and participant-facing system issues',
+          'Assist with any last-minute website or portal updates',
+          'Document issues and solutions for future reference',
+        ],
+        deliverables: [
+          'Mar 24: Systems checked and confirmed live at venue',
+          'Mar 26–28: On-call tech support throughout tournament',
+        ],
+        frameworks: [{ type: 'table', title: 'Tournament Day Issue Log', columns: ['Time', 'System', 'Issue', 'Fix Applied', 'Resolved By', 'Notes'], rows: 10 }],
+        weeklyPlan: [
+          { week: 'Mar 21–24', tasks: 'Final system checks. Venue setup support.' },
+          { week: 'Mar 26–28', tasks: 'On-site tech support. Log and resolve issues.' },
+        ],
+        reflections: ['What recurring issues came up and how would you prevent them next year?'],
+        risks: ['Check-in system failure at peak entry time', 'No backup plan if primary tech system goes down'],
+      },
+    },
+  },
+
+  {
     id: 'registration', title: 'Registration Coordinator', team: 'registration', startPhase: 'foundations', badge: 'CORE',
     reportsTo: 'Tech Lead',
     phases: {

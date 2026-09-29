@@ -8145,7 +8145,7 @@
     }
 
     function formatRole(roleId) {
-      const overrides = { "tech-lead": "Tech Coordinator" };
+      const overrides = { "tech-lead": "Tech Lead", "tech-coord": "Tech Coordinator" };
       if (overrides[roleId]) return overrides[roleId];
       const role = ROLE_OPTIONS.find(r => r.id === roleId);
       return role ? role.title : (roleId || "Not set");
