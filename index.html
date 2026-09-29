@@ -9272,17 +9272,19 @@ alter publication supabase_realtime add table messages;</pre>
       // Show shimmer immediately — before any network calls
       app.innerHTML = renderSkeleton();
 
-      // Detect invite/recovery tokens in URL hash and route to set-password screen
+      // Read hash BEFORE calling getSession (which consumes and clears it internally)
       const hashParams = new URLSearchParams(window.location.hash.replace("#", "?").slice(1));
       const hashType = hashParams.get("type");
-      if (hashType === "invite" || hashType === "recovery") {
-        // getUser() already called getSession() which consumed the hash — user is now signed in
-        // Clear hash from URL so refreshing doesn't re-trigger
+      const isInviteLink = hashType === "invite" || hashType === "recovery";
+
+      // getUser() calls getSession() which must run while the hash is still in the URL
+      const user = await getUser();
+
+      // Now that the token is consumed, clean the URL and route to set-password
+      if (isInviteLink) {
         history.replaceState(null, "", window.location.pathname);
         APP_STATE.view = "set-password";
       }
-
-      const user = await getUser();
       const profiles = await getAllProfiles();
       const rows = buildRoleDirectoryRows(profiles);
 
