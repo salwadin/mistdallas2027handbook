@@ -6644,7 +6644,63 @@
 
       const dreamTeam  = applications.filter(item => item.role_id === "dream-team");
       const organizers = applications.filter(item => item.role_id !== "dream-team");
-      const pendingCount = organizers.filter(item => item.status === "pending").length;
+      const pending  = organizers.filter(item => (item.status || "pending") === "pending");
+      const approved = organizers.filter(item => item.status === "approved");
+      const declined = organizers.filter(item => item.status === "declined");
+
+      const activeTab = APP_STATE.applicationsTab || "pending";
+
+      const tabGroups = { pending, approved, declined };
+      const tabList = organizers.length ? tabGroups[activeTab] : [];
+
+      const renderOrgCard = (item) => {
+        const claim = roleClaims[item.role_id];
+        const claimedLabel = claim?.claimed ? `Claimed by ${claim.full_name || claim.email || "organizer"}` : "Still open";
+        return `
+          <div class="stat">
+            <div class="phase-header">
+              <div>
+                <h3>${escapeHtml(item.full_name)}</h3>
+                <p>${escapeHtml(item.email)}${item.phone ? ` · ${escapeHtml(item.phone)}` : ""}</p>
+              </div>
+              <span class="status-pill ${escapeHtml(item.status || "pending")}">${escapeHtml(item.status || "pending")}</span>
+            </div>
+            <div class="grid">
+              <div>
+                <div class="label">Role</div>
+                <p>${escapeHtml(formatRole(item.role_id))}</p>
+              </div>
+              <div>
+                <div class="label">Role status</div>
+                <p>${escapeHtml(claimedLabel)}</p>
+              </div>
+              <div>
+                <div class="label">Submitted</div>
+                <p>${escapeHtml(formatDate(item.created_at))}</p>
+              </div>
+            </div>
+            <div style="margin-top:14px;">
+              <div class="label">Experience</div>
+              <p>${escapeHtml(item.experience || "")}</p>
+            </div>
+            <div style="margin-top:14px;">
+              <div class="label">Availability</div>
+              <p>${escapeHtml(item.availability || "")}</p>
+            </div>
+            ${renderApplicationAnswerReview(item.responses || {})}
+            <div style="margin-top:14px;">
+              <div class="label">Review notes</div>
+              <textarea id="review-notes-${escapeHtml(item.id)}" placeholder="Internal review notes...">${escapeHtml(item.review_notes || "")}</textarea>
+            </div>
+            <div class="inline-actions">
+              <button class="success" onclick="updateApplicationStatus('${escapeHtml(item.id)}', 'approved')">Approve</button>
+              <button class="danger" onclick="updateApplicationStatus('${escapeHtml(item.id)}', 'declined')">Decline</button>
+              <button class="ghost" onclick="updateApplicationStatus('${escapeHtml(item.id)}', 'pending')">Mark Pending</button>
+              <button class="secondary" onclick="sendApplicationDecisionEmail('${escapeHtml(item.id)}', '${escapeHtml(item.status || "pending")}', '${escapeHtml(item.role_id)}')">Email Decision</button>
+            </div>
+          </div>
+        `;
+      };
 
       return `
         <div class="dashboard-shell">
@@ -6660,16 +6716,16 @@
           <div class="panel">
             <div class="grid">
               <div class="stat">
-                <div class="stat-title">Organizer Apps</div>
-                <div class="stat-value">${organizers.length}</div>
-              </div>
-              <div class="stat">
                 <div class="stat-title">Pending Review</div>
-                <div class="stat-value">${pendingCount}</div>
+                <div class="stat-value">${pending.length}</div>
               </div>
               <div class="stat">
-                <div class="stat-title">Open Roles</div>
-                <div class="stat-value">${rows.filter(row => !row.claimed).length}</div>
+                <div class="stat-title">Approved</div>
+                <div class="stat-value">${approved.length}</div>
+              </div>
+              <div class="stat">
+                <div class="stat-title">Declined</div>
+                <div class="stat-value">${declined.length}</div>
               </div>
               <div class="stat">
                 <div class="stat-title">Dream Team</div>
@@ -6678,64 +6734,30 @@
             </div>
           </div>
 
-          <!-- Organizer Applications -->
+          <!-- Organizer Applications with tabs -->
           <div class="panel">
-            <div class="phase-header">
+            <div class="phase-header" style="margin-bottom:16px;">
               <div>
                 <h2>Organizer Applications</h2>
                 <p>Approving assigns the role if the applicant already has an account with the same email.</p>
               </div>
-              <span class="phase-chip">${organizers.length} total · ${pendingCount} pending</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:0;">
+              ${["pending","approved","declined"].map(tab => `
+                <button onclick="APP_STATE.applicationsTab='${tab}';renderApp();" style="
+                  background:none;border:none;padding:8px 16px;cursor:pointer;font-family:'nasalization',sans-serif;font-size:10px;letter-spacing:0.06em;font-weight:400;
+                  color:${activeTab===tab?"var(--rose)":"var(--muted)"};
+                  border-bottom:2px solid ${activeTab===tab?"var(--rose)":"transparent"};
+                  margin-bottom:-1px;transition:color 0.15s,border-color 0.15s;
+                ">${tab.toUpperCase()} <span style="
+                  display:inline-block;padding:1px 6px;border-radius:10px;font-size:9px;margin-left:4px;
+                  background:${activeTab===tab?"var(--rose)":"var(--surface2)"};
+                  color:${activeTab===tab?"#fff":"var(--muted)"};
+                ">${tabGroups[tab].length}</span></button>
+              `).join("")}
             </div>
             <div class="team-board">
-              ${organizers.length ? organizers.map(item => {
-                const claim = roleClaims[item.role_id];
-                const claimedLabel = claim?.claimed ? `Claimed by ${claim.full_name || claim.email || "organizer"}` : "Still open";
-                return `
-                  <div class="stat">
-                    <div class="phase-header">
-                      <div>
-                        <h3>${escapeHtml(item.full_name)}</h3>
-                        <p>${escapeHtml(item.email)}${item.phone ? ` · ${escapeHtml(item.phone)}` : ""}</p>
-                      </div>
-                      <span class="status-pill ${escapeHtml(item.status || "pending")}">${escapeHtml(item.status || "pending")}</span>
-                    </div>
-                    <div class="grid">
-                      <div>
-                        <div class="label">Role</div>
-                        <p>${escapeHtml(formatRole(item.role_id))}</p>
-                      </div>
-                      <div>
-                        <div class="label">Role status</div>
-                        <p>${escapeHtml(claimedLabel)}</p>
-                      </div>
-                      <div>
-                        <div class="label">Submitted</div>
-                        <p>${escapeHtml(formatDate(item.created_at))}</p>
-                      </div>
-                    </div>
-                    <div style="margin-top:14px;">
-                      <div class="label">Experience</div>
-                      <p>${escapeHtml(item.experience || "")}</p>
-                    </div>
-                    <div style="margin-top:14px;">
-                      <div class="label">Availability</div>
-                      <p>${escapeHtml(item.availability || "")}</p>
-                    </div>
-                    ${renderApplicationAnswerReview(item.responses || {})}
-                    <div style="margin-top:14px;">
-                      <div class="label">Review notes</div>
-                      <textarea id="review-notes-${escapeHtml(item.id)}" placeholder="Internal review notes...">${escapeHtml(item.review_notes || "")}</textarea>
-                    </div>
-                    <div class="inline-actions">
-                      <button class="success" onclick="updateApplicationStatus('${escapeHtml(item.id)}', 'approved')">Approve</button>
-                      <button class="danger" onclick="updateApplicationStatus('${escapeHtml(item.id)}', 'declined')">Decline</button>
-                      <button class="ghost" onclick="updateApplicationStatus('${escapeHtml(item.id)}', 'pending')">Mark Pending</button>
-                      <button class="secondary" onclick="sendApplicationDecisionEmail('${escapeHtml(item.id)}', '${escapeHtml(item.status || "pending")}', '${escapeHtml(item.role_id)}')">Email Decision</button>
-                    </div>
-                  </div>
-                `;
-              }).join("") : `<p style="color:var(--muted);">No organizer applications yet.</p>`}
+              ${tabList.length ? tabList.map(renderOrgCard).join("") : `<p style="color:var(--muted);">No ${activeTab} applications.</p>`}
             </div>
           </div>
 
