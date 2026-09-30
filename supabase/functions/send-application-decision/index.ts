@@ -80,15 +80,15 @@ serve(async (req) => {
     }
 
     const subject = isApproved
-      ? `You're in — MIST Dallas 2027 ${role_title}`
+      ? `Welcome to Our Orbit — MIST Dallas 2027`
       : `MIST Dallas 2027 Application Update`;
 
     const html = isApproved
       ? `
         <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#ffffff;">
-          <h2 style="color:#1a1a1a;margin-bottom:8px;">Assalamu Alaikum ${name},</h2>
+          <h2 style="color:#1a1a1a;margin-bottom:8px;">Welcome to Our Orbit, ${name}.</h2>
           <p style="color:#444;font-size:16px;line-height:1.6;">
-            We're excited to welcome you to the <strong>MIST Dallas 2027</strong> organizing team as <strong>${role_title}</strong>.
+            You've been selected to join the <strong>MIST Dallas 2027</strong> organizing team as <strong>${role_title}</strong>.
           </p>
           <p style="color:#444;font-size:16px;line-height:1.6;">
             Click the button below to set up your organizer account and access your role workbook, phase tasks, and team resources.
