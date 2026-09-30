@@ -3517,21 +3517,6 @@
       const applicationEmail = String(application.email || "").trim();
 
       if (status === "approved") {
-        const { data: existingClaim, error: claimError } = await supabaseClient
-          .from("profiles")
-          .select("id,full_name,email")
-          .eq("role_id", application.role_id)
-          .maybeSingle();
-
-        if (claimError) {
-          console.error("Role claim check error:", claimError);
-          return alert("Could not check whether that role is already claimed.");
-        }
-
-        if (existingClaim && normalizeEmail(existingClaim.email) !== normalizeEmail(applicationEmail)) {
-          return alert(`This role is already claimed by ${existingClaim.full_name || existingClaim.email}.`);
-        }
-
         // If they already have an account, assign the role immediately
         let applicantProfile = null;
         if (application.user_id) {
