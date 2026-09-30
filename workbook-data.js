@@ -1823,7 +1823,6 @@ const ROLES = [
     },
   },
 
-  {
   // ─── OPERATIONS ──────────────────────────────────────────────────────────
   {
     id: 'logistics-lead', title: 'Logistics Lead', team: 'operations', startPhase: 'foundations', badge: 'CORE',
