@@ -3167,6 +3167,7 @@
       return data || [];
     }
 
+
     async function getWorkbookProgress(userId) {
       const { data, error } = await supabaseClient
         .from("workbook_progress")
@@ -3418,21 +3419,6 @@
       if (!fullName || !roleId) return alert("Please fill out your name and choose your role.");
 
       const selectedRole = ROLE_OPTIONS.find(role => role.id === roleId);
-      const { data: existingClaim, error: claimError } = await supabaseClient
-        .from("profiles")
-        .select("id,full_name,email")
-        .eq("role_id", roleId)
-        .neq("id", user.id)
-        .maybeSingle();
-
-      if (claimError) {
-        console.error("Role claim check error:", claimError);
-        return alert("Could not check that role. Try again.");
-      }
-
-      if (existingClaim) {
-        return alert(`That role is already claimed by ${existingClaim.full_name || existingClaim.email || "another organizer"}.`);
-      }
 
       const { error } = await supabaseClient
         .from("profiles")
@@ -4478,12 +4464,10 @@
     }
 
     function renderRoleSetup(user, rows = []) {
-      const claimedRoleIds = new Set(rows.filter(row => row.claimed && row.profile_id !== user.id).map(row => row.role_id));
-
       return `
         <div class="card">
           <h2>Complete your profile</h2>
-          <p>Choose the role you are applying for this season. Filled roles are locked.</p>
+          <p>Choose your role on the organizing team.</p>
           <div class="stack">
             <div>
               <div class="label">Email</div>
@@ -4497,14 +4481,11 @@
               <div class="label">Role</div>
               <select id="role-id">
                 <option value="">Choose your role</option>
-                ${ROLE_OPTIONS.map(role => `
-                  <option value="${role.id}" ${claimedRoleIds.has(role.id) ? "disabled" : ""}>${role.title} - ${role.team}${claimedRoleIds.has(role.id) ? " (claimed)" : ""}</option>
-                `).join("")}
+                ${ROLE_OPTIONS.map(role => `<option value="${role.id}">${role.title} — ${role.team}</option>`).join("")}
               </select>
             </div>
             <button class="primary full" onclick="saveProfile()">Save and Continue</button>
           </div>
-          <div class="note">For now, each organizer selects their role once. We can make this admin-assigned later.</div>
         </div>
       `;
     }
@@ -4769,26 +4750,32 @@
 
     function buildRoleDirectoryRows(profiles = []) {
       const profilesByRole = profiles.reduce((map, profile) => {
-        if (profile.role_id && !map[profile.role_id]) map[profile.role_id] = profile;
+        if (profile.role_id) {
+          if (!map[profile.role_id]) map[profile.role_id] = [];
+          map[profile.role_id].push(profile);
+        }
         return map;
       }, {});
 
-      return ROLE_OPTIONS.map(role => {
-        const claim = profilesByRole[role.id];
+      const rows = [];
+      ROLE_OPTIONS.forEach(role => {
+        const claims = profilesByRole[role.id] || [];
         const workbook = WORKBOOKS[role.id] || WORKBOOKS.default;
-        return {
-          id: claim?.id || `role-${role.id}`,
-          profile_id: claim?.id || null,
-          full_name: claim?.full_name || "",
-          email: claim?.email || "",
+        const base = {
           role_id: role.id,
-          team: claim?.team || role.team,
+          team: role.team,
           start_phase: workbook.startPhase || firstPhaseForRole(role.id),
           task_preview: getRoleTaskPreview(role.id),
-          updated_at: claim?.updated_at || null,
-          claimed: !!claim
         };
+        if (claims.length === 0) {
+          rows.push({ ...base, id: `role-${role.id}`, profile_id: null, full_name: "", email: "", updated_at: null, claimed: false });
+        } else {
+          claims.forEach(claim => {
+            rows.push({ ...base, id: claim.id, profile_id: claim.id, full_name: claim.full_name || "", email: claim.email || "", updated_at: claim.updated_at || null, claimed: true });
+          });
+        }
       });
+      return rows;
     }
 
     function firstPhaseForRole(roleId) {
