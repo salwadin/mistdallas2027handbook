@@ -1586,8 +1586,8 @@ const ROLES = [
   },
 
   {
-    id: 'outreach', title: 'Outreach Coordinator', team: 'marketing', startPhase: 'foundations', badge: 'CORE',
-    reportsTo: 'Marketing Lead',
+    id: 'outreach', title: 'Outreach Coordinator', team: 'dreamteam', startPhase: 'foundations', badge: 'CORE',
+    reportsTo: 'Dream Team Lead',
     phases: {
       foundations: {
         focus: 'Build the master school database and develop the recruitment strategy.',
@@ -1824,87 +1824,6 @@ const ROLES = [
   },
 
   {
-    id: 'dt-training', title: 'Training & Development Coordinator', team: 'dreamteam', startPhase: 'stabilization', badge: 'STAB',
-    reportsTo: 'Dream Team Lead',
-    phases: {
-      foundations: {
-        focus: 'This role starts in Phase III: Stabilization.',
-        responsibilities: ['Connect with Dream Team Lead for scope'],
-        deliverables: ['Oct 31: Training framework outlined if joined early'],
-        frameworks: [],
-        weeklyPlan: [{ week: 'Pre-Stabilization', tasks: 'Connect with DT Lead. Understand training scope.' }],
-        reflections: ['What training do volunteers typically lack at MIST events?'],
-        risks: ['Training started too late to be effective'],
-      },
-      build: {
-        focus: 'Outline the volunteer handbook and identify training needs from all departments.',
-        responsibilities: ['Develop training framework', 'Collect training needs from every department', 'Outline volunteer handbook'],
-        deliverables: ['Nov 30: Volunteer handbook outline and training framework complete'],
-        frameworks: [{ type: 'table', title: 'Training Needs by Department', columns: ['Department', 'Training Topic', 'Who Needs It', 'Format (Online/In-Person)', 'Priority'], rows: 10 }],
-        weeklyPlan: [{ week: 'Nov 1–30', tasks: 'Collect training needs. Outline handbook.' }],
-        reflections: ['What is the most critical thing every volunteer must know regardless of their assignment?'],
-        risks: ['Training needs not collected from all depts', 'Handbook too long to actually read'],
-      },
-      stabilization: {
-        focus: 'Build all training materials and prepare to train volunteers in March.',
-        responsibilities: [
-          'Develop general Dream Team orientation and volunteer handbook',
-          'Create role-specific training materials for each department',
-          'Establish professionalism, conduct, and escalation training',
-          'Build scenario exercises for common situations',
-          'Develop quick-reference guides for day-of use',
-        ],
-        deliverables: [
-          'Jan 15: Core training material drafted',
-          'Feb 15: All department-specific training materials collected',
-          'Feb 28: Complete training package ready',
-        ],
-        frameworks: [
-          { type: 'table', title: 'Training Material Tracker', columns: ['Module', 'Audience', 'Format', 'Status', 'Reviewed By Dept?', 'Notes'], rows: 12 },
-        ],
-        weeklyPlan: [
-          { week: 'Jan 15–Feb 15', tasks: 'Core materials. Dept-specific materials.' },
-          { week: 'Feb 15–28', tasks: 'Finalize complete training package.' },
-        ],
-        reflections: [
-          'Will volunteers actually read and remember the handbook — or do they need scenarios?',
-          'Does every volunteer know exactly what to do when something goes wrong?',
-        ],
-        risks: ['Training materials not reviewed by departments before use', 'No scenario exercises = volunteers improvising day-of'],
-      },
-      execution: {
-        focus: 'Deliver training sessions, ensure all volunteers are trained, and support deployment.',
-        responsibilities: [
-          'Run general orientation training sessions',
-          'Coordinate department-specific training with each Lead',
-          'Conduct makeup training for late registrants',
-          'Ensure every volunteer has a quick-reference guide',
-          'Support DT Lead with deployment and recurring volunteer issues tournament weekend',
-        ],
-        deliverables: [
-          'Mar 7: Training session #1 (general orientation)',
-          'Mar 14: Department-specific training sessions',
-          'Mar 21: Makeup/final training + quick-reference guides distributed',
-          'Mar 25–28: Support DT Lead with deployment and issues',
-        ],
-        frameworks: [
-          { type: 'table', title: 'Training Attendance Log', columns: ['Volunteer', 'General Training', 'Dept Training', 'Makeup Done?', 'Quick Ref Received?', 'Cleared?'], rows: 40 },
-        ],
-        weeklyPlan: [
-          { week: 'Mar 1–7', tasks: 'Training session #1.' },
-          { week: 'Mar 7–14', tasks: 'Dept-specific sessions.' },
-          { week: 'Mar 14–21', tasks: 'Makeup sessions. Distribute quick-reference guides.' },
-          { week: 'Mar 25–28', tasks: 'Support deployment. Address recurring issues.' },
-        ],
-        reflections: [
-          'Are volunteers trained — or just oriented? Can they actually do their job?',
-          'What scenario is a volunteer most likely to encounter and not know how to handle?',
-        ],
-        risks: ['Volunteers not attending training with no makeup option', 'No quick-reference guide for day-of questions', 'Department-specific training skipped'],
-      },
-    },
-  },
-
   // ─── OPERATIONS ──────────────────────────────────────────────────────────
   {
     id: 'logistics-lead', title: 'Logistics Lead', team: 'operations', startPhase: 'foundations', badge: 'CORE',
