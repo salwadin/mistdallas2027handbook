@@ -2951,7 +2951,8 @@
       { id: "role_preference_order", section: "Positions", type: "textarea", label: "If multiple positions selected, list roles in order of preference below", required: false }
     ];
     // Only these roles are currently accepting applications
-    const OPEN_FOR_APPLICATIONS = new Set(ROLE_OPTIONS.map(r => r.id));
+    const EXEC_ROLES = new Set(["rd","internal-ad","external-ad","comps-lead","marketing-lead","dt-lead","logistics-lead","finance-lead","programs-lead","tech-lead","sports-lead"]);
+    const OPEN_FOR_APPLICATIONS = new Set(ROLE_OPTIONS.map(r => r.id).filter(id => !EXEC_ROLES.has(id)));
 
     // CALENDAR_DEADLINES and TIMELINE are set after MASTER_MILESTONES is defined below
     const DEFAULT_ANNOUNCEMENTS = [
