@@ -109,11 +109,17 @@ serve(async (req) => {
         <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#ffffff;">
           <h2 style="color:#1a1a1a;margin-bottom:8px;">Assalamu Alaikum ${name},</h2>
           <p style="color:#444;font-size:16px;line-height:1.6;">
-            Thank you for your interest in joining the <strong>MIST Dallas 2027</strong> organizing team.
+            Jazakallah khair for taking the time to apply for <strong>${role_title}</strong> on the MIST Dallas 2027 organizing team.
+            It genuinely means a lot that you wanted to be part of this — the fact that you showed up and put yourself out there says everything.
           </p>
           <p style="color:#444;font-size:16px;line-height:1.6;">
-            After careful review, we are not moving forward with your application for <strong>${role_title}</strong> at this time.
-            We appreciate the time you took to apply and encourage you to stay connected with MIST Dallas.
+            After careful review, we weren't able to move forward with your application for this role at this time. Please know this was not an easy decision, and it is not a reflection of your character or your love for this community.
+          </p>
+          <p style="color:#444;font-size:16px;line-height:1.6;">
+            We would love to have you involved in another way — we'll be reaching out in <strong>January</strong> about joining our <strong>Dream Team</strong>, our incredible group of weekend volunteers who make the tournament come to life. It's a meaningful role and we'd be honored to have you.
+          </p>
+          <p style="color:#444;font-size:16px;line-height:1.6;">
+            Thank you for caring about MIST Dallas. This community is better because you're in it. 🤍
           </p>
           <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
           <p style="color:#aaa;font-size:12px;">MIST Dallas 2027 Organizing Team</p>
